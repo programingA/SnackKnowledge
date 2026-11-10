@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getKnowledge } from '../../api/knowledge'
+import KnowledgeQuestionForm from './KnowledgeQuestionForm'
 import Modal from '../ui/Modal'
 
 export default function DatabaseArticleModal({ id, onClose }) {
@@ -43,6 +44,7 @@ export default function DatabaseArticleModal({ id, onClose }) {
           </div>
           <div className="article-body">
             <p>{knowledge.content}</p>
+            <KnowledgeQuestionForm id={id} />
           </div>
         </>
       )}
