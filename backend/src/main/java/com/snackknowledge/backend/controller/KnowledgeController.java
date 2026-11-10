@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import com.snackknowledge.backend.service.KnowledgeAnswerService;
+import com.snackknowledge.backend.dto.KnowledgeQuizResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -58,5 +59,12 @@ public class KnowledgeController {
         String answer = knowledgeAnswerService.answer(knowledge, request.question());
 
         return Map.of("answer", answer);
+    }
+
+    @PostMapping("/api/knowledge/{id}/quiz")
+    public KnowledgeQuizResponse generateQuiz(@PathVariable("id") Long id) {
+        KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
+
+        return knowledgeAnswerService.generateQuiz(knowledge);
     }
 }
