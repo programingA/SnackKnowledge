@@ -51,3 +51,18 @@ export async function generateKnowledgeQuiz(id) {
 
   return { ...quiz, options }
 }
+
+export async function getExplanationFeedback(id, explanation) {
+  const response = await fetch(`/api/knowledge/${id}/explanations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(({explanation})),
+  })
+
+  if (!response.ok) {
+    throw new Error(`피드백을 가져오지 못했어요(${response.status}).`)
+  }
+
+  const data = await response.json()
+  return data.feedback
+}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { askKnowledgeQuestion } from "../../api/knowledge";
+import AiResponseText from '../ui/AiResponseText'
 
 export default function KnowledgeQuestionForm({ id }) {
     const [question, setQuestion] = useState('')
@@ -53,7 +54,7 @@ export default function KnowledgeQuestionForm({ id }) {
       {answer && (
         <div className="response" role="status">
           <strong>AI 답변</strong>
-          <p style={{ whiteSpace: 'pre-wrap' }}>{answer}</p>
+          <AiResponseText text={answer} />
         </div>
       )}
     </form>
