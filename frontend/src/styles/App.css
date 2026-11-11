@@ -889,7 +889,7 @@ textarea {
   border-radius: 10px;
   animation: rise-in 0.35s both;
 }
-.response strong {
+.response > strong {
   font-size: 13px;
   display: flex;
   align-items: center;

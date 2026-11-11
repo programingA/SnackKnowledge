@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import com.snackknowledge.backend.service.KnowledgeAnswerService;
 import com.snackknowledge.backend.dto.KnowledgeQuizResponse;
+import com.snackknowledge.backend.dto.KnowledgeExplanationRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -67,4 +68,23 @@ public class KnowledgeController {
 
         return knowledgeAnswerService.generateQuiz(knowledge);
     }
+
+    @PostMapping("/api/knowledge/{id}/explanations")
+    public Map<String, String> receiveExplanation(
+            @PathVariable Long id,
+            @RequestBody KnowledgeExplanationRequest request
+    ) {
+        String explanation = request.explanation();
+
+        if (explanation == null || explanation.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "설명을 입력해주세요."
+            );
+        }
+        KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
+
+        String feedback = knowledgeAnswerService.giveExplanationFeedback(knowledge, explanation);
+        return Map.of("feedback", feedback);
+    }
+
 }

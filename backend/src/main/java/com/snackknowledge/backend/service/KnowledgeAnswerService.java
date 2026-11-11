@@ -25,12 +25,6 @@ public class KnowledgeAnswerService {
     }
 
     public String answer(KnowledgeResponse knowledge, String question) {
-        if (client == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.SERVICE_UNAVAILABLE, "OpenAI API 키를 설정해주세요."
-            );
-        }
-
         String input = """
                 제목: %s
                 본문: %s
@@ -38,9 +32,45 @@ public class KnowledgeAnswerService {
                 질문: %s
                 """.formatted(knowledge.title(), knowledge.content(), question);
 
+        return requestText(
+                input,
+                "본문을 참고해 한국어로 쉽게 답하세요. 근거가 부족하면 그렇게 알려주세요."
+        );
+    }
+
+    public String giveExplanationFeedback(KnowledgeResponse knowledge, String explanation) {
+        String input = """
+                제목: %s
+                카드 원문: %s
+
+                사용자 설명: %s
+                """.formatted(knowledge.title(), knowledge.content(), explanation);
+
+        String feedback = requestText(input, """
+                카드 원문을 기준으로 사용자 설명에 대해 한국어로 피드백하세요.
+                잘 이해한 점, 수정할 점, 보충 설명을 짧게 나누어 작성하세요.
+                수정할 점이 없다면 없다고 알려주세요.
+                """);
+
+        if (feedback.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_GATEWAY, "AI 피드백을 받지 못했어요."
+            );
+        }
+
+        return feedback;
+    }
+
+    private String requestText(String input, String instructions) {
+        if (client == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.SERVICE_UNAVAILABLE, "OpenAI API 키를 설정해주세요."
+            );
+        }
+
         var params = ResponseCreateParams.builder()
                 .model("gpt-5.6-terra")
-                .instructions("본문을 참고해 한국어로 쉽게 답하세요. 근거가 부족하면 그렇게 알려주세요.")
+                .instructions(instructions)
                 .input(input)
                 .maxOutputTokens(600L)
                 .build();

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getKnowledge } from '../../api/knowledge'
 import KnowledgeQuestionForm from './KnowledgeQuestionForm'
 import KnowledgeQuiz from './KnowledgeQuiz'
+import KnowledgeExplanationForm from './KnowledgeExplanationForm'
 import Modal from '../ui/Modal'
 
 export default function DatabaseArticleModal({ id, onClose }) {
@@ -47,6 +48,7 @@ export default function DatabaseArticleModal({ id, onClose }) {
             <p>{knowledge.content}</p>
             <KnowledgeQuestionForm id={id} />
             <KnowledgeQuiz id={id} />
+            <KnowledgeExplanationForm key={id} id={id} />
           </div>
         </>
       )}
