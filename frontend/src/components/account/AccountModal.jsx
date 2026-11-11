@@ -143,6 +143,9 @@ export default function AccountModal({ username, onChange, onClose }) {
           {pending ? '처리 중...' : username ? '로그아웃' : title}
         </button>
       </form>
+      {username && (
+        <a className="text-button" href="#/bookmarks" onClick={onClose}>내 북마크</a>
+      )}
       {!username && (
         <div className="account-footer">
           <span>{registering ? '이미 계정이 있나요?' : '처음 오셨나요?'}</span>

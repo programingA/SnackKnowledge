@@ -12,12 +12,17 @@ async function request(path, options) {
   return response
 }
 
-async function submit(path, body, contentType) {
+export async function getCsrfHeaders() {
   const tokenResponse = await request('csrf', { cache: 'no-store' })
   const { header, token } = await tokenResponse.json()
+  return { [header]: token }
+}
+
+async function submit(path, body, contentType) {
+  const csrfHeaders = await getCsrfHeaders()
   return request(path, {
     method: 'POST',
-    headers: { [header]: token, ...(contentType && { 'Content-Type': contentType }) },
+    headers: { ...csrfHeaders, ...(contentType && { 'Content-Type': contentType }) },
     body,
   })
 }
