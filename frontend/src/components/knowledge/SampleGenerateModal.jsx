@@ -1,11 +1,35 @@
 import { useState } from 'react'
-import { articles } from '../../data/sampleKnowledge'
+import { generateKnowledge } from '../../api/knowledge'
+import AiResponseText from '../ui/AiResponseText'
 import Icon from '../ui/Icon'
 import Modal from '../ui/Modal'
 
-export default function SampleGenerateModal({ onClose, onOpen }) {
+export default function SampleGenerateModal({ onClose }) {
   const [topic, setTopic] = useState('')
-  const [result, setResult] = useState(false)
+  const [result, setResult] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    const trimmedTopic = topic.trim()
+    if (!trimmedTopic || loading) return
+
+    setLoading(true)
+    setError('')
+    setResult(null)
+
+    try {
+      const card = await generateKnowledge(trimmedTopic)
+      setResult(card)
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <Modal
       label="새로운 지식 만들기"
@@ -15,65 +39,51 @@ export default function SampleGenerateModal({ onClose, onOpen }) {
       <span className="large-icon">
         <Icon name="sparkle" size={29} />
       </span>
-      <span className="eyebrow">FOLLOW YOUR CURIOSITY</span>
       <h2>오늘은 무엇이 궁금한가요?</h2>
-      <p className="muted">작은 호기심 하나가 새로운 발견의 시작이에요.</p>
-      <div className="demo-notice">
-        현재는 샘플 체험입니다. 입력한 주제로 실제 콘텐츠를 생성하지 않습니다.
-      </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          if (topic.trim()) setResult(true)
-        }}
-      >
+
+      <form onSubmit={handleSubmit}>
         <label htmlFor="topic">알고 싶은 주제</label>
         <input
           id="topic"
           value={topic}
           maxLength={100}
-          onChange={(e) => {
-            setTopic(e.target.value)
-            setResult(false)
-          }}
-          placeholder="예: 하늘은 왜 파란색일까?"
+          onChange={(event) => setTopic(event.target.value)}
+          placeholder="예: 블랙홀은 어떻게 생기나요?"
+          disabled={loading}
           required
         />
+
         <div className="topic-suggestions">
-          {['하늘의 색', '와이파이의 원리', '달빛의 비밀'].map((t) => (
+          {['하늘의 색', '와이파이의 원리', '달빛의 비밀'].map((suggestion) => (
             <button
               type="button"
-              key={t}
-              onClick={() => {
-                setTopic(t)
-                setResult(false)
-              }}
+              key={suggestion}
+              onClick={() => setTopic(suggestion)}
+              disabled={loading}
             >
-              {t} +
+              {suggestion} +
             </button>
           ))}
         </div>
+
         <button
           type="submit"
           className="primary-button full-width"
-          disabled={!topic.trim()}
+          disabled={loading || !topic.trim()}
         >
           <Icon name="sparkle" size={17} />
-          샘플 결과 체험하기
-          <Icon name="arrow" size={17} />
+          {loading ? '지식 카드를 만드는 중...' : '지식 카드 만들기'}
         </button>
       </form>
+
+      {error && <p role="alert">{error}</p>}
+
       {result && (
         <div className="response" role="status">
-          <strong>이런 지식이 만들어질 거예요</strong>
-          <p>
-            입력한 주제와 별개로, 준비된 ‘하늘은 왜 파란색일까?’ 샘플을
-            보여드려요.
-          </p>
-          <button className="text-button" onClick={() => onOpen(articles[0])}>
-            샘플 지식 읽기
-            <Icon name="arrow" size={16} />
-          </button>
+          <small>{result.category}</small>
+          <strong>{result.title}</strong>
+          <p>{result.summary}</p>
+          <AiResponseText text={result.content} />
         </div>
       )}
     </Modal>

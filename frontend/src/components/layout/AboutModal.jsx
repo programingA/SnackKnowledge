@@ -16,10 +16,10 @@ export default function AboutModal({ onClose, onBrowse }) {
       <div className="takeaway">
         <Icon name="sparkle" />
         <div>
-          <strong>지금은 프론트 미리보기예요</strong>
+          <strong>AI로 새 지식을 만들 수 있어요</strong>
           <p>
-            6개의 샘플 지식과 퀴즈를 체험할 수 있어요. 로그인·영구 저장·실제 AI
-            요청은 제공하지 않으며, 질문과 설명은 외부로 전송하지 않아요.
+            궁금한 주제를 입력하면 AI가 만든 지식 카드를 바로 읽을 수 있어요.
+            주제, 질문, 직접 작성한 설명은 응답을 생성하기 위해 AI 서비스로 전송돼요.
           </p>
         </div>
       </div>

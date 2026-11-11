@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.snackknowledge.backend.service.KnowledgeAnswerService;
 import com.snackknowledge.backend.dto.KnowledgeQuizResponse;
 import com.snackknowledge.backend.dto.KnowledgeExplanationRequest;
+import com.snackknowledge.backend.dto.KnowledgeGenerateRequest;
+import com.snackknowledge.backend.dto.KnowledgeGenerateResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -87,4 +89,19 @@ public class KnowledgeController {
         return Map.of("feedback", feedback);
     }
 
+    @PostMapping("/api/knowledge/generate")
+    public KnowledgeGenerateResponse generateKnowledge(
+            @RequestBody KnowledgeGenerateRequest request
+    ) {
+        String topic = request.topic();
+
+        if (topic == null || topic.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "주제를 입력해주세요."
+            );
+        }
+
+        return knowledgeAnswerService.generateKnowledge(topic.strip());
+    }
 }
