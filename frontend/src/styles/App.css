@@ -71,9 +71,6 @@ nav .nav-active:after {
   background: #fffefa;
   white-space: nowrap;
 }
-.account-switch {
-  margin-top: 16px;
-}
 .page-shell {
   max-width: 1160px;
   padding: 0 20px;

@@ -1,5 +1,6 @@
 package com.snackknowledge.backend.controller;
 
+import com.snackknowledge.backend.config.AccountCredentials;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -8,9 +9,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -35,22 +34,22 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void register(@RequestBody Credentials request) {
-        String username = request.username() == null ? "" : request.username().strip().toLowerCase(Locale.ROOT);
+        String username = AccountCredentials.normalizeUsername(request.username());
         String password = request.password();
-        if (!username.matches("[a-z0-9_]{3,30}") || password == null
-                || password.length() < 8 || password.getBytes(StandardCharsets.UTF_8).length > 72) {
+        if (!AccountCredentials.validUsername(username) || !AccountCredentials.validNewPassword(password)
+                || !password.equals(request.passwordConfirmation())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         try {
             jdbc.sql("INSERT INTO member_account (username, password_hash) VALUES (?, ?)")
                     .params(username, encoder.encode(password)).update();
-        } catch (DuplicateKeyException error) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        } catch (DuplicateKeyException ignored) {
+            // Match the response for a new account without changing its existing password.
         }
     }
 
-    public record Credentials(String username, String password) {}
+    public record Credentials(String username, String password, String passwordConfirmation) {}
     public record Session(String username) {}
 }

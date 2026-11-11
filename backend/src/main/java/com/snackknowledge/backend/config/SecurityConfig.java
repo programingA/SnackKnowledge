@@ -13,8 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-
-import java.util.Locale;
+import org.springframework.security.web.csrf.CsrfFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -26,7 +25,7 @@ public class SecurityConfig {
     @Bean
     UserDetailsService userDetailsService(JdbcClient jdbc) {
         return username -> jdbc.sql("SELECT username, password_hash FROM member_account WHERE username = ?")
-                .param(username.strip().toLowerCase(Locale.ROOT))
+                .param(AccountCredentials.normalizeUsername(username))
                 .query((row, index) -> User.withUsername(row.getString("username"))
                         .password(row.getString("password_hash")).roles("MEMBER").build())
                 .optional()
@@ -40,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/me/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/knowledge/**"))
+                .addFilterAfter(new AccountAttemptFilter(), CsrfFilter.class)
                 .requestCache(cache -> cache.disable())
                 .exceptionHandling(errors -> errors
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
