@@ -1,6 +1,6 @@
 import Icon from '../ui/Icon'
 
-export default function SiteHeader({ onBrowse, onAbout }) {
+export default function SiteHeader({ onBrowse, onAbout, onAccount, username }) {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -18,10 +18,9 @@ export default function SiteHeader({ onBrowse, onAbout }) {
           </button>
           <button onClick={onAbout}>한입지식 소개</button>
         </nav>
-        <span className="preview-badge">
-          <span />
-          프론트 미리보기
-        </span>
+        <button type="button" className="account-button" onClick={onAccount}>
+          {username ? '내 계정' : '로그인'}
+        </button>
       </div>
     </header>
   )
