@@ -81,7 +81,7 @@ export default function App() {
           />
         ))}
       {modal === 'generate' && (
-        <SampleGenerateModal onClose={closeModal} onOpen={openArticle} />
+        <SampleGenerateModal onClose={closeModal} />
       )}
       {modal === 'about' && (
         <AboutModal

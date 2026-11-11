@@ -12,7 +12,7 @@ export default function CuriosityBanner({ onGenerate }) {
         <p>궁금한 주제를 입력하고 나만의 지식을 만나는 경험.</p>
       </div>
       <button className="primary-button" onClick={onGenerate}>
-        <Icon name="sparkle" size={17} />새 지식 체험하기
+        <Icon name="sparkle" size={17} />새 지식 만들기
         <Icon name="arrow" size={17} />
       </button>
     </section>

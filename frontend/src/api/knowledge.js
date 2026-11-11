@@ -66,3 +66,17 @@ export async function getExplanationFeedback(id, explanation) {
   const data = await response.json()
   return data.feedback
 }
+
+export async function generateKnowledge(topic) {
+  const response = await fetch('/api/knowledge/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ topic }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`지식 카드를 생성하지 못했어요(${response.status}).`)
+  }
+
+  return response.json()
+}

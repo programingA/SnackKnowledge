@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import com.snackknowledge.backend.dto.KnowledgeQuizResponse;
+import com.snackknowledge.backend.dto.KnowledgeGenerateResponse;
 
 import javax.swing.*;
 import java.util.stream.Collectors;
@@ -127,5 +128,38 @@ public class KnowledgeAnswerService {
         }
 
         return quiz;
+    }
+
+    public KnowledgeGenerateResponse generateKnowledge(String topic) {
+        if(client == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.SERVICE_UNAVAILABLE,
+                    "OpenAI API 키를 설정해주세요."
+            );
+        }
+
+        var params = ResponseCreateParams.builder()
+                .model("gpt-5.6-terra")
+                .instructions("""
+                        입력한 주제에 대해 한국어 지식 카드 한장을 만드세요.
+                        category에는 분야, title에는 제목, summary에는 한 문장 요약을 작성하세요.
+                        content에는 처음 배우는 사람도 이해할 수 있는 짧은 설명을 작성하세요.
+                        """)
+                .input(topic)
+                .maxOutputTokens(1000L)
+                .text(KnowledgeGenerateResponse.class)
+                .build();
+
+        var response = client.responses().create(params);
+
+        return response.output().stream()
+                .flatMap(item -> item.message().stream())
+                .flatMap(message -> message.content().stream())
+                .flatMap(content -> content.outputText().stream())
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_GATEWAY,
+                        "지식 카드를 생성하지 못했어요."
+                ));
     }
 }
