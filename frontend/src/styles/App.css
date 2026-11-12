@@ -932,10 +932,6 @@ a.featured-card:hover .round-arrow {
   line-height: 1.85;
 }
 
-.generated-article-reading.ai-response-text > * + * {
-  margin-top: 0;
-}
-
 .study-article .article-heading {
   padding-block: clamp(28px, 4vw, 38px) clamp(24px, 4vw, 32px);
 }
@@ -962,7 +958,39 @@ a.featured-card:hover .round-arrow {
 }
 
 .study-article .article-body {
-  padding-block: clamp(26px, 4vw, 36px) clamp(36px, 6vw, 52px);
+  padding-block: clamp(32px, 5.5vw, 52px) clamp(44px, 7vw, 66px);
+}
+
+.study-article .article-reading {
+  --reading-gap: clamp(22px, 3.4vw, 32px);
+  gap: var(--reading-gap);
+  text-align: start;
+}
+
+.study-article .article-reading :is(p, li) {
+  line-height: 1.95;
+}
+
+.generated-article-reading.ai-response-text {
+  row-gap: 0;
+}
+
+.generated-article-reading.ai-response-text > :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  font-size: clamp(16px, 2.3vw, 18px);
+  font-weight: 750;
+}
+
+.generated-article-reading.ai-response-text > :is(h1, h2) {
+  font-size: clamp(18px, 2.6vw, 21px);
+}
+
+.generated-article-reading.ai-response-text > * + * {
+  margin-block-start: var(--reading-gap);
+}
+
+.generated-article-reading.ai-response-text > :is(h1, h2, h3, h4, h5, h6) + * {
+  margin-block-start: 8px;
 }
 
 .takeaway {
@@ -1633,11 +1661,21 @@ textarea {
 
 .knowledge-illustration {
   display: block;
-  width: 100%;
-  max-height: 400px;
+  max-inline-size: 100%;
+  max-block-size: clamp(270px, 55vw, 460px);
+  margin: 0 auto clamp(30px, 5vw, 46px);
+  padding: clamp(5px, 1vw, 9px);
+  border: 1px solid #a68e79;
+  border-radius: 16px;
+  background: #f4eadd;
+  box-shadow: 0 4px 12px #5c3f281c;
   object-fit: contain;
-  border-radius: 12px;
-  margin-bottom: clamp(22px, 4vw, 34px);
+}
+
+.study-article .takeaway {
+  gap: 14px;
+  margin: clamp(30px, 5vw, 48px) 0 0;
+  padding: clamp(19px, 3vw, 28px);
 }
 
 .study-article .takeaway p {
@@ -1648,7 +1686,7 @@ textarea {
 .knowledge-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: clamp(20px, 3vw, 30px);
 }
 
 .study-article .article-heading .bookmark-control {
@@ -1717,6 +1755,14 @@ textarea {
 .knowledge-chat-ai {
   justify-self: start;
   background: #f6f1e9;
+}
+
+.study-article form > label {
+  margin-bottom: 14px;
+}
+
+.study-article .form-bottom {
+  margin-top: 18px;
 }
 
 .study-article .form-bottom > button {
@@ -1800,7 +1846,7 @@ textarea {
 
 .knowledge-chat-heading {
   margin: 0;
-  padding: 16px clamp(12px, 3vw, 20px);
+  padding: 20px clamp(16px, 3.5vw, 28px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -1810,7 +1856,7 @@ textarea {
   min-width: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 16px clamp(12px, 3vw, 20px);
+  padding: 22px clamp(16px, 3.5vw, 28px);
   background: #fcf8f2;
 }
 
@@ -1827,7 +1873,7 @@ textarea {
 .knowledge-chat-form,
 .knowledge-chat > :is(p, .knowledge-actions) {
   margin: 0;
-  padding: 12px clamp(12px, 3vw, 20px);
+  padding: 16px clamp(16px, 3.5vw, 28px);
 }
 
 .knowledge-chat-form {
@@ -1847,7 +1893,7 @@ textarea {
 }
 
 .knowledge-quiz-panel {
-  padding: clamp(14px, 3vw, 24px);
+  padding: clamp(19px, 3.6vw, 32px);
 }
 
 .knowledge-quiz-header {
@@ -1855,7 +1901,7 @@ textarea {
   flex-wrap: wrap;
   align-items: center;
   gap: 6px 12px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
 .knowledge-quiz-header > h3 {
@@ -1971,5 +2017,4 @@ textarea {
   width: auto;
   margin-inline-end: 6px;
 }
-
 

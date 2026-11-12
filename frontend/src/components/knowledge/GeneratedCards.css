@@ -45,14 +45,6 @@
   color: #a53428;
 }
 
-.saved-generated-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-top: 12px;
-  border-radius: 10px;
-}
-
 .generated-article {
   overflow-wrap: anywhere;
 }
@@ -63,12 +55,6 @@
   border-bottom: 2px solid var(--coral);
   color: var(--coral);
   font-size: 12px;
-}
-
-.generated-article .saved-generated-image {
-  margin: 0 0 20px;
-  max-height: 400px;
-  object-fit: contain;
 }
 
 .generated-preview-nav {
