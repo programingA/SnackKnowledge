@@ -23,27 +23,31 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
 
   return (
     <main className="page-shell article-page" id="generated-preview-page" tabIndex={-1} hidden={!visible}>
-      <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
+      <div className="generated-preview-nav">
+        <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
+        {card && (
+          <button className="primary-button generated-preview-secondary" type="button" onClick={onGenerate}>
+            <Icon name="sparkle" size={16} />
+            다른 지식 만들기
+          </button>
+        )}
+      </div>
       {storageWarning && <p className="generated-study-status" role="status">{storageWarning}</p>}
+      {card && !studyId && (studyError ? (
+        <div className="generated-study-status">
+          <p role="alert">{studyError}</p>
+          <button className="text-button" type="button" onClick={() => {
+            setStudyError('')
+            setAttempt((current) => current + 1)
+          }}>학습 기능 다시 연결하기</button>
+        </div>
+      ) : <p className="generated-study-status" role="status">학습 기능을 연결하는 중이에요.</p>)}
       {card ? (
         <GeneratedArticle card={card} showStudy studyPath={studyId ? `/api/study/generated/preview/${studyId}` : undefined}
           showImageFallback={Object.hasOwn(card, 'imageBase64')}
           headerActions={(
             <>
-              {!studyId && (studyError ? (
-                <div className="generated-study-status">
-                  <p role="alert">{studyError}</p>
-                  <button className="text-button" type="button" onClick={() => {
-                    setStudyError('')
-                    setAttempt((current) => current + 1)
-                  }}>학습 기능 다시 연결하기</button>
-                </div>
-              ) : <p className="generated-study-status" role="status">학습 기능을 연결하는 중이에요.</p>)}
-              <div className="generated-preview-actions">
-                <button className="primary-button generated-preview-secondary" type="button" onClick={onGenerate}>
-                  <Icon name="sparkle" size={17} />
-                  다른 지식 만들기
-                </button>
+              <div className="generated-preview-save">
                 <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
               </div>
               {!username && (

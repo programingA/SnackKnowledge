@@ -71,51 +71,85 @@
   object-fit: contain;
 }
 
-.generated-preview-controls {
-  padding: 16px clamp(18px, 5vw, 38px) 20px;
-}
-
-.generated-preview-actions {
+.generated-preview-nav {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 8px 12px;
+  margin-bottom: 14px;
 }
 
-.generated-preview-actions > :last-child {
-  margin-inline-start: auto;
+.generated-preview-nav > .article-back {
+  margin: 0;
 }
 
-.generated-preview-actions .generated-card-actions {
-  justify-content: flex-end;
-  margin-top: 0;
-}
-
-.generated-preview-actions .generated-preview-secondary {
+.generated-preview-nav .generated-preview-secondary {
+  min-height: 38px;
+  padding: 8px 12px;
+  gap: 6px;
   border: 1px solid #dec5b4;
-  background: transparent;
+  background: #fffefa;
   color: #864d38;
 }
 
-.generated-preview-actions .generated-preview-secondary:hover:not(:disabled) {
+.generated-preview-nav .generated-preview-secondary:hover:not(:disabled) {
   border-color: #c76e51;
   background: #fff1e5;
 }
 
-.generated-preview-hint {
+.generated-preview-article .article-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.generated-preview-article .article-heading > h1,
+.generated-preview-article .article-heading > p {
+  grid-column: 1 / -1;
+}
+
+.generated-preview-article .article-heading > h1 {
+  grid-row: 2;
+}
+
+.generated-preview-article .article-heading > p {
+  grid-row: 3;
+  max-width: none;
+}
+
+.generated-preview-save {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  max-inline-size: min(190px, 100%);
+  text-align: right;
+}
+
+.generated-preview-save .primary-button {
+  min-height: 40px;
+  padding: 8px 12px;
+  gap: 6px;
+}
+
+.generated-preview-save .generated-card-actions {
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+}
+
+.generated-preview-save .generated-card-actions p {
+  font-size: 12px;
+}
+
+.generated-preview-article .article-heading > .generated-preview-hint {
+  grid-row: 4;
   margin: 8px 0 0;
   color: #715d4d;
   font-size: 12px;
   line-height: 1.6;
-  text-align: right;
-}
-
-@media (max-width: 400px) {
-  .generated-preview-actions .primary-button {
-    gap: 6px;
-    padding-inline: 10px;
-  }
 }
 
 .generated-study-status {

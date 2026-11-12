@@ -20,9 +20,11 @@ export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(
   )
 
   return (
-    <article className="article-page-card generated-article study-article" aria-label={card.title}>
-      <ArticleHeading category={card.category} title={card.title} summary={card.summary} />
-      {headerActions && <div className="generated-preview-controls">{headerActions}</div>}
+    <article className={`article-page-card generated-article study-article${headerActions ? ' generated-preview-article' : ''}`}
+      aria-label={card.title}>
+      <ArticleHeading category={card.category} title={card.title} summary={card.summary}>
+        {headerActions}
+      </ArticleHeading>
       {showStudy ? (
         <KnowledgeStudyTabs studyPath={studyPath} summary={card.summary} readingFooter={children}>
           {reading}
