@@ -14,6 +14,29 @@ const activities = [
   ['explain', '직접 설명하기'],
 ]
 
+const sentenceSegmenter = typeof Intl.Segmenter === 'function'
+  ? new Intl.Segmenter('ko', { granularity: 'sentence' })
+  : null
+
+function getReadingParagraphs(content) {
+  const text = content.trim()
+  if (!text) return []
+
+  const paragraphs = text.split(/\r?\n[ \t]*\r?\n(?:[ \t]*\r?\n)*/)
+  if (paragraphs.length > 1 || text.includes('\n')) return paragraphs
+
+  const sentences = sentenceSegmenter
+    ? Array.from(sentenceSegmenter.segment(text), ({ segment }) => segment.trim())
+    : text.split(/(?<=[.!?。！？])\s+/)
+  const reading = sentences.slice(0, 1)
+
+  for (let index = 1; index < sentences.length; index += 2) {
+    reading.push(sentences.slice(index, index + 2).join(' '))
+  }
+
+  return reading
+}
+
 export default function DatabaseArticlePage({ id, username }) {
   const [knowledge, setKnowledge] = useState(null)
   const [error, setError] = useState('')
@@ -35,7 +58,7 @@ export default function DatabaseArticlePage({ id, username }) {
   }, [id])
 
   return (
-    <article className="article-page-card" aria-label={knowledge?.title ?? '지식 상세보기'}>
+    <article className="article-page-card database-article" aria-label={knowledge?.title ?? '지식 상세보기'}>
       {error && (
         <p className="article-body" role="alert">
           {error}
@@ -66,11 +89,15 @@ export default function DatabaseArticlePage({ id, username }) {
           </div>
           <div className="article-body">
             {learning.error && <p role="alert">{learning.error}</p>}
-            {activity === 'read' && knowledge.content.split(/\r?\n[ \t]*\r?\n(?:[ \t]*\r?\n)*/).map((paragraph, index) => (
-              <p key={index} className={index === 0 ? 'article-intro article-page-content' : 'article-page-content'}>
-                {paragraph}
-              </p>
-            ))}
+            {activity === 'read' && (
+              <div className="article-reading">
+                {getReadingParagraphs(knowledge.content).map((paragraph, index) => (
+                  <p key={index} className={index === 0 ? 'article-intro' : undefined}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            )}
             <div hidden={activity !== 'ask'}>
               <KnowledgeQuestionForm id={id} onComplete={learning.track} />
             </div>
