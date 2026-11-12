@@ -1659,6 +1659,15 @@ textarea {
   white-space: pre-wrap;
 }
 
+.knowledge-chat-loading {
+  width: fit-content;
+  margin-top: 12px;
+}
+
+.knowledge-chat-loading .generate-progress {
+  margin-top: 0;
+}
+
 .knowledge-chat-user {
   justify-self: end;
   background: #f8e2d5;
@@ -1827,6 +1836,10 @@ textarea {
 .quiz-regenerate-button:focus-visible {
   outline: 2px solid var(--coral);
   outline-offset: 3px;
+}
+
+.knowledge-quiz-panel > .generate-progress {
+  margin-bottom: 16px;
 }
 
 .knowledge-quiz-start {

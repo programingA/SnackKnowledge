@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/knowledge'
 import AiResponseText from '../ui/AiResponseText'
+import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 
 export default function KnowledgeQuestionForm({ studyPath, onComplete, active }) {
   const composerId = useId()
@@ -16,8 +17,8 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
   const log = useRef(null)
 
   useEffect(() => {
-    if (active && used && log.current) log.current.scrollTop = log.current.scrollHeight
-  }, [active, used])
+    if (active && (used || sending) && log.current) log.current.scrollTop = log.current.scrollHeight
+  }, [active, sending, used])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -74,7 +75,11 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
             ))}
           </ol>
         )}
-        {sending && <p className="knowledge-chat-empty" role="status">AI가 답변을 작성하고 있어요.</p>}
+        {sending && (
+          <div className="knowledge-chat-message knowledge-chat-ai knowledge-chat-loading">
+            <GenerationProgress>AI가 답변을 작성하고 있어요.</GenerationProgress>
+          </div>
+        )}
       </div>
       {finished ? (
         <div className="knowledge-chat-locked" role="status">
@@ -89,6 +94,7 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
               onChange={(event) => setQuestion(event.target.value)}
               disabled={!conversation || sending} />
             <button type="submit" className="primary-button" disabled={!conversation || sending || !question.trim()}>
+              {sending && <LoadingSpinner />}
               {sending ? '답변 생성 중...' : '질문하기'}
             </button>
           </div>

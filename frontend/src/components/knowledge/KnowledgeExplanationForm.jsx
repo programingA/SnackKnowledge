@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { getExplanationFeedback } from '../../api/knowledge'
 import AiResponseText from '../ui/AiResponseText'
+import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 
 const MIN_LENGTH = 20
 const MAX_LENGTH = 1500
@@ -45,9 +46,11 @@ export default function KnowledgeExplanationForm({ studyPath, onComplete }) {
       <div className="form-bottom">
         <small id={inputId + '-count'}>{length.toLocaleString('ko-KR')} / 1,500자</small>
         <button type="submit" className="primary-button" disabled={sending || !valid}>
+          {sending && <LoadingSpinner />}
           {sending ? '피드백을 만드는 중...' : '피드백 받기'}
         </button>
       </div>
+      {sending && <GenerationProgress>작성한 설명을 읽고 피드백을 만들고 있어요.</GenerationProgress>}
       {error && <p role="alert">{error}</p>}
       {feedback && (
         <div className="response" role="status">

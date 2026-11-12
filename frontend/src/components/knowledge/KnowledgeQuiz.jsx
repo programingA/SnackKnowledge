@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/knowledge'
 import { startWrongAnswerQuiz } from '../../api/wrongAnswers'
+import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import Icon from '../ui/Icon'
 
 export default function KnowledgeQuiz({ studyPath, practiceId, initialQuiz = null, onComplete }) {
@@ -55,16 +56,20 @@ export default function KnowledgeQuiz({ studyPath, practiceId, initialQuiz = nul
         <h3 id={questionId + '-title'}>퀴즈로 복습하기</h3>
         {quiz && (
           <button type="button" className="text-button quiz-regenerate-button" onClick={handleGenerate} disabled={busy}>
-            <Icon name="refresh" size={16} />
+            {loading ? <LoadingSpinner /> : <Icon name="refresh" size={16} />}
             {generateLabel}
           </button>
         )}
       </div>
       {error && <p role="alert">{error}</p>}
+      {loading && (
+        <GenerationProgress>{practiceId ? '저장한 문제를 불러오고 있어요.' : '퀴즈 문제와 보기를 만들고 있어요.'}</GenerationProgress>
+      )}
 
       {!quiz ? (
         <div className="knowledge-quiz-start">
           <button type="button" className="primary-button" onClick={handleGenerate} disabled={busy}>
+            {loading && <LoadingSpinner />}
             {generateLabel}
           </button>
         </div>

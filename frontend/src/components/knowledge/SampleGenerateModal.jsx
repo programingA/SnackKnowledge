@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { generateKnowledge } from '../../api/knowledge'
+import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import Icon from '../ui/Icon'
 import Modal from '../ui/Modal'
 
@@ -74,17 +75,12 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
           className="primary-button full-width"
           disabled={loading || !topic.trim()}
         >
-          {loading ? <span className="generate-loading-spinner" aria-hidden="true" /> : <Icon name="sparkle" size={17} />}
+          {loading ? <LoadingSpinner /> : <Icon name="sparkle" size={17} />}
           {loading ? '생성 중…' : '지식 카드 만들기'}
         </button>
       </form>
 
-      {loading && (
-        <div className="generate-progress" role="status">
-          <div className="generate-progress-track" aria-hidden="true"><span /></div>
-          <p>카드 내용과 삽화를 준비하고 있어요.</p>
-        </div>
-      )}
+      {loading && <GenerationProgress>카드 내용과 삽화를 준비하고 있어요.</GenerationProgress>}
       {error && <p role="alert">{error}</p>}
     </Modal>
   )
