@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getSession } from './api/account'
 import AccountModal from './components/account/AccountModal'
+import BookmarksPage from './components/knowledge/BookmarksPage'
 import { articles } from './data/sampleKnowledge'
 import AboutModal from './components/layout/AboutModal'
 import CuriosityBanner from './components/layout/CuriosityBanner'
@@ -17,6 +18,9 @@ export default function App() {
   const [selected, setSelected] = useState(null)
   const [modal, setModal] = useState(null)
   const [username, setUsername] = useState(null)
+  const [locationHash, setLocationHash] = useState(() => window.location.hash)
+  const [bookmarkRevision, setBookmarkRevision] = useState(0)
+  const isBookmarksPage = locationHash === '#/bookmarks'
 
   useEffect(() => {
     const controller = new AbortController()
@@ -26,6 +30,25 @@ export default function App() {
     return () => controller.abort()
   }, [])
 
+  useEffect(() => {
+    function handleHashChange() {
+      setLocationHash(window.location.hash)
+      setSelected(null)
+      setModal(null)
+    }
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  useEffect(() => {
+    if (isBookmarksPage) {
+      window.scrollTo(0, 0)
+      document.getElementById('bookmarks-page')?.focus({ preventScroll: true })
+    } else if (locationHash === '#knowledge-feed') {
+      document.getElementById('knowledge-feed')?.scrollIntoView()
+    }
+  }, [isBookmarksPage, locationHash])
+
   function openArticle(article) {
     setModal(null)
     setSelected(article)
@@ -33,6 +56,7 @@ export default function App() {
 
   function closeArticle() {
     setSelected(null)
+    if (isBookmarksPage) setBookmarkRevision((current) => current + 1)
   }
 
   function closeModal() {
@@ -40,6 +64,10 @@ export default function App() {
   }
 
   function scrollToFeed() {
+    if (isBookmarksPage) {
+      window.location.hash = 'knowledge-feed'
+      return
+    }
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
@@ -55,16 +83,24 @@ export default function App() {
 
   return (
     <>
-      <a className="skip-link" href="#knowledge-feed">
-        지식 목록으로 바로가기
-      </a>
+      {!isBookmarksPage && (
+        <a className="skip-link" href="#knowledge-feed">지식 목록으로 바로가기</a>
+      )}
       <SiteHeader
         onBrowse={scrollToFeed}
         onAbout={() => setModal('about')}
         onAccount={() => setModal('account')}
         username={username}
       />
-      <main className="page-shell">
+      {isBookmarksPage && (
+        <BookmarksPage
+          key={bookmarkRevision}
+          username={username}
+          onSignIn={() => setModal('account')}
+          onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
+        />
+      )}
+      <main className="page-shell" hidden={isBookmarksPage}>
         <Hero
           onBrowse={scrollToFeed}
           onRandom={openRandomArticle}
@@ -87,6 +123,7 @@ export default function App() {
           <DatabaseArticleModal
             key={selected.id}
             id={selected.id}
+            username={username}
             onClose={closeArticle}
           />
         ) : (

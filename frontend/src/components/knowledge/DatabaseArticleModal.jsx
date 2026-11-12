@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { getKnowledge } from '../../api/knowledge'
+import BookmarkButton from './BookmarkButton'
 import KnowledgeQuestionForm from './KnowledgeQuestionForm'
 import KnowledgeQuiz from './KnowledgeQuiz'
 import KnowledgeExplanationForm from './KnowledgeExplanationForm'
 import Modal from '../ui/Modal'
 
-export default function DatabaseArticleModal({ id, onClose }) {
+export default function DatabaseArticleModal({ id, username, onClose }) {
   const [knowledge, setKnowledge] = useState(null)
   const [error, setError] = useState('')
 
@@ -43,6 +44,7 @@ export default function DatabaseArticleModal({ id, onClose }) {
             </span>
             <h2>{knowledge.title}</h2>
             <p>{knowledge.summary}</p>
+            {username && <BookmarkButton key={username} id={id} />}
           </div>
           <div className="article-body">
             <p>{knowledge.content}</p>
