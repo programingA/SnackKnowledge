@@ -41,6 +41,19 @@
   background: #f8e4d8;
 }
 
+.bookmark-icon-button {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 0;
+}
+
+.bookmark-icon-button:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 3px;
+}
+
 .bookmark-list {
   display: grid;
   gap: 12px;

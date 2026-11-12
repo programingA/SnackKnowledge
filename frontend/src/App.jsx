@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getSession } from './api/account'
+import { getKnowledgeList } from './api/knowledge'
 import AccountModal from './components/account/AccountModal'
 import InterestSettingsPage from './components/account/InterestSettingsPage'
 import MyPage from './components/account/MyPage'
@@ -25,6 +26,7 @@ import './styles/App.css'
 export default function App() {
   const [modal, setModal] = useState(null)
   const [preview, setPreview] = useState(null)
+  const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: '' })
   const [username, setUsername] = useState(null)
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
   const databaseId = locationHash.match(/^#\/knowledge\/(\d+)$/)?.[1]
@@ -82,6 +84,20 @@ export default function App() {
     setModal(null)
   }
 
+  useEffect(() => {
+    const controller = new AbortController()
+    getKnowledgeList(controller.signal)
+      .then((cards) => {
+        if (controller.signal.aborted) return
+        const featured = cards[Math.floor(Math.random() * cards.length)] ?? null
+        setKnowledge({ cards, featured, error: '' })
+      })
+      .catch((error) => {
+        if (!controller.signal.aborted) setKnowledge({ cards: null, featured: null, error: error.message })
+      })
+    return () => controller.abort()
+  }, [])
+
   function showGeneratedCard(card) {
     setPreview((current) => ({ card, revision: (current?.revision ?? 0) + 1 }))
     setModal(null)
@@ -102,8 +118,12 @@ export default function App() {
   }
 
   function openRandomArticle() {
-    const index = Math.floor(Math.random() * articles.length)
-    window.location.hash = '/sample/' + articles[index].id
+    if (!knowledge.cards?.length) return
+    const candidates = knowledge.cards.length > 1
+      ? knowledge.cards.filter((card) => card.id !== knowledge.featured?.id)
+      : knowledge.cards
+    const card = candidates[Math.floor(Math.random() * candidates.length)]
+    window.location.hash = '/knowledge/' + card.id
   }
 
   function openAccount() {
@@ -185,8 +205,9 @@ export default function App() {
       <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero
           onBrowse={scrollToFeed}
-          onRandom={openRandomArticle}
-          onFeatured={() => { window.location.hash = '/sample/' + articles[0].id }}
+          onRandom={knowledge.cards?.length ? openRandomArticle : undefined}
+          featured={knowledge.featured}
+          featuredStatus={knowledge.error ? '지식을 불러오지 못했어요.' : knowledge.cards ? '등록된 지식이 없어요.' : '지식을 불러오는 중이에요.'}
         />
         {username && !focusedPageId && (
           <KnowledgeRecommendations
@@ -194,7 +215,7 @@ export default function App() {
             onOpenArticle={openArticle}
           />
         )}
-        <KnowledgeFeed />
+        <KnowledgeFeed cards={knowledge.cards} error={knowledge.error} />
         <CuriosityBanner onGenerate={() => setModal('generate')} />
         <div className="closing-note">
           어제보다 조금 더 넓어진 세상.<span>오늘도 한 입, 잘 먹었습니다.</span>

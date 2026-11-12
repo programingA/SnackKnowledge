@@ -1,6 +1,7 @@
 import Icon from '../ui/Icon'
 
-export default function Hero({ onBrowse, onRandom, onFeatured }) {
+export default function Hero({ onBrowse, onRandom, featured, featuredStatus }) {
+  const FeaturedCard = featured ? 'a' : 'div'
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
@@ -22,7 +23,7 @@ export default function Hero({ onBrowse, onRandom, onFeatured }) {
             오늘의 지식 만나기
             <Icon name="arrow" size={18} />
           </button>
-          <button className="random-button" onClick={onRandom}>
+          <button type="button" className="random-button" onClick={onRandom} disabled={!onRandom}>
             <Icon name="shuffle" size={18} />
             우연한 발견
           </button>
@@ -32,17 +33,16 @@ export default function Hero({ onBrowse, onRandom, onFeatured }) {
           습관
         </div>
       </div>
-      <button
+      <FeaturedCard
         className="featured-card"
-        onClick={onFeatured}
-        aria-label="오늘의 한입: 하늘은 왜 파란색일까? 읽기"
+        href={featured ? `#/knowledge/${featured.id}` : undefined}
+        aria-label={featured ? `오늘의 한입: ${featured.title} 읽기` : undefined}
       >
         <div className="featured-top">
           <span>
             <span className="live-dot" />
             오늘의 한입
           </span>
-          <span>NO. 001</span>
         </div>
         <div className="sun-art" aria-hidden="true">
           <div className="orbit orbit-one" />
@@ -54,18 +54,20 @@ export default function Hero({ onBrowse, onRandom, onFeatured }) {
           <span className="art-label">a little wonder</span>
         </div>
         <div className="featured-bottom">
-          <div>
-            <span>과학 · 2분 읽기</span>
-            <h2>
-              하늘은 왜<br />
-              파란색일까?
-            </h2>
-          </div>
-          <span className="round-arrow">
-            <Icon name="arrow" size={24} />
-          </span>
+          {featured ? (
+            <>
+              <div>
+                <span>{featured.category}</span>
+                <h2>{featured.title}</h2>
+                <p className="featured-summary">{featured.summary}</p>
+              </div>
+              <span className="round-arrow">
+                <Icon name="arrow" size={24} />
+              </span>
+            </>
+          ) : <p role="status">{featuredStatus}</p>}
         </div>
-      </button>
+      </FeaturedCard>
     </section>
   )
 }
