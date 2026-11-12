@@ -32,6 +32,15 @@ public class GeneratedStudyCards {
         return id;
     }
 
+    public synchronized UUID reconnect(HttpSession session, KnowledgeResponse knowledge) {
+        if (session.getAttribute(SESSION_KEY) instanceof Previews previews) {
+            var existing = previews.entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(knowledge)).map(java.util.Map.Entry::getKey).findFirst();
+            if (existing.isPresent()) return existing.get();
+        }
+        return remember(session, knowledge.category(), knowledge.title(), knowledge.summary(), knowledge.content());
+    }
+
     public StudyCard resolve(HttpSession session, String source, UUID id, Principal principal) {
         return switch (source) {
             case "preview" -> preview(session, id);

@@ -3,7 +3,7 @@ import Icon from '../ui/Icon'
 import { saveGeneratedCard } from '../../api/generatedCards'
 import './GeneratedCards.css'
 
-export default function SaveGeneratedCardButton({ card, username, onSignIn }) {
+export default function SaveGeneratedCardButton({ card, studyId, username, onSignIn }) {
   const cardId = useRef(null)
   const signInRequested = useRef(false)
   const saveButton = useRef(null)
@@ -22,7 +22,8 @@ export default function SaveGeneratedCardButton({ card, username, onSignIn }) {
     setSaving(true)
     setError('')
     try {
-      const { studyId, ...payload } = card
+      const payload = { category: card.category, title: card.title, summary: card.summary,
+        content: card.content, imageBase64: card.imageBase64 }
       cardId.current ??= studyId ?? crypto.randomUUID()
       await saveGeneratedCard(cardId.current, payload)
       setSavedId(cardId.current)
@@ -38,7 +39,7 @@ export default function SaveGeneratedCardButton({ card, username, onSignIn }) {
       <Icon name="bookmark" />
       <div>
         <strong>생성한 지식 저장하기</strong>
-        <p>로그인하면 이 카드를 보관함에 저장해 다시 볼 수 있어요. AI 질문·퀴즈·직접 설명하기는 지금도 이용할 수 있어요.</p>
+        <p>로그인하면 이 카드를 보관함에 저장해 다시 볼 수 있어요. {studyId ? 'AI 질문·퀴즈·직접 설명하기는 지금도 이용할 수 있어요.' : '학습 기능이 연결되면 AI 질문·퀴즈·직접 설명하기를 이용할 수 있어요.'}</p>
         <button className="text-button generated-sign-in-link" type="button" aria-haspopup="dialog" onClick={() => {
           signInRequested.current = true
           onSignIn()

@@ -1,8 +1,10 @@
 import Icon from '../ui/Icon'
+import { getCategoryStyle } from '../../data/sampleKnowledge'
 import BookmarkButton from '../knowledge/BookmarkButton'
 
 export default function Hero({ onBrowse, onRandom, featured, featuredStatus, bookmarks }) {
   const FeaturedCard = featured ? 'a' : 'div'
+  const categoryStyle = featured ? getCategoryStyle(featured.category) : null
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
@@ -36,7 +38,7 @@ export default function Hero({ onBrowse, onRandom, featured, featuredStatus, boo
       </div>
       <div className="featured-entry">
         <FeaturedCard
-          className="featured-card"
+          className={categoryStyle ? `featured-card tint-${categoryStyle.color}` : 'featured-card'}
           href={featured ? `#/knowledge/${featured.id}` : undefined}
           aria-label={featured ? `오늘의 한입: ${featured.title} 읽기` : undefined}
         >
@@ -49,7 +51,9 @@ export default function Hero({ onBrowse, onRandom, featured, featuredStatus, boo
           <div className="sun-art" aria-hidden="true">
             <div className="orbit orbit-one" />
             <div className="orbit orbit-two" />
-            <div className="sun-core">✳</div>
+            <div className={categoryStyle ? `sun-core featured-category-art text-${categoryStyle.color}` : 'sun-core'}>
+              {categoryStyle ? <Icon name={categoryStyle.icon} size={116} strokeWidth={1.15} /> : '✳'}
+            </div>
             <span className="art-dot dot-one" />
             <span className="art-dot dot-two" />
             <span className="art-star">✧</span>
@@ -59,7 +63,9 @@ export default function Hero({ onBrowse, onRandom, featured, featuredStatus, boo
             {featured ? (
               <>
                 <div>
-                  <span>{featured.category}</span>
+                  <span className="featured-category-label">
+                    <Icon name={categoryStyle.icon} size={15} />{featured.category}
+                  </span>
                   <h2>{featured.title}</h2>
                   <p className="featured-summary">{featured.summary}</p>
                 </div>

@@ -278,6 +278,19 @@ a.featured-card:hover {
   top: 28px;
   animation: sun-turn 65s linear infinite;
 }
+.featured-category-art {
+  display: grid;
+  width: 143px;
+  height: 143px;
+  place-items: center;
+}
+
+.featured-bottom > div > .featured-category-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .art-dot {
   position: absolute;
   width: 10px;
@@ -1789,5 +1802,62 @@ textarea {
   font-size: 13px;
   line-height: 1.6;
   cursor: default;
+}
+
+
+.ai-markdown-table {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.ai-markdown-table:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 2px;
+}
+
+.ai-markdown-table table {
+  width: 100%;
+  min-width: 22rem;
+  border-collapse: collapse;
+  font-size: .93em;
+}
+
+.ai-markdown-table :is(th, td) {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
+  vertical-align: top;
+}
+
+.ai-markdown-table th {
+  background: #eee5d9;
+  color: #4f483e;
+}
+
+.ai-markdown-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.ai-response-text blockquote {
+  padding-inline-start: 12px;
+  border-inline-start: 3px solid #dec5b4;
+  color: #706255;
+}
+
+.ai-response-text blockquote p {
+  margin-top: 0;
+}
+
+.ai-response-text ul.contains-task-list {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.ai-response-text .task-list-item input {
+  width: auto;
+  margin-inline-end: 6px;
 }
 

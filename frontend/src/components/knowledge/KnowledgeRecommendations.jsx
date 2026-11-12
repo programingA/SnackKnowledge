@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getRecommendations } from '../../api/recommendations'
 import Icon from '../ui/Icon'
+import { getCategoryStyle } from '../../data/sampleKnowledge'
 import BookmarkButton from './BookmarkButton'
 import './KnowledgeRecommendations.css'
 
@@ -49,16 +50,21 @@ export default function KnowledgeRecommendations({ onOpenArticle, bookmarks, pau
       {!error && cards?.length === 0 && <p className="recommendations-state">추천할 새 카드가 아직 없어요.</p>}
       {cards?.length > 0 && (
         <ul className="recommendations-list">
-          {cards.map((card) => (
-            <li key={card.id} className={bookmarks ? 'recommendation-with-bookmark' : undefined}>
-              <button className="recommendations-card" type="button" onClick={() => onOpenArticle(card)}>
-                <span className="category-label">{card.category}</span>
-                <strong>{card.title}</strong>
-                <span className="recommendations-summary">{card.summary}</span>
-              </button>
-              {bookmarks && <BookmarkButton card={card} bookmarks={bookmarks} compact />}
-            </li>
-          ))}
+          {cards.map((card) => {
+            const { color, icon } = getCategoryStyle(card.category)
+            return (
+              <li key={card.id} className={bookmarks ? 'recommendation-with-bookmark' : undefined}>
+                <button className="recommendations-card" type="button" onClick={() => onOpenArticle(card)}>
+                  <span className={`category-label recommendation-category tint-${color} text-${color}`}>
+                    <Icon name={icon} size={14} />{card.category}
+                  </span>
+                  <strong>{card.title}</strong>
+                  <span className="recommendations-summary">{card.summary}</span>
+                </button>
+                {bookmarks && <BookmarkButton card={card} bookmarks={bookmarks} compact />}
+              </li>
+            )
+          })}
         </ul>
       )}
     </section>

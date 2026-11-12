@@ -11,7 +11,7 @@ export default function KnowledgeReadingActions({ summary, onQuiz }) {
         </div>
       </div>
       <div className="knowledge-actions">
-        <button type="button" className="primary-button" onClick={onQuiz}>
+        <button type="button" className="primary-button" onClick={onQuiz} disabled={!onQuiz}>
           잘 이해했는지 확인해볼까요?
           <Icon name="arrow" size={17} />
         </button>

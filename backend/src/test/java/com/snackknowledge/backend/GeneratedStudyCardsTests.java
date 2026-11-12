@@ -1,6 +1,7 @@
 package com.snackknowledge.backend;
 
 import com.snackknowledge.backend.dto.KnowledgeQuizResponse;
+import com.snackknowledge.backend.dto.KnowledgeResponse;
 import com.snackknowledge.backend.service.GeneratedStudyCards;
 import com.snackknowledge.backend.service.KnowledgeAnswerService;
 import com.snackknowledge.backend.service.KnowledgeStudyService;
@@ -32,6 +33,15 @@ class GeneratedStudyCardsTests {
 
         var privateCard = assertThrows(ResponseStatusException.class, () -> cards.resolve(session, "saved", id, null));
         assertEquals(HttpStatus.UNAUTHORIZED, privateCard.getStatusCode());
+    }
+
+    @Test
+    void reconnectingTheSamePreviewKeepsItsStudyIdentifier() {
+        var session = new MockHttpSession();
+        var card = new KnowledgeResponse(null, "과학", "제목", "요약", "생성한 본문");
+        UUID id = cards.reconnect(session, card);
+        assertEquals(id, cards.reconnect(session, card));
+        assertNotEquals(id, cards.reconnect(new MockHttpSession(), card));
     }
 
     @Test

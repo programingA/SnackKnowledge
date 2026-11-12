@@ -26,6 +26,7 @@ export default function KnowledgeStudyTabs({ studyPath, summary, onComplete, err
         {activities.map(([value, label]) => (
           <button type="button" key={value} ref={value === 'quiz' ? quizTab : undefined}
             className={activity === value ? 'active' : ''} aria-pressed={activity === value}
+            disabled={value !== 'read' && !studyPath}
             onClick={() => setActivity(value)}>
             {label}
           </button>
@@ -35,18 +36,22 @@ export default function KnowledgeStudyTabs({ studyPath, summary, onComplete, err
         {error && <p role="alert">{error}</p>}
         <div hidden={activity !== 'read'}>
           {children}
-          <KnowledgeReadingActions summary={summary} onQuiz={openQuiz} />
+          <KnowledgeReadingActions summary={summary} onQuiz={studyPath ? openQuiz : undefined} />
           {readingFooter}
         </div>
-        <div hidden={activity !== 'ask'}>
-          <KnowledgeQuestionForm studyPath={studyPath} onComplete={onComplete} active={activity === 'ask'} />
-        </div>
-        <div hidden={activity !== 'quiz'}>
-          <KnowledgeQuiz studyPath={studyPath} onComplete={onComplete} />
-        </div>
-        <div hidden={activity !== 'explain'}>
-          <KnowledgeExplanationForm studyPath={studyPath} onComplete={onComplete} />
-        </div>
+        {studyPath && (
+          <>
+            <div hidden={activity !== 'ask'}>
+              <KnowledgeQuestionForm studyPath={studyPath} onComplete={onComplete} active={activity === 'ask'} />
+            </div>
+            <div hidden={activity !== 'quiz'}>
+              <KnowledgeQuiz studyPath={studyPath} onComplete={onComplete} />
+            </div>
+            <div hidden={activity !== 'explain'}>
+              <KnowledgeExplanationForm studyPath={studyPath} onComplete={onComplete} />
+            </div>
+          </>
+        )}
       </div>
     </>
   )

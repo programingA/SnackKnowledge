@@ -27,6 +27,20 @@ async function postStudy(studyPath, activity, body) {
   })
 }
 
+export async function reconnectGeneratedPreview({ category, title, summary, content }, signal) {
+  const csrf = await getCsrfHeaders(signal)
+  const response = await fetch('/api/study/generated/previews', {
+    method: 'POST',
+    headers: { ...csrf, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category, title, summary, content }),
+    signal,
+  })
+  if (!response.ok) throw new Error('이 카드의 학습 기능에 연결하지 못했어요.')
+  const result = await response.json()
+  if (!result.studyId) throw new Error('이 카드의 학습 기능에 연결하지 못했어요.')
+  return result.studyId
+}
+
 export function getKnowledgeConversation(studyPath, signal) {
   return fetchKnowledge(studyPath + '/questions', signal, '대화를 불러오지 못했어요')
 }

@@ -1,10 +1,10 @@
-import { articles } from '../../data/sampleKnowledge'
+import { getCategoryStyle } from '../../data/sampleKnowledge'
 import Icon from '../ui/Icon'
 
 export default function ArticleHeading({ category, title, summary, color, icon, children }) {
-  const categoryStyle = articles.find((article) => article.category === category)
-  const tint = color ?? categoryStyle?.color ?? 'blue'
-  const categoryIcon = icon ?? categoryStyle?.icon ?? 'sparkle'
+  const categoryStyle = getCategoryStyle(category)
+  const tint = color ?? categoryStyle.color
+  const categoryIcon = icon ?? categoryStyle.icon
 
   return (
     <div className={`article-heading tint-${tint}`}>

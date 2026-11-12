@@ -24,7 +24,7 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
 
     try {
       const card = await generateKnowledge(trimmedTopic, controller.signal)
-      if (!controller.signal.aborted) onGenerated(card)
+      if (!controller.signal.aborted) await onGenerated(card)
     } catch (error) {
       if (!controller.signal.aborted) setError(error.message)
     } finally {

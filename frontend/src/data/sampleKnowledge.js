@@ -38,3 +38,7 @@ export const articles = [
     takeaway: '달빛은 반사된 햇빛이며, 달의 위상은 태양·지구·달의 위치 관계에 따라 달라져요.', question: '우리가 보는 달빛은 주로 어디에서 온 빛일까요?', options: ['달 내부의 불꽃', '달이 반사한 태양빛', '지구의 가로등'], correct: 1, explanation: '달은 태양빛을 반사해 밝게 보여요. 스스로 빛을 내는 천체는 아닙니다.', keywords: ['태양', '반사', '햇빛', '위치'], followup: '초승달은 지구 그림자에 가려진 걸까?', answer: '보통 달의 모양 변화는 지구 그림자 때문이 아니에요. 태양빛을 받은 달의 절반 중 우리가 볼 수 있는 부분이 달라지는 것입니다. 지구 그림자가 달을 가리면 월식이라고 해요.',
   },
 ]
+
+export function getCategoryStyle(category) {
+  return articles.find((article) => article.category === category?.trim()) ?? { color: 'blue', icon: 'sparkle' }
+}
