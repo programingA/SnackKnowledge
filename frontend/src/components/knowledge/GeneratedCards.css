@@ -146,10 +146,22 @@
 
 .generated-preview-article .article-heading > .generated-preview-hint {
   grid-row: 4;
-  margin: 8px 0 0;
-  color: #715d4d;
-  font-size: 12px;
-  line-height: 1.6;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 5px 9px;
+  border: 1px solid #e7d9c9;
+  border-radius: 7px;
+  background: #fffaf3;
+  color: #705744;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.generated-preview-hint > svg {
+  flex-shrink: 0;
 }
 
 .generated-study-status {

@@ -51,7 +51,10 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
                 <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
               </div>
               {!username && (
-                <p className="generated-preview-hint">로그인하면 이 카드를 보관함에 저장할 수 있어요.</p>
+                <p className="generated-preview-hint">
+                  <Icon name="info" size={14} />
+                  로그인하면 이 카드를 보관함에 저장할 수 있어요.
+                </p>
               )}
             </>
           )}
