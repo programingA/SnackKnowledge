@@ -993,6 +993,10 @@ a.featured-card:hover .round-arrow {
   margin-block-start: 8px;
 }
 
+.generated-article-reading.ai-response-text > * + :is(h1, h2, h3, h4, h5, h6) {
+  margin-block-start: clamp(34px, 5vw, 48px);
+}
+
 .takeaway {
   display: flex;
   align-items: start;
