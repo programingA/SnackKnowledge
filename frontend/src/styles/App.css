@@ -1309,25 +1309,24 @@ textarea {
 }
 .page-shell.about-page {
   min-height: 52vh;
-  padding-block: clamp(38px, 7vw, 84px) clamp(44px, 8vw, 86px);
+  padding-block: clamp(22px, 4vw, 46px) clamp(44px, 8vw, 82px);
 }
 
-.about-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(28px, 7vw, 86px);
+.about-intro {
+  padding: clamp(34px, 7vw, 72px) 20px;
+  border-block: 1px solid #ead8c9;
+  background: #f7eee5;
+  text-align: center;
 }
 
 .about-intro h1 {
-  margin: 0 0 18px;
-  font-size: clamp(37px, 5.7vw, 68px);
-  line-height: 1.16;
+  margin: 0 0 12px;
+  font-size: clamp(32px, 4.8vw, 55px);
+  line-height: 1.2;
 }
 
 .about-intro p,
-.about-steps p,
-.about-library p {
+.about-section p {
   color: #65574b;
   line-height: 1.8;
   word-break: keep-all;
@@ -1335,8 +1334,84 @@ textarea {
 }
 
 .about-intro p {
-  max-inline-size: 35rem;
+  max-inline-size: 34rem;
+  margin-inline: auto;
   font-size: clamp(16px, 1.8vw, 19px);
+}
+
+.about-content {
+  max-inline-size: 49rem;
+  margin-inline: auto;
+}
+
+.about-section {
+  padding-block: clamp(26px, 5vw, 42px);
+  border-bottom: 1px solid var(--line);
+}
+
+.about-section h2 {
+  margin-bottom: 12px;
+  font-size: clamp(21px, 2.7vw, 28px);
+}
+
+.about-section p {
+  font-size: 15px;
+}
+
+.about-sample-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-block: 6px;
+  color: #923827;
+  font-weight: 700;
+}
+
+.about-sample-link:hover {
+  text-decoration: underline;
+}
+
+.about-sample-link svg {
+  flex-shrink: 0;
+}
+
+.about-steps {
+  margin: 16px 0 0;
+  padding-inline-start: 2em;
+}
+
+.about-steps li {
+  padding: 12px 0 12px 8px;
+}
+
+.about-steps li + li {
+  border-top: 1px solid var(--line);
+}
+
+.about-steps li::marker {
+  color: #923827;
+  font-weight: 700;
+}
+
+.about-steps h3 {
+  margin-bottom: 3px;
+  font-size: 17px;
+}
+
+.about-ai-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  color: #6c5e52;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.about-ai-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .about-actions {
@@ -1358,137 +1433,6 @@ textarea {
 
 .about-actions .about-generate:hover {
   background: #f8e7da;
-}
-
-.about-example {
-  display: block;
-  overflow: hidden;
-  border: 1px solid #cddce2;
-  border-radius: 18px;
-  background: #fffefa;
-  box-shadow: 0 8px 0 #e7eef0;
-}
-
-.about-example:hover {
-  border-color: #658391;
-}
-
-.about-example-art {
-  display: grid;
-  min-height: clamp(102px, 15vw, 180px);
-  place-items: center;
-  color: #9a5d28;
-  background: radial-gradient(circle at center, #fff1ce 0 44px, transparent 45px),
-    linear-gradient(145deg, #c8dce8, #edf3ee);
-}
-
-.about-example-copy {
-  padding: clamp(16px, 3vw, 26px);
-}
-
-.about-example-copy p {
-  color: #435f6b;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.about-example-copy h2 {
-  margin: 8px 0 13px;
-  font-size: clamp(21px, 2.8vw, 30px);
-  line-height: 1.35;
-}
-
-.about-example-copy span {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #923827;
-  font-weight: 700;
-}
-
-.about-learning {
-  margin-top: clamp(44px, 8vw, 96px);
-}
-
-.about-learning > h2 {
-  margin-bottom: 20px;
-  font-size: clamp(23px, 3vw, 34px);
-}
-
-.about-steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(16px, 3vw, 36px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: about-step;
-}
-
-.about-steps li {
-  counter-increment: about-step;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
-
-.about-steps h3 {
-  margin-bottom: 6px;
-  font-size: 18px;
-}
-
-.about-steps h3::before {
-  content: counter(about-step) '. ';
-  color: #923827;
-}
-
-.about-steps p,
-.about-library p {
-  font-size: 15px;
-}
-
-.about-library {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  margin-top: clamp(30px, 5vw, 56px);
-  padding: clamp(18px, 3vw, 28px);
-  border-radius: 14px;
-  background: #f6eee3;
-}
-
-.about-library > svg {
-  flex-shrink: 0;
-  color: #923827;
-}
-
-.about-library h2 {
-  margin-bottom: 6px;
-  font-size: clamp(18px, 2.2vw, 23px);
-}
-
-.about-ai-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 18px;
-  color: #6c5e52;
-  font-size: 13px;
-  line-height: 1.65;
-}
-
-.about-ai-note svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-@media (max-width: 720px) {
-  .about-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .about-steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @keyframes rise-in {
