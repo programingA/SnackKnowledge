@@ -87,6 +87,7 @@ export default function SampleArticlePage({ article }) {
               {article.followup}
             </button>
             <form
+              className="knowledge-explanation"
               onSubmit={(e) => {
                 e.preventDefault()
                 if (question.trim()) setAsked(true)
@@ -200,6 +201,7 @@ export default function SampleArticlePage({ article }) {
               평가하지 않습니다.
             </div>
             <form
+              className="knowledge-explanation"
               onSubmit={(e) => {
                 e.preventDefault()
                 if (explanation.trim().length >= 20) setFeedback(true)

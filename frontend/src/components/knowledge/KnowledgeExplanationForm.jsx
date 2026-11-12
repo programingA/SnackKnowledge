@@ -36,7 +36,7 @@ export default function KnowledgeExplanationForm({ studyPath, onComplete }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="knowledge-explanation" onSubmit={handleSubmit}>
       <label htmlFor={inputId}>내 말로 설명하기</label>
       <textarea id={inputId} rows={5} value={explanation}
         onChange={(event) => setExplanation(event.target.value)}

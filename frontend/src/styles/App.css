@@ -1307,12 +1307,133 @@ textarea {
   border-radius: 20px;
   color: #9a8467;
 }
-.about-copy {
-  line-height: 1.95;
-  font-size: 14px;
-  color: #8c7e69;
-  margin-top: 15px;
+.about-page {
+  min-height: 52vh;
+  padding-block: clamp(22px, 4vw, 46px) clamp(44px, 8vw, 82px);
 }
+
+.about-intro {
+  padding: clamp(34px, 7vw, 72px) 20px;
+  border-block: 1px solid #efe4d9;
+  background: #faf4ed;
+  text-align: center;
+}
+
+.about-intro h1 {
+  margin: 0 0 12px;
+  font-size: clamp(32px, 4.8vw, 55px);
+  line-height: 1.2;
+}
+
+.about-intro p,
+.about-section p {
+  color: #65574b;
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.about-intro p {
+  max-inline-size: 34rem;
+  margin-inline: auto;
+  font-size: clamp(16px, 1.8vw, 19px);
+}
+
+.about-content {
+  max-inline-size: calc(49rem + 40px);
+}
+
+.about-section {
+  padding-block: clamp(26px, 5vw, 42px);
+  border-bottom: 1px solid var(--line);
+}
+
+.about-section h2 {
+  margin-bottom: 12px;
+  font-size: clamp(21px, 2.7vw, 28px);
+}
+
+.about-section p {
+  font-size: 15px;
+}
+
+.about-sample-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-block: 6px;
+  color: #923827;
+  font-weight: 700;
+}
+
+.about-sample-link:hover {
+  text-decoration: underline;
+}
+
+.about-sample-link svg {
+  flex-shrink: 0;
+}
+
+.about-steps {
+  margin: 16px 0 0;
+  padding-inline-start: 2em;
+}
+
+.about-steps li {
+  padding: 12px 0 12px 8px;
+}
+
+.about-steps li + li {
+  border-top: 1px solid var(--line);
+}
+
+.about-steps li::marker {
+  color: #923827;
+  font-weight: 700;
+}
+
+.about-steps h3 {
+  margin-bottom: 3px;
+  font-size: 17px;
+}
+
+.about-ai-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  color: #6c5e52;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.about-ai-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.about-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.about-actions .about-browse {
+  background: #923827;
+}
+
+.about-actions .about-generate {
+  border: 1px solid #d8b9a8;
+  background: #fffefa;
+  color: #923827;
+}
+
+.about-actions .about-generate:hover {
+  background: #f8e7da;
+}
+
 @keyframes rise-in {
   from {
     opacity: 0;
@@ -1772,6 +1893,23 @@ textarea {
 
 .study-article .form-bottom > button {
   margin-left: auto;
+}
+
+.knowledge-explanation > label {
+  font-size: 16px;
+}
+
+.knowledge-explanation textarea {
+  font-size: 16px;
+}
+
+.knowledge-explanation textarea::placeholder {
+  color: #786b5e;
+}
+
+.knowledge-explanation .form-bottom small {
+  color: #786b5e;
+  font-size: 13px;
 }
 
 .ai-response-text {

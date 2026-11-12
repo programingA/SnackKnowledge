@@ -10,7 +10,7 @@ import LearningHistoryPage from './components/knowledge/LearningHistoryPage'
 import SavedGeneratedCardsPage from './components/knowledge/SavedGeneratedCardsPage'
 import WrongAnswersPage from './components/knowledge/WrongAnswersPage'
 import { articles } from './data/sampleKnowledge'
-import AboutModal from './components/layout/AboutModal'
+import AboutPage from './components/layout/AboutPage'
 import CuriosityBanner from './components/layout/CuriosityBanner'
 import Hero from './components/layout/Hero'
 import SiteFooter from './components/layout/SiteFooter'
@@ -44,9 +44,11 @@ export default function App() {
   const isWrongAnswersPage = locationHash === '#/wrong-answers'
   const isInterestsPage = locationHash === '#/interests'
   const isMyPage = locationHash === '#/my-page'
+  const isAboutPage = locationHash === '#/about'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
-  const focusedPageId = isGeneratedPreview ? 'generated-preview-page'
+  const focusedPageId = isAboutPage ? 'about-page'
+    : isGeneratedPreview ? 'generated-preview-page'
     : databaseId || sample ? 'article-page'
     : communityRoute ? 'community-page'
     : isBookmarksPage ? 'bookmarks-page'
@@ -128,7 +130,7 @@ export default function App() {
 
   function scrollToFeed() {
     if (focusedPageId) {
-      window.location.hash = 'knowledge-feed'
+      window.location.hash = isAboutPage ? '' : 'knowledge-feed'
       return
     }
     const reduceMotion = window.matchMedia(
@@ -171,7 +173,7 @@ export default function App() {
       <SiteHeader
         isCommunity={Boolean(communityRoute)}
         onBrowse={scrollToFeed}
-        onAbout={() => setModal('about')}
+        isAboutPage={isAboutPage}
         onAccount={() => setModal('account')}
         isMyPage={isMyPage}
         onSignOut={handleSignOut}
@@ -237,6 +239,7 @@ export default function App() {
         />
       )}
 
+      {isAboutPage && <AboutPage onGenerate={() => setModal('generate')} />}
       <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero
           onBrowse={scrollToFeed}
@@ -267,15 +270,6 @@ export default function App() {
         <AccountModal
           onChange={setUsername}
           onClose={() => setModal(null)}
-        />
-      )}
-      {modal === 'about' && (
-        <AboutModal
-          onClose={closeModal}
-          onBrowse={() => {
-            closeModal()
-            scrollToFeed()
-          }}
         />
       )}
     </>
