@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { signOut } from '../../api/account'
 import { getMemberOverview } from '../../api/memberOverview'
 import Icon from '../ui/Icon'
 import './MyPage.css'
@@ -11,12 +10,12 @@ const destinations = [
   { route: 'wrong-answers', title: '오답 노트', icon: 'check', key: 'wrongAnswers', unit: '개', description: '다시 풀 수 있는 문제' },
 ]
 
-export default function MyPage({ username, onSignIn, onSignedOut }) {
+export default function MyPage({ username, onSignIn, onSignOut, signingOut }) {
   return (
     <main className="page-shell my-page" id="my-page" tabIndex={-1}>
       <a className="my-page-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>마이페이지</h1>
-      {username ? <MemberDashboard key={username} username={username} onSignedOut={onSignedOut} /> : (
+      {username ? <MemberDashboard key={username} username={username} onSignOut={onSignOut} signingOut={signingOut} /> : (
         <div className="my-page-panel">
           <p>로그인하면 내 카드와 학습 활동을 볼 수 있어요.</p>
           <button className="primary-button" type="button" onClick={onSignIn}>로그인</button>
@@ -26,12 +25,10 @@ export default function MyPage({ username, onSignIn, onSignedOut }) {
   )
 }
 
-function MemberDashboard({ username, onSignedOut }) {
+function MemberDashboard({ username, onSignOut, signingOut }) {
   const [overview, setOverview] = useState(null)
   const [loadError, setLoadError] = useState('')
-  const [logoutError, setLogoutError] = useState('')
   const [revision, setRevision] = useState(0)
-  const [signingOut, setSigningOut] = useState(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -43,28 +40,14 @@ function MemberDashboard({ username, onSignedOut }) {
     return () => controller.abort()
   }, [revision])
 
-  async function handleSignOut() {
-    if (signingOut) return
-    setSigningOut(true)
-    setLogoutError('')
-    try {
-      await signOut()
-      onSignedOut()
-    } catch (error) {
-      setLogoutError(error.message)
-      setSigningOut(false)
-    }
-  }
-
   return (
     <>
       <div className="my-page-panel my-page-member">
         <p><strong>{username}</strong>님</p>
-        <button type="button" className="my-page-logout" disabled={signingOut} onClick={handleSignOut}>
-          {signingOut ? '로그아웃 중...' : '로그아웃'}
+        <button type="button" className="my-page-logout" disabled={signingOut} onClick={onSignOut}>
+          {signingOut ? '로그아웃 중…' : '로그아웃'}
         </button>
       </div>
-      {logoutError && <p className="my-page-error" role="alert">{logoutError}</p>}
       {loadError && (
         <div className="my-page-error">
           <p role="alert">{loadError}</p>
