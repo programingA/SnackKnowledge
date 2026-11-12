@@ -4,7 +4,6 @@ import './Bookmarks.css'
 export default function BookmarksPage({ bookmarks, onSignIn, onOpenArticle }) {
   return (
     <main className="page-shell bookmarks-page" id="bookmarks-page" tabIndex={-1}>
-      <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>내 북마크</h1>
       {bookmarks ? <BookmarkList bookmarks={bookmarks} onOpenArticle={onOpenArticle} /> : (
         <div className="bookmark-empty">

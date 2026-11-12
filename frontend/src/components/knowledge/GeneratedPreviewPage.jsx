@@ -23,15 +23,14 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
 
   return (
     <main className="page-shell article-page" id="generated-preview-page" tabIndex={-1} hidden={!visible}>
-      <div className="generated-preview-nav">
-        <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
-        {card && (
+      {card && (
+        <div className="generated-preview-nav">
           <button className="primary-button generated-preview-secondary" type="button" onClick={onGenerate}>
             <Icon name="sparkle" size={16} />
             다른 지식 만들기
           </button>
-        )}
-      </div>
+        </div>
+      )}
       {storageWarning && <p className="generated-study-status" role="status">{storageWarning}</p>}
       {card && !studyId && (studyError ? (
         <div className="generated-study-status">

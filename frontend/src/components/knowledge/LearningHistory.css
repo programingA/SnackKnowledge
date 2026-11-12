@@ -4,11 +4,6 @@
   padding-block: 30px 60px;
 }
 
-.learning-back {
-  color: var(--coral);
-  font-weight: 700;
-}
-
 .learning-page h1 {
   margin: 14px 0 22px;
   font-size: clamp(26px, 5vw, 36px);

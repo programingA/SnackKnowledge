@@ -7,9 +7,7 @@ import './GeneratedCards.css'
 export default function SavedGeneratedCardsPage({ username, id, onSignIn }) {
   return (
     <main className={id ? "page-shell article-page" : "page-shell generated-cards-page"} id="generated-cards-page" tabIndex={-1}>
-      <a className="article-back" href={id ? '#/generated-cards' : '#knowledge-feed'}>
-        {id ? '← 생성한 카드로' : '← 지식 목록으로'}
-      </a>
+      {id && <a className="article-back" href="#/generated-cards">← 생성한 카드로</a>}
       {(!id || !username) && <h1>생성한 카드</h1>}
       {username ? <SavedCards key={username + ':' + (id ?? 'list')} id={id} /> : (
         <div className="generated-cards-panel">

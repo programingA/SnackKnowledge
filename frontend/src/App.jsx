@@ -181,7 +181,6 @@ export default function App() {
       />
       {(databaseId || sample) && (
         <main className="page-shell article-page" id="article-page" tabIndex={-1}>
-          <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
           {databaseId ? (
             <DatabaseArticlePage key={databaseId} id={databaseId} username={username} bookmarks={bookmarks} />
           ) : (

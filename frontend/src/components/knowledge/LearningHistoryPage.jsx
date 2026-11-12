@@ -14,7 +14,6 @@ const dateFormat = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeS
 export default function LearningHistoryPage({ username, onSignIn, onOpenArticle }) {
   return (
     <main className="page-shell learning-page" id="learning-history-page" tabIndex={-1}>
-      <a className="learning-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>학습 기록</h1>
       {username ? <LearningHistoryList key={username} onOpenArticle={onOpenArticle} /> : (
         <div className="learning-state">

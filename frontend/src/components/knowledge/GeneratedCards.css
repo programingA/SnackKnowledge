@@ -59,15 +59,8 @@
 
 .generated-preview-nav {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 12px;
+  justify-content: flex-end;
   margin-bottom: 14px;
-}
-
-.generated-preview-nav > .article-back {
-  margin: 0;
 }
 
 .generated-preview-nav .generated-preview-secondary {

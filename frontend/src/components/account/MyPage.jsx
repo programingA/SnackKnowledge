@@ -13,7 +13,6 @@ const destinations = [
 export default function MyPage({ username, onSignIn }) {
   return (
     <main className="page-shell my-page" id="my-page" tabIndex={-1}>
-      <a className="my-page-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>마이페이지</h1>
       {username ? <MemberDashboard key={username} username={username} /> : (
         <div className="my-page-panel">

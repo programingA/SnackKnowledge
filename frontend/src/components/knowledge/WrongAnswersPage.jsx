@@ -8,7 +8,6 @@ const dateFormat = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium' })
 export default function WrongAnswersPage({ username, onSignIn }) {
   return (
     <main className="page-shell wrong-answers-page" id="wrong-answers-page" tabIndex={-1}>
-      <a className="wrong-answers-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>오답 노트</h1>
       {username ? <WrongAnswerList key={username} /> : (
         <div className="wrong-answer-panel">
