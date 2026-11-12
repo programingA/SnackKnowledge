@@ -1144,6 +1144,63 @@ textarea {
   padding: 38px;
   width: 550px;
 }
+.generate-loading-spinner {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: generate-spin 0.85s linear infinite;
+}
+
+.generate-progress {
+  margin-top: 15px;
+}
+
+.generate-progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f3e6db;
+}
+
+.generate-progress-track > span {
+  display: block;
+  width: 36%;
+  height: 100%;
+  border-radius: inherit;
+  background: #b8503a;
+  animation: generate-sweep 1.35s ease-in-out infinite;
+}
+
+.generate-progress > p {
+  margin: 8px 0 0;
+  color: #715d4d;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@keyframes generate-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes generate-sweep {
+  from { transform: translateX(-105%); }
+  to { transform: translateX(280%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .generate-loading-spinner,
+  .generate-progress-track > span {
+    animation: none;
+  }
+
+  .generate-progress-track > span {
+    margin-inline: auto;
+  }
+}
+
 .large-icon {
   width: 60px;
   height: 60px;

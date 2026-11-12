@@ -74,11 +74,17 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
           className="primary-button full-width"
           disabled={loading || !topic.trim()}
         >
-          <Icon name="sparkle" size={17} />
-          {loading ? '지식 카드를 만드는 중...' : '지식 카드 만들기'}
+          {loading ? <span className="generate-loading-spinner" aria-hidden="true" /> : <Icon name="sparkle" size={17} />}
+          {loading ? '생성 중…' : '지식 카드 만들기'}
         </button>
       </form>
 
+      {loading && (
+        <div className="generate-progress" role="status">
+          <div className="generate-progress-track" aria-hidden="true"><span /></div>
+          <p>카드 내용과 삽화를 준비하고 있어요.</p>
+        </div>
+      )}
       {error && <p role="alert">{error}</p>}
     </Modal>
   )
