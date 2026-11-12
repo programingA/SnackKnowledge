@@ -45,6 +45,7 @@ export default function Icon({ name, size = 20, ...props }) {
         <path d="M20 2v4m-2-2h4" />
       </>
     ),
+    refresh: <path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6" />,
     close: <path d="m6 6 12 12M6 18 18 6" />,
     clock: (
       <>
