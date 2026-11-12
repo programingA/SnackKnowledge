@@ -4,11 +4,6 @@
   padding-block: 30px 60px;
 }
 
-.my-page-back {
-  color: #a44833;
-  font-weight: 700;
-}
-
 .my-page h1 {
   margin: 14px 0 20px;
   font-size: clamp(26px, 5vw, 36px);

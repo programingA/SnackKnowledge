@@ -4,12 +4,6 @@
   padding-block: 30px 60px;
 }
 
-.bookmarks-page .article-back {
-  display: inline-block;
-  color: var(--coral);
-  font-weight: 700;
-}
-
 .bookmarks-page h1 {
   margin: 14px 0 22px;
   font-size: clamp(26px, 5vw, 36px);

@@ -5,7 +5,6 @@ import './InterestSettings.css'
 export default function InterestSettingsPage({ username, onSignIn }) {
   return (
     <main className="page-shell interests-page" id="interests-page" tabIndex={-1}>
-      <a className="interests-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>관심 분야 설정</h1>
       <p className="interests-description">선택한 분야를 홈 추천에 반영해요.</p>
       {username ? <InterestForm key={username} /> : (

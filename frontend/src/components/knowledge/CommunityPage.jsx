@@ -6,9 +6,7 @@ import './Community.css'
 export default function CommunityPage({ id }) {
   return (
     <main className={id ? "page-shell article-page" : "page-shell generated-cards-page"} id="community-page" tabIndex={-1}>
-      <a className="article-back" href={id ? '#/community' : '#knowledge-feed'}>
-        {id ? '← 커뮤니티 목록으로' : '← 지식 목록으로'}
-      </a>
+      {id && <a className="article-back" href="#/community">← 커뮤니티 목록으로</a>}
       {!id && <h1>커뮤니티</h1>}
       <CommunityCards key={id ?? 'list'} id={id} />
     </main>
