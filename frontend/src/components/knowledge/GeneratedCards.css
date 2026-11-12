@@ -88,14 +88,16 @@
   min-height: 38px;
   padding: 8px 12px;
   gap: 6px;
-  border: 1px solid #dec5b4;
-  background: #fffefa;
-  color: #864d38;
+  border: 1px solid #923827;
+  background: #923827;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .generated-preview-nav .generated-preview-secondary:hover:not(:disabled) {
-  border-color: #c76e51;
-  background: #fff1e5;
+  border-color: #762b1d;
+  background: #762b1d;
 }
 
 .generated-preview-article .article-heading {
