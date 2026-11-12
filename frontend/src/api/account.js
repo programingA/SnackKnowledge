@@ -1,6 +1,7 @@
+import { requestApi, isSuccessful } from './http'
 async function request(path, options) {
-  const response = await fetch('/api/account/' + path, options)
-  if (!response.ok) {
+  const response = await requestApi('/api/account/' + path, options)
+  if (!isSuccessful(response)) {
     const messages = {
       400: '아이디와 비밀번호 형식을 확인해주세요.',
       401: '아이디 또는 비밀번호를 확인해주세요.',
@@ -14,7 +15,7 @@ async function request(path, options) {
 
 export async function getCsrfHeaders(signal) {
   const tokenResponse = await request('csrf', { cache: 'no-store', signal })
-  const { header, token } = await tokenResponse.json()
+  const { header, token } = tokenResponse.data
   return { [header]: token }
 }
 
@@ -23,17 +24,17 @@ async function submit(path, body, contentType) {
   return request(path, {
     method: 'POST',
     headers: { ...csrfHeaders, ...(contentType && { 'Content-Type': contentType }) },
-    body,
+    data: body,
   })
 }
 
 export async function getSession(signal) {
   const response = await request('session', { signal, cache: 'no-store' })
-  return response.json()
+  return response.data
 }
 
 export function registerAccount(username, password, passwordConfirmation) {
-  return submit('register', JSON.stringify({ username, password, passwordConfirmation }), 'application/json')
+  return submit('register', { username, password, passwordConfirmation }, 'application/json')
 }
 
 export async function signIn(username, password) {

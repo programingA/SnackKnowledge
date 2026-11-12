@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/knowledge'
+import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/study'
 import AiResponseText from '../ui/AiResponseText'
 import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 

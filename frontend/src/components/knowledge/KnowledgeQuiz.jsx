@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/knowledge'
+import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/study'
 import { startWrongAnswerQuiz } from '../../api/wrongAnswers'
 import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import Icon from '../ui/Icon'
