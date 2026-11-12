@@ -4,11 +4,12 @@
 }
 .header-inner {
   max-width: 1160px;
-  height: 88px;
+  min-height: 64px;
   margin: auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 65px;
+  gap: 0 18px;
   padding: 0 20px;
 }
 .brand {
@@ -39,9 +40,10 @@
 }
 .site-header nav {
   display: flex;
-  gap: 29px;
-  height: 100%;
-  align-items: center;
+  gap: clamp(18px, 2.4vw, 29px);
+  align-self: stretch;
+  justify-content: center;
+  align-items: stretch;
 }
 .site-header nav :is(button, a) {
   display: inline-flex;
@@ -74,7 +76,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  margin-inline-start: auto;
+  justify-self: end;
 }
 .header-username {
   max-width: min(25vw, 10rem);
@@ -1353,12 +1355,6 @@ textarea {
   }
 }
 @media (max-width: 960px) {
-  .header-inner {
-    gap: 26px;
-  }
-  .site-header nav {
-    gap: 21px;
-  }
   .hero {
     gap: 28px;
     grid-template-columns: 1.3fr 1fr;
@@ -1393,13 +1389,11 @@ textarea {
     font-size: 15px;
   }
 }
-@media (max-width: 860px) {
+@media (max-width: 960px) {
   .header-inner {
-    display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    height: auto;
     gap: 0 12px;
-    padding-block: 10px 0;
+    padding-block-start: 6px;
   }
   .brand {
     justify-self: start;
@@ -1413,7 +1407,7 @@ textarea {
   .site-header nav {
     grid-column: 1 / -1;
     grid-row: 2;
-    height: 38px;
+    min-height: 34px;
     gap: clamp(9px, 4vw, 16px);
   }
   .site-header nav :is(button, a) {
