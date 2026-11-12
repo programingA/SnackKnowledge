@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { getExplanationFeedback } from '../../api/knowledge'
+import { getExplanationFeedback } from '../../api/study'
 import AiResponseText from '../ui/AiResponseText'
 import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 

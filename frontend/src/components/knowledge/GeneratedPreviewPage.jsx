@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { reconnectGeneratedPreview } from '../../api/knowledge'
+import { reconnectGeneratedPreview } from '../../api/study'
 import Icon from '../ui/Icon'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'

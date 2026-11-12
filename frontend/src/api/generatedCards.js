@@ -1,8 +1,9 @@
+import { requestApi, isSuccessful } from './http'
 import { getCsrfHeaders } from './account'
 
 async function request(path, options) {
-  const response = await fetch('/api/me/generated-cards' + path, options)
-  if (!response.ok) {
+  const response = await requestApi('/api/me/generated-cards' + path, options)
+  if (!isSuccessful(response)) {
     const messages = {
       400: '카드 내용이나 이미지 형식을 확인해주세요.',
       401: '로그인한 뒤 생성한 카드를 보관할 수 있어요.',
@@ -15,18 +16,18 @@ async function request(path, options) {
 }
 
 export async function getGeneratedCards(signal) {
-  return (await request('', { signal })).json()
+  return (await request('', { signal })).data
 }
 
 export async function getGeneratedCard(id, signal) {
-  return (await request('/' + id, { signal })).json()
+  return (await request('/' + id, { signal })).data
 }
 
 export async function saveGeneratedCard(id, card) {
   await request('/' + id, {
     method: 'PUT',
     headers: { ...await getCsrfHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify(card),
+    data: card,
   })
 }
 
