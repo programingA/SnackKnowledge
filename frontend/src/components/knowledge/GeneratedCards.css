@@ -75,24 +75,47 @@
   padding: 16px clamp(18px, 5vw, 38px) 20px;
 }
 
-.generated-preview-controls > .generated-sign-in-note {
-  margin: 0;
+.generated-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px 12px;
 }
 
-.generated-preview-controls > .generated-card-actions {
+.generated-preview-actions > :last-child {
+  margin-inline-start: auto;
+}
+
+.generated-preview-actions .generated-card-actions {
+  justify-content: flex-end;
   margin-top: 0;
 }
 
-.generated-sign-in-note .generated-sign-in-link {
-  margin-top: 10px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.generated-preview-actions .generated-preview-secondary {
+  border: 1px solid #dec5b4;
+  background: transparent;
+  color: #864d38;
 }
 
-.generated-preview-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
+.generated-preview-actions .generated-preview-secondary:hover:not(:disabled) {
+  border-color: #c76e51;
+  background: #fff1e5;
+}
+
+.generated-preview-hint {
+  margin: 8px 0 0;
+  color: #715d4d;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: right;
+}
+
+@media (max-width: 400px) {
+  .generated-preview-actions .primary-button {
+    gap: 6px;
+    padding-inline: 10px;
+  }
 }
 
 .generated-study-status {

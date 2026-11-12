@@ -35,19 +35,13 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
   }
 
   if (!username) return (
-    <div className="takeaway generated-sign-in-note">
-      <Icon name="bookmark" />
-      <div>
-        <strong>생성한 지식 저장하기</strong>
-        <p>로그인하면 이 카드를 보관함에 저장해 다시 볼 수 있어요. {studyId ? 'AI 질문·퀴즈·직접 설명하기는 지금도 이용할 수 있어요.' : '학습 기능이 연결되면 AI 질문·퀴즈·직접 설명하기를 이용할 수 있어요.'}</p>
-        <button className="text-button generated-sign-in-link" type="button" aria-haspopup="dialog" onClick={() => {
-          signInRequested.current = true
-          onSignIn()
-        }}>
-          로그인하러 가기 <Icon name="arrow" size={16} />
-        </button>
-      </div>
-    </div>
+    <button className="primary-button" type="button" aria-haspopup="dialog" onClick={() => {
+      signInRequested.current = true
+      onSignIn()
+    }}>
+      <Icon name="bookmark" size={17} />
+      로그인하고 저장
+    </button>
   )
 
   return (

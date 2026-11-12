@@ -39,13 +39,16 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
                   }}>학습 기능 다시 연결하기</button>
                 </div>
               ) : <p className="generated-study-status" role="status">학습 기능을 연결하는 중이에요.</p>)}
-              <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
               <div className="generated-preview-actions">
-                <button className="primary-button" type="button" onClick={onGenerate}>
+                <button className="primary-button generated-preview-secondary" type="button" onClick={onGenerate}>
                   <Icon name="sparkle" size={17} />
                   다른 지식 만들기
                 </button>
+                <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
               </div>
+              {!username && (
+                <p className="generated-preview-hint">로그인하면 이 카드를 보관함에 저장할 수 있어요.</p>
+              )}
             </>
           )}
         />
