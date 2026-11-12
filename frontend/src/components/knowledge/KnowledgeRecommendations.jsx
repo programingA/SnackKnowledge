@@ -30,7 +30,7 @@ export default function KnowledgeRecommendations({ onOpenArticle, paused = false
           <h2 id="recommendations-title">나에게 맞는 지식</h2>
           {cards?.length > 0 && (
             <p>{cards.some((card) => card.matchedInterest)
-              ? '자주 읽거나 저장한 분야의 카드를 먼저 골랐어요.'
+              ? '관심 분야와 읽기·북마크 기록을 바탕으로 골랐어요.'
               : '아직 읽거나 저장하지 않은 카드부터 골랐어요.'}</p>
           )}
         </div>

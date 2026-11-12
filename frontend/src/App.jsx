@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getSession } from './api/account'
 import AccountModal from './components/account/AccountModal'
+import InterestSettingsPage from './components/account/InterestSettingsPage'
 import BookmarksPage from './components/knowledge/BookmarksPage'
 import LearningHistoryPage from './components/knowledge/LearningHistoryPage'
 import SavedGeneratedCardsPage from './components/knowledge/SavedGeneratedCardsPage'
@@ -27,11 +28,13 @@ export default function App() {
   const isBookmarksPage = locationHash === '#/bookmarks'
   const isLearningHistoryPage = locationHash === '#/learning-history'
   const isWrongAnswersPage = locationHash === '#/wrong-answers'
+  const isInterestsPage = locationHash === '#/interests'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const focusedPageId = isBookmarksPage ? 'bookmarks-page'
     : isLearningHistoryPage ? 'learning-history-page'
       : generatedCardRoute ? 'generated-cards-page'
-        : isWrongAnswersPage ? 'wrong-answers-page' : null
+        : isWrongAnswersPage ? 'wrong-answers-page'
+          : isInterestsPage ? 'interests-page' : null
 
   useEffect(() => {
     const controller = new AbortController()
@@ -128,6 +131,9 @@ export default function App() {
       )}
       {isWrongAnswersPage && (
         <WrongAnswersPage username={username} onSignIn={() => setModal('account')} />
+      )}
+      {isInterestsPage && (
+        <InterestSettingsPage username={username} onSignIn={() => setModal('account')} />
       )}
       <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero

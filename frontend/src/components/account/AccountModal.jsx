@@ -156,6 +156,9 @@ export default function AccountModal({ username, onChange, onClose }) {
       {username && (
         <a className="text-button" href="#/wrong-answers" onClick={onClose}>오답 노트</a>
       )}
+      {username && (
+        <a className="text-button" href="#/interests" onClick={onClose}>관심 분야 설정</a>
+      )}
       {!username && (
         <div className="account-footer">
           <span>{registering ? '이미 계정이 있나요?' : '처음 오셨나요?'}</span>

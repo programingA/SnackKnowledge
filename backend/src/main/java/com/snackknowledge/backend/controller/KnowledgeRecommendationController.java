@@ -21,6 +21,8 @@ public class KnowledgeRecommendationController {
     public List<Recommendation> list(Principal principal) {
         return jdbc.sql("""
                 WITH interest_signals AS (
+                    SELECT category, 5 AS points FROM member_interest WHERE username = :username
+                    UNION ALL
                     SELECT k.category, 3 AS points
                     FROM member_bookmark b JOIN knowledge k ON k.id = b.knowledge_id
                     WHERE b.username = :username
