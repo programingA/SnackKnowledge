@@ -11,26 +11,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import com.snackknowledge.backend.service.KnowledgeAnswerService;
-import com.snackknowledge.backend.dto.KnowledgeQuizResponse;
+import com.snackknowledge.backend.service.QuizAttemptService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import com.snackknowledge.backend.dto.KnowledgeExplanationRequest;
 import com.snackknowledge.backend.dto.KnowledgeGenerateRequest;
 import com.snackknowledge.backend.dto.KnowledgeGenerateResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 public class KnowledgeController {
 
     private final KnowledgeService knowledgeService;
     private final KnowledgeAnswerService knowledgeAnswerService;
+    private final QuizAttemptService quizAttemptService;
 
     public KnowledgeController(
             KnowledgeService knowledgeService,
-            KnowledgeAnswerService knowledgeAnswerService
+            KnowledgeAnswerService knowledgeAnswerService,
+            QuizAttemptService quizAttemptService
     ){
         this.knowledgeService = knowledgeService;
         this.knowledgeAnswerService = knowledgeAnswerService;
+        this.quizAttemptService = quizAttemptService;
     }
 
     @GetMapping("/api/knowledge")
@@ -65,11 +71,22 @@ public class KnowledgeController {
     }
 
     @PostMapping("/api/knowledge/{id}/quiz")
-    public KnowledgeQuizResponse generateQuiz(@PathVariable("id") Long id) {
+    public QuizAttemptService.QuizQuestion generateQuiz(@PathVariable("id") Long id, HttpSession session) {
         KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
 
-        return knowledgeAnswerService.generateQuiz(knowledge);
+        return quizAttemptService.start(session, knowledgeAnswerService.generateQuiz(knowledge));
     }
+
+    @PostMapping("/api/quizzes/{quizId}/submissions")
+    public QuizAttemptService.QuizGrade submitQuiz(
+            @PathVariable("quizId") UUID quizId,
+            @RequestBody QuizSubmission submission,
+            HttpServletRequest request
+    ) {
+        return quizAttemptService.grade(request.getSession(false), quizId, submission.selectedIndex());
+    }
+
+    public record QuizSubmission(Integer selectedIndex) {}
 
     @PostMapping("/api/knowledge/{id}/explanations")
     public Map<String, String> receiveExplanation(
