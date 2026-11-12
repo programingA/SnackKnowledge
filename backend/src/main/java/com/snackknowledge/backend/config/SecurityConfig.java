@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,9 +35,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, CommunityReviewAccess reviewAccess) throws Exception {
         return http
                 .authorizeHttpRequests(rules -> rules
+                        .requestMatchers("/api/admin/community/**").access((authentication, context) -> {
+                            var user = authentication.get();
+                            return new AuthorizationDecision(user != null && user.isAuthenticated()
+                                    && !(user instanceof AnonymousAuthenticationToken)
+                                    && reviewAccess.canReview(user.getName()));
+                        })
                         .requestMatchers("/api/me/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/knowledge/**"))

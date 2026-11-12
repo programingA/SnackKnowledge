@@ -11,11 +11,14 @@ const destinations = [
   { route: 'wrong-answers', title: '오답 노트', icon: 'check', key: 'wrongAnswers', unit: '개', description: '다시 풀 수 있는 문제' },
 ]
 
-export default function MyPage({ username, onSignIn, onSignedOut }) {
+export default function MyPage({ username, canReviewCommunity, onSignIn, onSignedOut }) {
   return (
     <main className="page-shell my-page" id="my-page" tabIndex={-1}>
       <a className="my-page-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>마이페이지</h1>
+      {username && canReviewCommunity && (
+        <p><a className="text-button" href="#/community-review">커뮤니티 검토</a></p>
+      )}
       {username ? <MemberDashboard key={username} username={username} onSignedOut={onSignedOut} /> : (
         <div className="my-page-panel">
           <p>로그인하면 내 카드와 학습 활동을 볼 수 있어요.</p>

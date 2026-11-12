@@ -1,6 +1,7 @@
 package com.snackknowledge.backend.controller;
 
 import com.snackknowledge.backend.config.AccountCredentials;
+import com.snackknowledge.backend.config.CommunityReviewAccess;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -18,9 +19,12 @@ public class AccountController {
     private final JdbcClient jdbc;
     private final PasswordEncoder encoder;
 
-    public AccountController(JdbcClient jdbc, PasswordEncoder encoder) {
+    private final CommunityReviewAccess reviewAccess;
+
+    public AccountController(JdbcClient jdbc, PasswordEncoder encoder, CommunityReviewAccess reviewAccess) {
         this.jdbc = jdbc;
         this.encoder = encoder;
+        this.reviewAccess = reviewAccess;
     }
 
     @GetMapping("/csrf")
@@ -30,7 +34,8 @@ public class AccountController {
 
     @GetMapping("/session")
     public Session session(Principal principal) {
-        return new Session(principal == null ? null : principal.getName());
+        String username = principal == null ? null : principal.getName();
+        return new Session(username, username != null && reviewAccess.canReview(username));
     }
 
     @PostMapping("/register")
@@ -51,5 +56,5 @@ public class AccountController {
     }
 
     public record Credentials(String username, String password, String passwordConfirmation) {}
-    public record Session(String username) {}
+    public record Session(String username, boolean canReviewCommunity) {}
 }
