@@ -11,6 +11,7 @@ import SiteFooter from './components/layout/SiteFooter'
 import SiteHeader from './components/layout/SiteHeader'
 import DatabaseArticleModal from './components/knowledge/DatabaseArticleModal'
 import KnowledgeFeed from './components/knowledge/KnowledgeFeed'
+import KnowledgeRecommendations from './components/knowledge/KnowledgeRecommendations'
 import SampleArticleModal from './components/knowledge/SampleArticleModal'
 import SampleGenerateModal from './components/knowledge/SampleGenerateModal'
 import './styles/App.css'
@@ -118,6 +119,13 @@ export default function App() {
           onRandom={openRandomArticle}
           onFeatured={() => openArticle(articles[0])}
         />
+        {username && !focusedPageId && (
+          <KnowledgeRecommendations
+            key={username}
+            paused={Boolean(selected)}
+            onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
+          />
+        )}
         <KnowledgeFeed
           onOpenArticle={(article) =>
             openArticle({ ...article, source: 'database' })
