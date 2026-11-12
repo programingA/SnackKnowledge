@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { generateKnowledgeQuiz } from "../../api/knowledge";
 
-export default function KnowledgeQuiz({ id }) {
+export default function KnowledgeQuiz({ id, onComplete }) {
     const [quiz, setQuiz] = useState(null)
     const [selectedIndex, setSelectedIndex] = useState(null)
     const [submitted, setSubmitted] = useState(false)
@@ -62,7 +62,10 @@ export default function KnowledgeQuiz({ id }) {
                         type="button"
                         className="primary-button"
                         disabled={loading || selectedIndex === null}
-                        onClick={() => setSubmitted(true)}
+                        onClick={() => {
+                            setSubmitted(true)
+                            onComplete?.('quiz')
+                        }}
                     >
                         정답 확인하기
                     </button>

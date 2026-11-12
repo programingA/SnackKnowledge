@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getSession } from './api/account'
 import AccountModal from './components/account/AccountModal'
 import BookmarksPage from './components/knowledge/BookmarksPage'
+import LearningHistoryPage from './components/knowledge/LearningHistoryPage'
 import { articles } from './data/sampleKnowledge'
 import AboutModal from './components/layout/AboutModal'
 import CuriosityBanner from './components/layout/CuriosityBanner'
@@ -19,8 +20,11 @@ export default function App() {
   const [modal, setModal] = useState(null)
   const [username, setUsername] = useState(null)
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
-  const [bookmarkRevision, setBookmarkRevision] = useState(0)
+  const [listRevision, setListRevision] = useState(0)
   const isBookmarksPage = locationHash === '#/bookmarks'
+  const isLearningHistoryPage = locationHash === '#/learning-history'
+  const focusedPageId = isBookmarksPage ? 'bookmarks-page'
+    : isLearningHistoryPage ? 'learning-history-page' : null
 
   useEffect(() => {
     const controller = new AbortController()
@@ -41,13 +45,13 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (isBookmarksPage) {
+    if (focusedPageId) {
       window.scrollTo(0, 0)
-      document.getElementById('bookmarks-page')?.focus({ preventScroll: true })
+      document.getElementById(focusedPageId)?.focus({ preventScroll: true })
     } else if (locationHash === '#knowledge-feed') {
       document.getElementById('knowledge-feed')?.scrollIntoView()
     }
-  }, [isBookmarksPage, locationHash])
+  }, [focusedPageId, locationHash])
 
   function openArticle(article) {
     setModal(null)
@@ -56,7 +60,7 @@ export default function App() {
 
   function closeArticle() {
     setSelected(null)
-    if (isBookmarksPage) setBookmarkRevision((current) => current + 1)
+    if (focusedPageId) setListRevision((current) => current + 1)
   }
 
   function closeModal() {
@@ -64,7 +68,7 @@ export default function App() {
   }
 
   function scrollToFeed() {
-    if (isBookmarksPage) {
+    if (focusedPageId) {
       window.location.hash = 'knowledge-feed'
       return
     }
@@ -83,7 +87,7 @@ export default function App() {
 
   return (
     <>
-      {!isBookmarksPage && (
+      {!focusedPageId && (
         <a className="skip-link" href="#knowledge-feed">지식 목록으로 바로가기</a>
       )}
       <SiteHeader
@@ -94,13 +98,21 @@ export default function App() {
       />
       {isBookmarksPage && (
         <BookmarksPage
-          key={bookmarkRevision}
+          key={listRevision}
           username={username}
           onSignIn={() => setModal('account')}
           onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
         />
       )}
-      <main className="page-shell" hidden={isBookmarksPage}>
+      {isLearningHistoryPage && (
+        <LearningHistoryPage
+          key={listRevision}
+          username={username}
+          onSignIn={() => setModal('account')}
+          onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
+        />
+      )}
+      <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero
           onBrowse={scrollToFeed}
           onRandom={openRandomArticle}
