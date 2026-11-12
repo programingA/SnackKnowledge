@@ -63,6 +63,20 @@
   overflow-wrap: anywhere;
 }
 
+.recommendation-with-bookmark {
+  position: relative;
+}
+
+.recommendation-with-bookmark .recommendations-card {
+  padding-inline-end: 55px;
+}
+
+.recommendation-with-bookmark > .bookmark-control {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 .recommendations-card:hover {
   border-color: #cc8a72;
 }

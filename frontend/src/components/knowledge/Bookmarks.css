@@ -54,6 +54,29 @@
   outline-offset: 3px;
 }
 
+.bookmark-control--compact {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  margin: 0 0 0 auto;
+}
+
+.bookmark-control--compact .bookmark-icon-button {
+  width: 36px;
+  height: 36px;
+}
+
+.bookmark-control--compact > [role='alert'] {
+  position: absolute;
+  inset: 100% 0 auto auto;
+  width: 150px;
+  padding: 6px 8px;
+  border: 1px solid #dec5b4;
+  border-radius: 6px;
+  background: #fffefa;
+  font-size: 12px;
+}
+
 .bookmark-list {
   display: grid;
   gap: 12px;
