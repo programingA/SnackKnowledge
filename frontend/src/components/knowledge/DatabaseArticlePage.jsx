@@ -125,7 +125,7 @@ export default function DatabaseArticlePage({ id, username }) {
               </>
             )}
             <div hidden={activity !== 'ask'}>
-              <KnowledgeQuestionForm id={id} onComplete={learning.track} />
+              <KnowledgeQuestionForm id={id} onComplete={learning.track} active={activity === 'ask'} />
             </div>
             <div hidden={activity !== 'quiz'}>
               <KnowledgeQuiz id={id} onComplete={learning.track} />

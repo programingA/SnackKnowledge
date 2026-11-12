@@ -30,7 +30,11 @@ export async function askKnowledgeQuestion(id, question) {
   })
 
   if (!response.ok) {
-    const error = new Error(response.status === 429 ? '이 카드의 질문 5회를 모두 사용했어요.' : `답변을 가져오지 못했어요(${response.status}).`)
+    const messages = {
+      429: '이 카드의 질문 5회를 모두 사용했어요.',
+      502: 'AI 답변이 끝까지 생성되지 않았어요. 다시 질문해 주세요.',
+    }
+    const error = new Error(messages[response.status] ?? `답변을 가져오지 못했어요(${response.status}).`)
     error.status = response.status
     throw error
   }

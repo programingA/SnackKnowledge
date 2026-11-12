@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/knowledge'
 import AiResponseText from '../ui/AiResponseText'
 
-export default function KnowledgeQuestionForm({ id, onComplete }) {
+export default function KnowledgeQuestionForm({ id, onComplete, active }) {
   const [question, setQuestion] = useState('')
   const [conversation, setConversation] = useState(null)
   const [error, setError] = useState('')
@@ -11,6 +11,11 @@ export default function KnowledgeQuestionForm({ id, onComplete }) {
   const used = conversation?.turns.length ?? 0
   const limit = conversation?.limit ?? 5
   const finished = used >= limit
+  const log = useRef(null)
+
+  useEffect(() => {
+    if (active && used && log.current) log.current.scrollTop = log.current.scrollHeight
+  }, [active, used])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -48,36 +53,45 @@ export default function KnowledgeQuestionForm({ id, onComplete }) {
         <h3 id="knowledge-chat-title">AI에게 질문하기</h3>
         <p className="knowledge-question-count" role="status">{used} / {limit}회 · {limit - used}회 남음</p>
       </div>
-      {!conversation && !error && <p role="status">이전 대화를 불러오는 중이에요.</p>}
-      {used > 0 && (
-        <ol className="knowledge-chat-turns" aria-label="AI와 나눈 대화">
-          {conversation.turns.map((turn, index) => (
-            <li key={index}>
-              <div className="knowledge-chat-message knowledge-chat-user">
-                <strong>나</strong>
-                <p>{turn.question}</p>
-              </div>
-              <div className="knowledge-chat-message knowledge-chat-ai">
-                <strong>AI 답변</strong>
-                <AiResponseText text={turn.answer} />
-              </div>
-            </li>
-          ))}
-        </ol>
-      )}
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="knowledge-question">이 지식에 대해 궁금한 점</label>
-        <div className="input-action">
-          <input id="knowledge-question" value={question} maxLength={300}
-            placeholder="예: 노을은 왜 붉은색인가요?"
-            onChange={(event) => setQuestion(event.target.value)}
-            disabled={!conversation || finished || sending} />
-          <button type="submit" className="primary-button" disabled={!conversation || finished || sending || !question.trim()}>
-            {sending ? '답변 생성 중...' : '질문하기'}
-          </button>
+      <div className="knowledge-chat-log" ref={log} role="log" aria-label="대화 기록" tabIndex={0}>
+        {!conversation && !error && <p role="status">이전 대화를 불러오는 중이에요.</p>}
+        {conversation && !used && <p className="knowledge-chat-empty">읽은 지식에서 궁금한 점을 질문해 보세요.</p>}
+        {used > 0 && (
+          <ol className="knowledge-chat-turns" aria-label="AI와 나눈 대화">
+            {conversation.turns.map((turn, index) => (
+              <li key={index}>
+                <div className="knowledge-chat-message knowledge-chat-user">
+                  <strong>나</strong>
+                  <p>{turn.question}</p>
+                </div>
+                <div className="knowledge-chat-message knowledge-chat-ai">
+                  <strong>AI 답변</strong>
+                  <AiResponseText text={turn.answer} />
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+        {sending && <p className="knowledge-chat-empty" role="status">AI가 답변을 작성하고 있어요.</p>}
+      </div>
+      {finished ? (
+        <div className="knowledge-chat-locked" role="status">
+          이 카드의 질문 {limit}회를 모두 사용했어요. 더 이상 질문할 수 없어요.
         </div>
-      </form>
-      {finished && <p className="knowledge-chat-limit" role="status">이 카드의 질문 {limit}회를 모두 사용했어요. 더 이상 질문할 수 없어요.</p>}
+      ) : (
+        <form className="knowledge-chat-form" onSubmit={handleSubmit}>
+          <label htmlFor="knowledge-question">이 지식에 대해 궁금한 점</label>
+          <div className="input-action">
+            <input id="knowledge-question" value={question} maxLength={300}
+              placeholder="예: 노을은 왜 붉은색인가요?"
+              onChange={(event) => setQuestion(event.target.value)}
+              disabled={!conversation || sending} />
+            <button type="submit" className="primary-button" disabled={!conversation || sending || !question.trim()}>
+              {sending ? '답변 생성 중...' : '질문하기'}
+            </button>
+          </div>
+        </form>
+      )}
       {error && !finished && <p role="alert">{error}</p>}
       {!conversation && error && (
         <div className="knowledge-actions">
