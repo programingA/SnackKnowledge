@@ -36,7 +36,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(rules -> rules
-                        .requestMatchers("/api/me/**").authenticated()
+                        .requestMatchers("/api/me/**", "/api/study/generated/saved/**").authenticated()
                         .anyRequest().permitAll())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/knowledge/**"))
                 .addFilterAfter(new AccountAttemptFilter(), CsrfFilter.class)

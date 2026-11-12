@@ -26,9 +26,9 @@ function normalizeMarkdown(text) {
 
 const mathPlugins = [[rehypeKatex, { trust: false, maxSize: 20, strict: 'ignore' }]]
 
-export default function AiResponseText({ text }) {
+export default function AiResponseText({ text, className = '' }) {
   return (
-    <div className="ai-response-text">
+    <div className={`ai-response-text ${className}`.trim()}>
       <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={mathPlugins} skipHtml disallowedElements={['img']}>
         {normalizeMarkdown(text ?? '')}
       </ReactMarkdown>

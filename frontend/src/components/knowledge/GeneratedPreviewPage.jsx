@@ -6,7 +6,8 @@ export default function GeneratedPreviewPage({ card, username, visible, onGenera
     <main className="page-shell article-page" id="generated-preview-page" tabIndex={-1} hidden={!visible}>
       <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
       {card ? (
-        <GeneratedArticle card={card} showImageFallback={Object.hasOwn(card, 'imageBase64')}>
+        <GeneratedArticle card={card} studyPath={card.studyId ? `/api/study/generated/preview/${card.studyId}` : undefined}
+          showImageFallback={Object.hasOwn(card, 'imageBase64')}>
           <SaveGeneratedCardButton card={card} username={username} />
           <button className="text-button" type="button" onClick={onGenerate}>다른 지식 만들기</button>
         </GeneratedArticle>

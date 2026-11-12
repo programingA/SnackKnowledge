@@ -877,37 +877,42 @@ a.featured-card:hover .round-arrow {
   overflow-wrap: anywhere;
 }
 
-.article-reading > .article-intro {
+.article-reading > .article-intro,
+.generated-article-reading > p:first-child {
   font-size: 16px;
   line-height: 1.85;
 }
 
-.database-article .article-heading {
+.generated-article-reading.ai-response-text > * + * {
+  margin-top: 0;
+}
+
+.study-article .article-heading {
   padding-block: clamp(28px, 4vw, 38px) clamp(24px, 4vw, 32px);
 }
 
-.database-article .article-heading > p {
+.study-article .article-heading > p {
   max-inline-size: 39rem;
   font-size: 14px;
 }
 
-.database-article .bookmark-control {
+.study-article .bookmark-control {
   margin-top: 20px;
 }
 
-.database-article .article-tabs {
+.study-article .article-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   row-gap: 0;
 }
 
 @media (max-width: 400px) {
-  .database-article .article-tabs {
+  .study-article .article-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.database-article .article-body {
+.study-article .article-body {
   padding-block: clamp(26px, 4vw, 36px) clamp(36px, 6vw, 52px);
 }
 
@@ -1524,7 +1529,7 @@ textarea {
   margin-bottom: clamp(22px, 4vw, 34px);
 }
 
-.database-article .takeaway p {
+.study-article .takeaway p {
   font-size: 14px;
   line-height: 1.7;
 }
@@ -1535,7 +1540,7 @@ textarea {
   margin-top: 16px;
 }
 
-.database-article .article-heading .bookmark-control {
+.study-article .article-heading .bookmark-control {
   text-align: right;
 }
 
@@ -1594,7 +1599,7 @@ textarea {
   background: #f6f1e9;
 }
 
-.database-article .form-bottom > button {
+.study-article .form-bottom > button {
   margin-left: auto;
 }
 

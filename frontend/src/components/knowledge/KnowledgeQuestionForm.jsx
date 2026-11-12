@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/knowledge'
 import AiResponseText from '../ui/AiResponseText'
 
-export default function KnowledgeQuestionForm({ id, onComplete, active }) {
+export default function KnowledgeQuestionForm({ studyPath, onComplete, active }) {
+  const composerId = useId()
+  const titleId = useId()
   const [question, setQuestion] = useState('')
   const [conversation, setConversation] = useState(null)
   const [error, setError] = useState('')
@@ -19,11 +21,11 @@ export default function KnowledgeQuestionForm({ id, onComplete, active }) {
 
   useEffect(() => {
     const controller = new AbortController()
-    getKnowledgeConversation(id, controller.signal).then(setConversation).catch((error) => {
+    getKnowledgeConversation(studyPath, controller.signal).then(setConversation).catch((error) => {
       if (!controller.signal.aborted) setError(error.message)
     })
     return () => controller.abort()
-  }, [id, attempt])
+  }, [studyPath, attempt])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -33,7 +35,7 @@ export default function KnowledgeQuestionForm({ id, onComplete, active }) {
     setSending(true)
     setError('')
     try {
-      setConversation(await askKnowledgeQuestion(id, text))
+      setConversation(await askKnowledgeQuestion(studyPath, text))
       setQuestion('')
       onComplete?.('question')
     } catch (error) {
@@ -48,9 +50,9 @@ export default function KnowledgeQuestionForm({ id, onComplete, active }) {
   }
 
   return (
-    <section className="knowledge-chat" aria-labelledby="knowledge-chat-title">
+    <section className="knowledge-chat" aria-labelledby={titleId}>
       <div className="knowledge-chat-heading">
-        <h3 id="knowledge-chat-title">AI에게 질문하기</h3>
+        <h3 id={titleId}>AI에게 질문하기</h3>
         <p className="knowledge-question-count" role="status">{used} / {limit}회 · {limit - used}회 남음</p>
       </div>
       <div className="knowledge-chat-log" ref={log} role="log" aria-label="대화 기록" tabIndex={0}>
@@ -80,9 +82,9 @@ export default function KnowledgeQuestionForm({ id, onComplete, active }) {
         </div>
       ) : (
         <form className="knowledge-chat-form" onSubmit={handleSubmit}>
-          <label htmlFor="knowledge-question">이 지식에 대해 궁금한 점</label>
+          <label htmlFor={composerId}>이 지식에 대해 궁금한 점</label>
           <div className="input-action">
-            <input id="knowledge-question" value={question} maxLength={300}
+            <input id={composerId} value={question} maxLength={300}
               placeholder="예: 노을은 왜 붉은색인가요?"
               onChange={(event) => setQuestion(event.target.value)}
               disabled={!conversation || sending} />

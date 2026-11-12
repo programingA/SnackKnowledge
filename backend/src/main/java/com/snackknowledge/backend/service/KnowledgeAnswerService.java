@@ -192,7 +192,8 @@ public class KnowledgeAnswerService {
                 .instructions("""
                         입력한 주제에 대해 한국어 지식 카드 한장을 만드세요.
                         category에는 분야, title에는 제목, summary에는 한 문장 요약을 작성하세요.
-                        content에는 처음 배우는 사람도 이해할 수 있는 짧은 설명을 작성하세요.
+                        content에는 처음 배우는 사람도 이해할 수 있도록 도입, 원리, 예시를 여러 문단으로 나눠 작성하세요.
+                        문단 사이에는 빈 줄을 넣고, 필요하면 표준 Markdown 제목과 목록을 사용하세요.
                         """)
                 .input(topic)
                 .maxOutputTokens(1000L)

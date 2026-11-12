@@ -36,6 +36,7 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
     <Modal
       label="새로운 지식 만들기"
       onClose={onClose}
+      dismissible={!loading}
       className="generate-modal"
     >
       <span className="large-icon">

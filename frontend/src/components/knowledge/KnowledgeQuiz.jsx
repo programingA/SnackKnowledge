@@ -3,7 +3,7 @@ import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/knowledge'
 import { startWrongAnswerQuiz } from '../../api/wrongAnswers'
 import Icon from '../ui/Icon'
 
-export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onComplete }) {
+export default function KnowledgeQuiz({ studyPath, practiceId, initialQuiz = null, onComplete }) {
   const questionId = useId()
   const [quiz, setQuiz] = useState(initialQuiz)
   const [selectedIndex, setSelectedIndex] = useState(null)
@@ -19,7 +19,7 @@ export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onCo
     setLoading(true)
     setError('')
     try {
-      setQuiz(await (practiceId ? startWrongAnswerQuiz(practiceId) : generateKnowledgeQuiz(id)))
+      setQuiz(await (practiceId ? startWrongAnswerQuiz(practiceId) : generateKnowledgeQuiz(studyPath)))
       setSelectedIndex(null)
       setGrade(null)
     } catch (error) {

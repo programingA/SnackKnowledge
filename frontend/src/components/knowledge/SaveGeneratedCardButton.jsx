@@ -12,8 +12,9 @@ export default function SaveGeneratedCardButton({ card, username }) {
     setSaving(true)
     setError('')
     try {
-      cardId.current ??= crypto.randomUUID()
-      await saveGeneratedCard(cardId.current, card)
+      const { studyId, ...payload } = card
+      cardId.current ??= studyId ?? crypto.randomUUID()
+      await saveGeneratedCard(cardId.current, payload)
       setSavedId(cardId.current)
     } catch (error) {
       setError(error.message)

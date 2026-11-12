@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Icon from './Icon'
 
-export default function Modal({ children, onClose, label, className = '' }) {
+export default function Modal({ children, onClose, label, className = '', dismissible = true }) {
   const ref = useRef(null)
   useEffect(() => {
     const dialog = ref.current
@@ -20,12 +20,15 @@ export default function Modal({ children, onClose, label, className = '' }) {
       ref={ref}
       className={`modal ${className}`}
       aria-label={label}
-      onCancel={onClose}
+      onCancel={(event) => {
+        event.preventDefault()
+        if (dismissible) onClose()
+      }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
+        if (dismissible && e.target === e.currentTarget) onClose()
       }}
     >
-      <button className="close-button" aria-label="창 닫기" onClick={onClose}>
+      <button type="button" className="close-button" aria-label="창 닫기" onClick={onClose} disabled={!dismissible}>
         <Icon name="close" />
       </button>
       {children}

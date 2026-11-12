@@ -64,7 +64,7 @@ function SavedCards({ id }) {
   if (data === null) return <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>
   if (id) {
     return (
-      <GeneratedArticle card={data}>
+      <GeneratedArticle card={data} studyPath={`/api/study/generated/saved/${id}`}>
         <CommunityShareControls id={id} />
         <div className="generated-card-actions">
           {confirmDelete ? (
