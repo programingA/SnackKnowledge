@@ -39,8 +39,9 @@ export default function AccountModal({ username, onChange, onClose }) {
         setError('비밀번호를 입력해주세요. UTF-8 기준 72바이트까지 입력할 수 있어요.')
         return
       }
-      if (registering && (!password.trim() || [...password].length < 15)) {
-        setError('비밀번호는 15자 이상 입력해주세요.')
+      const passwordLength = [...password].length
+      if (registering && (!password.trim() || passwordLength < 8 || passwordLength > 15)) {
+        setError('비밀번호는 8~15자로 입력해주세요.')
         return
       }
       if (registering && password !== confirmation) {
@@ -118,7 +119,7 @@ export default function AccountModal({ username, onChange, onClose }) {
                   {showPassword ? '숨기기' : '표시'}
                 </button>
               </div>
-              {registering && <p id="account-password-hint">15자 이상 · 최대 72바이트(한글 24자 분량)</p>}
+              {registering && <p id="account-password-hint">8~15자</p>}
             </div>
             {registering && (
               <div className="account-field">
