@@ -1,6 +1,6 @@
 import Icon from '../ui/Icon'
 
-export default function SiteHeader({ onBrowse, onAbout, onAccount, username }) {
+export default function SiteHeader({ onBrowse, onAbout, onAccount, username, isCommunity }) {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -17,6 +17,9 @@ export default function SiteHeader({ onBrowse, onAbout, onAccount, username }) {
             지식 둘러보기
           </button>
           <button onClick={onAbout}>한입지식 소개</button>
+          <a className="community-link" href="#/community" aria-current={isCommunity ? 'page' : undefined}>
+            커뮤니티
+          </a>
         </nav>
         <button type="button" className="account-button" onClick={onAccount}>
           {username ? '마이페이지' : '로그인'}

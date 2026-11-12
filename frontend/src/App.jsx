@@ -12,6 +12,7 @@ import AboutModal from './components/layout/AboutModal'
 import CuriosityBanner from './components/layout/CuriosityBanner'
 import Hero from './components/layout/Hero'
 import SiteFooter from './components/layout/SiteFooter'
+import CommunityPage from './components/knowledge/CommunityPage'
 import SiteHeader from './components/layout/SiteHeader'
 import DatabaseArticleModal from './components/knowledge/DatabaseArticleModal'
 import KnowledgeFeed from './components/knowledge/KnowledgeFeed'
@@ -32,7 +33,9 @@ export default function App() {
   const isInterestsPage = locationHash === '#/interests'
   const isMyPage = locationHash === '#/my-page'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
-  const focusedPageId = isBookmarksPage ? 'bookmarks-page'
+  const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
+  const focusedPageId = communityRoute ? 'community-page'
+    : isBookmarksPage ? 'bookmarks-page'
     : isLearningHistoryPage ? 'learning-history-page'
       : generatedCardRoute ? 'generated-cards-page'
         : isWrongAnswersPage ? 'wrong-answers-page'
@@ -109,6 +112,7 @@ export default function App() {
         <a className="skip-link" href="#knowledge-feed">지식 목록으로 바로가기</a>
       )}
       <SiteHeader
+        isCommunity={Boolean(communityRoute)}
         onBrowse={scrollToFeed}
         onAbout={() => setModal('about')}
         onAccount={openAccount}
@@ -153,6 +157,8 @@ export default function App() {
           }}
         />
       )}
+      {communityRoute && <CommunityPage id={communityRoute[1]} />}
+
       <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero
           onBrowse={scrollToFeed}

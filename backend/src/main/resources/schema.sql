@@ -59,3 +59,14 @@ CREATE TABLE IF NOT EXISTS member_interest (
     PRIMARY KEY (username, category),
     FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS community_share (
+    share_id CHAR(36) PRIMARY KEY,
+    username VARCHAR(30) NOT NULL,
+    card_id CHAR(36) NOT NULL,
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
+    submitted_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    UNIQUE KEY community_share_card (username, card_id),
+    INDEX community_share_status (status, submitted_at),
+    FOREIGN KEY (username, card_id) REFERENCES member_generated_card(username, card_id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
