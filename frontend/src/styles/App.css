@@ -189,6 +189,18 @@ h1 > span:first-of-type:after {
   color: #ab9d76;
   font-size: 17px;
 }
+.featured-entry {
+  position: relative;
+  min-width: 0;
+}
+
+.featured-entry > .bookmark-control {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 3;
+}
+
 .featured-card {
   text-align: left;
   position: relative;
@@ -479,6 +491,7 @@ a.featured-card:hover .round-arrow {
   gap: 17px;
 }
 .knowledge-card {
+  position: relative;
   border: 1px solid #e7e3da;
   border-radius: 12px;
   background: #fffefa;
@@ -538,6 +551,18 @@ a.featured-card:hover .round-arrow {
   font-weight: 700;
   min-height: 58px;
 }
+.knowledge-card-link::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  content: '';
+}
+
+.knowledge-card-link:focus-visible::after {
+  outline: 2px solid var(--coral);
+  outline-offset: 3px;
+}
+
 .knowledge-card > p {
   font-size: 11px;
   color: #8c8478;

@@ -38,7 +38,7 @@ function getReadingParagraphs(content) {
   return reading
 }
 
-export default function DatabaseArticlePage({ id, username }) {
+export default function DatabaseArticlePage({ id, username, bookmarks }) {
   const [knowledge, setKnowledge] = useState(null)
   const [error, setError] = useState('')
   const learning = useLearningActivity(id, username, Boolean(knowledge))
@@ -75,7 +75,7 @@ export default function DatabaseArticlePage({ id, username }) {
       {knowledge && (
         <>
           <ArticleHeading category={knowledge.category} title={knowledge.title} summary={knowledge.summary}>
-            {username && <BookmarkButton key={username} id={id} />}
+            {bookmarks && <BookmarkButton key={username} card={knowledge} bookmarks={bookmarks} />}
           </ArticleHeading>
           <div className="article-tabs" role="group" aria-label="학습 활동">
             {activities.map(([value, label]) => (

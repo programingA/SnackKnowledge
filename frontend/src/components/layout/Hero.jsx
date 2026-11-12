@@ -1,6 +1,7 @@
 import Icon from '../ui/Icon'
+import BookmarkButton from '../knowledge/BookmarkButton'
 
-export default function Hero({ onBrowse, onRandom, featured, featuredStatus }) {
+export default function Hero({ onBrowse, onRandom, featured, featuredStatus, bookmarks }) {
   const FeaturedCard = featured ? 'a' : 'div'
   return (
     <section className="hero" aria-labelledby="hero-title">
@@ -33,41 +34,44 @@ export default function Hero({ onBrowse, onRandom, featured, featuredStatus }) {
           습관
         </div>
       </div>
-      <FeaturedCard
-        className="featured-card"
-        href={featured ? `#/knowledge/${featured.id}` : undefined}
-        aria-label={featured ? `오늘의 한입: ${featured.title} 읽기` : undefined}
-      >
-        <div className="featured-top">
-          <span>
-            <span className="live-dot" />
-            오늘의 한입
-          </span>
-        </div>
-        <div className="sun-art" aria-hidden="true">
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="sun-core">✳</div>
-          <span className="art-dot dot-one" />
-          <span className="art-dot dot-two" />
-          <span className="art-star">✧</span>
-          <span className="art-label">a little wonder</span>
-        </div>
-        <div className="featured-bottom">
-          {featured ? (
-            <>
-              <div>
-                <span>{featured.category}</span>
-                <h2>{featured.title}</h2>
-                <p className="featured-summary">{featured.summary}</p>
-              </div>
-              <span className="round-arrow">
-                <Icon name="arrow" size={24} />
-              </span>
-            </>
-          ) : <p role="status">{featuredStatus}</p>}
-        </div>
-      </FeaturedCard>
+      <div className="featured-entry">
+        <FeaturedCard
+          className="featured-card"
+          href={featured ? `#/knowledge/${featured.id}` : undefined}
+          aria-label={featured ? `오늘의 한입: ${featured.title} 읽기` : undefined}
+        >
+          <div className="featured-top">
+            <span>
+              <span className="live-dot" />
+              오늘의 한입
+            </span>
+          </div>
+          <div className="sun-art" aria-hidden="true">
+            <div className="orbit orbit-one" />
+            <div className="orbit orbit-two" />
+            <div className="sun-core">✳</div>
+            <span className="art-dot dot-one" />
+            <span className="art-dot dot-two" />
+            <span className="art-star">✧</span>
+            <span className="art-label">a little wonder</span>
+          </div>
+          <div className="featured-bottom">
+            {featured ? (
+              <>
+                <div>
+                  <span>{featured.category}</span>
+                  <h2>{featured.title}</h2>
+                  <p className="featured-summary">{featured.summary}</p>
+                </div>
+                <span className="round-arrow">
+                  <Icon name="arrow" size={24} />
+                </span>
+              </>
+            ) : <p role="status">{featuredStatus}</p>}
+          </div>
+        </FeaturedCard>
+        {featured && bookmarks && <BookmarkButton card={featured} bookmarks={bookmarks} compact />}
+      </div>
     </section>
   )
 }

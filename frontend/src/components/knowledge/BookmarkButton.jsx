@@ -1,59 +1,44 @@
-import { useEffect, useState } from 'react'
-import { getBookmarkStatus, setBookmark } from '../../api/bookmarks'
+import { useState } from 'react'
 import Icon from '../ui/Icon'
 import './Bookmarks.css'
 
-export default function BookmarkButton({ id }) {
-  const [saved, setSaved] = useState(null)
-  const [pending, setPending] = useState(false)
+export default function BookmarkButton({ card, bookmarks, compact = false }) {
   const [error, setError] = useState('')
-  const [attempt, setAttempt] = useState(0)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getBookmarkStatus(id, controller.signal)
-      .then((result) => setSaved(result.saved))
-      .catch((error) => {
-        if (error.name !== 'AbortError') setError(error.message)
-      })
-    return () => controller.abort()
-  }, [id, attempt])
+  const saved = bookmarks.cards?.some((item) => item.id === card.id)
+  const pending = bookmarks.isPending(card.id)
+  const label = pending ? '북마크 처리 중'
+    : saved === undefined ? (bookmarks.error ? '북마크 다시 확인' : '북마크 확인 중')
+      : saved ? '북마크 해제' : '북마크 저장'
 
   async function handleClick() {
     setError('')
-    if (saved === null) {
-      setAttempt(attempt + 1)
+    if (saved === undefined) {
+      bookmarks.retry()
       return
     }
-    setPending(true)
+
     try {
-      await setBookmark(id, !saved)
-      setSaved(!saved)
+      await bookmarks.change(card, !saved)
     } catch (error) {
       setError(error.message)
-    } finally {
-      setPending(false)
     }
   }
 
-  const label = pending ? '북마크 처리 중' : saved === null
-    ? (error ? '북마크 다시 확인' : '북마크 확인 중')
-    : (saved ? '북마크 해제' : '북마크 저장')
-
   return (
-    <div className="bookmark-control">
+    <div className={compact ? 'bookmark-control bookmark-control--compact' : 'bookmark-control'}>
       <button
         type="button"
         className="bookmark-button bookmark-icon-button"
-        aria-label={label}
+        aria-label={compact ? card.title + ' ' + label : label}
         title={label}
-        aria-pressed={saved ?? undefined}
-        disabled={pending || (saved === null && !error)}
+        aria-pressed={saved}
+        disabled={pending || (saved === undefined && !bookmarks.error)}
         onClick={handleClick}
       >
         <Icon name="bookmark" size={20} fill={saved ? 'currentColor' : 'none'} />
       </button>
       {error && <p role="alert">{error}</p>}
+      {!compact && bookmarks.error && <p role="alert">{bookmarks.error}</p>}
     </div>
   )
 }

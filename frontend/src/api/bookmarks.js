@@ -12,10 +12,6 @@ export async function getBookmarks(signal) {
   return (await request('', { signal })).json()
 }
 
-export async function getBookmarkStatus(id, signal) {
-  return (await request('/' + id, { signal })).json()
-}
-
 export async function setBookmark(id, saved) {
   await request('/' + id, {
     method: saved ? 'PUT' : 'DELETE',

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { getRecommendations } from '../../api/recommendations'
 import Icon from '../ui/Icon'
+import BookmarkButton from './BookmarkButton'
 import './KnowledgeRecommendations.css'
 
-export default function KnowledgeRecommendations({ onOpenArticle, paused = false }) {
+export default function KnowledgeRecommendations({ onOpenArticle, bookmarks, paused = false }) {
   const [cards, setCards] = useState(null)
   const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -49,12 +50,13 @@ export default function KnowledgeRecommendations({ onOpenArticle, paused = false
       {cards?.length > 0 && (
         <ul className="recommendations-list">
           {cards.map((card) => (
-            <li key={card.id}>
+            <li key={card.id} className={bookmarks ? 'recommendation-with-bookmark' : undefined}>
               <button className="recommendations-card" type="button" onClick={() => onOpenArticle(card)}>
                 <span className="category-label">{card.category}</span>
                 <strong>{card.title}</strong>
                 <span className="recommendations-summary">{card.summary}</span>
               </button>
+              {bookmarks && <BookmarkButton card={card} bookmarks={bookmarks} compact />}
             </li>
           ))}
         </ul>
