@@ -1,0 +1,119 @@
+.modal.account-modal {
+  width: 390px;
+  padding: clamp(20px, 6vw, 28px);
+}
+
+.account-modal .close-button {
+  right: 12px;
+  top: 12px;
+}
+
+.account-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 26px 20px 0;
+}
+
+.account-heading h2 {
+  font-size: 22px;
+  line-height: 1.35;
+  letter-spacing: -0.5px;
+}
+
+.account-icon {
+  display: grid;
+  flex: 0 0 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 11px;
+  color: #a64932;
+  background: #f8e6d8;
+}
+
+.account-form,
+.account-field {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+}
+
+.account-field {
+  gap: 6px;
+}
+
+.account-field label {
+  margin: 0;
+  font-size: 13px;
+}
+
+.account-field input {
+  min-height: 42px;
+  padding: 8px 11px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.account-field p,
+.account-footer {
+  color: #73695e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.account-password-control {
+  position: relative;
+}
+
+.account-password-control input {
+  padding-right: 72px;
+}
+
+.account-password-control button {
+  position: absolute;
+  inset: 3px 4px 3px auto;
+  min-width: 58px;
+  background: #f7f2eb;
+  color: #5d4d40;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.account-form .primary-button {
+  min-height: 42px;
+  padding: 9px 14px;
+  font-size: 14px;
+  background: #b74a32;
+}
+
+.account-message,
+.account-session {
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: #f6f1e8;
+  color: #594638;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.account-error {
+  background: #fff0ec;
+  color: #982f26;
+}
+
+.account-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+  padding-top: 9px;
+}
+
+.account-footer .account-switch {
+  margin: 0;
+  color: #a64932;
+}

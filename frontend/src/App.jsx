@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getSession } from './api/account'
+import AccountModal from './components/account/AccountModal'
 import { articles } from './data/sampleKnowledge'
 import AboutModal from './components/layout/AboutModal'
 import CuriosityBanner from './components/layout/CuriosityBanner'
@@ -14,6 +16,15 @@ import './styles/App.css'
 export default function App() {
   const [selected, setSelected] = useState(null)
   const [modal, setModal] = useState(null)
+  const [username, setUsername] = useState(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    getSession(controller.signal)
+      .then((session) => setUsername(session.username))
+      .catch(() => {})
+    return () => controller.abort()
+  }, [])
 
   function openArticle(article) {
     setModal(null)
@@ -47,7 +58,12 @@ export default function App() {
       <a className="skip-link" href="#knowledge-feed">
         지식 목록으로 바로가기
       </a>
-      <SiteHeader onBrowse={scrollToFeed} onAbout={() => setModal('about')} />
+      <SiteHeader
+        onBrowse={scrollToFeed}
+        onAbout={() => setModal('about')}
+        onAccount={() => setModal('account')}
+        username={username}
+      />
       <main className="page-shell">
         <Hero
           onBrowse={scrollToFeed}
@@ -82,6 +98,13 @@ export default function App() {
         ))}
       {modal === 'generate' && (
         <SampleGenerateModal onClose={closeModal} />
+      )}
+      {modal === 'account' && (
+        <AccountModal
+          username={username}
+          onChange={setUsername}
+          onClose={() => setModal(null)}
+        />
       )}
       {modal === 'about' && (
         <AboutModal

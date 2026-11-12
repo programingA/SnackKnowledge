@@ -61,22 +61,15 @@ nav .nav-active:after {
   height: 2px;
   background: var(--coral);
 }
-.preview-badge {
+.account-button {
   margin-left: auto;
   color: #79756d;
   border: 1px solid #e6e1d7;
   padding: 7px 11px;
   border-radius: 20px;
   font-size: 11px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.preview-badge > span {
-  height: 5px;
-  width: 5px;
-  background: #af9a6c;
-  border-radius: 100%;
+  background: #fffefa;
+  white-space: nowrap;
 }
 .page-shell {
   max-width: 1160px;
@@ -1132,7 +1125,7 @@ textarea {
   nav button {
     font-size: 11px;
   }
-  .preview-badge {
+  .account-button {
     font-size: 9px;
     padding: 6px 8px;
   }
@@ -1316,8 +1309,8 @@ textarea {
   nav {
     gap: 13px;
   }
-  .preview-badge {
-    display: none;
+  .account-button {
+    margin-left: 0;
   }
   .brand {
     margin-right: auto;
