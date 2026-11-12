@@ -24,7 +24,8 @@ public final class AccountCredentials {
     }
 
     public static boolean validNewPassword(String password) {
-        return acceptsPassword(password) && !password.isBlank()
-                && password.codePointCount(0, password.length()) >= 15;
+        if (!acceptsPassword(password) || password.isBlank()) return false;
+        int length = password.codePointCount(0, password.length());
+        return length >= 8 && length <= 15;
     }
 }
