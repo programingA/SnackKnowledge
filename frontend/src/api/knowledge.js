@@ -1,3 +1,5 @@
+import { getCsrfHeaders } from './account'
+
 async function fetchKnowledge(path, signal, errorLabel) {
   const response = await fetch(path, { signal })
 
@@ -32,25 +34,41 @@ export async function askKnowledgeQuestion(id, question) {
 }
 
 export async function generateKnowledgeQuiz(id) {
-  const response = await fetch(`/api/knowledge/${id}/quiz`, {
-    method: 'POST',
-  })
+  const response = await fetch(`/api/knowledge/${id}/quiz`, { method: 'POST' })
 
-  if(!response.ok) {
+  if (!response.ok) {
     throw new Error(`퀴즈를 만들지 못했어요 (${response.status}).`)
   }
 
   const quiz = await response.json()
-  const options = quiz?.options ?? quiz?.option
-
-  if (!Array.isArray(options) || options.length !== 4
-      || !Number.isInteger(quiz.correctIndex)
-      || quiz.correctIndex < 0 || quiz.correctIndex >= options.length) {
-    throw new Error('퀴즈 응답의 보기 또는 정답 위치가 올바르지 않아요.')
+  if (typeof quiz?.quizId !== 'string' || typeof quiz.question !== 'string' || !quiz.question.trim()
+      || !Array.isArray(quiz.options) || quiz.options.length !== 4
+      || quiz.options.some((option) => typeof option !== 'string' || !option.trim())) {
+    throw new Error('퀴즈 문제나 보기를 받지 못했어요. 다시 만들어보세요.')
   }
 
-  return { ...quiz, options }
+  return { quizId: quiz.quizId, question: quiz.question, options: quiz.options }
 }
+
+export async function submitKnowledgeQuiz(quizId, selectedIndex) {
+  const response = await fetch(`/api/quizzes/${quizId}/submissions`, {
+    method: 'POST',
+    headers: { ...await getCsrfHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selectedIndex }),
+  })
+
+  if (response.status === 410) throw new Error('퀴즈가 만료됐어요. 새 퀴즈를 만들어주세요.')
+  if (response.status === 409) throw new Error('이미 답안을 제출했어요. 새 퀴즈를 만들어주세요.')
+  if (!response.ok) throw new Error('채점하지 못했어요. 다시 시도해주세요.')
+
+  const grade = await response.json()
+  if (typeof grade?.correct !== 'boolean' || !Number.isInteger(grade.correctIndex)
+      || grade.correctIndex < 0 || grade.correctIndex >= 4 || typeof grade.explanation !== 'string') {
+    throw new Error('채점 결과를 확인하지 못했어요.')
+  }
+  return grade
+}
+
 
 export async function getExplanationFeedback(id, explanation) {
   const response = await fetch(`/api/knowledge/${id}/explanations`, {
