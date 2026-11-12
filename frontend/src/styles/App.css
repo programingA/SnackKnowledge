@@ -1307,13 +1307,10 @@ textarea {
   border-radius: 20px;
   color: #9a8467;
 }
-.about-modal {
-  width: 670px;
-  padding: clamp(20px, 4.8vw, 38px);
-}
-
-.about-intro {
-  padding-inline-end: 24px;
+.page-shell.about-page {
+  max-width: 820px;
+  min-height: 52vh;
+  padding-block: clamp(30px, 6vw, 66px) clamp(42px, 8vw, 80px);
 }
 
 .about-icon {
@@ -1327,10 +1324,10 @@ textarea {
   color: #923827;
 }
 
-.about-intro h2 {
-  margin-bottom: 6px;
-  font-size: clamp(24px, 4vw, 30px);
-  letter-spacing: -0.8px;
+.about-intro h1 {
+  margin: 0 0 8px;
+  font-size: clamp(29px, 4.4vw, 40px);
+  letter-spacing: -1px;
 }
 
 .about-intro p,
@@ -1359,7 +1356,7 @@ textarea {
   grid-column: 1 / -1;
 }
 
-.about-feature h3 {
+.about-feature h2 {
   margin-bottom: 5px;
   color: #5d3c2e;
   font-size: 15px;
@@ -1409,7 +1406,7 @@ textarea {
     grid-template-columns: 1fr;
   }
 
-  .about-actions > button {
+  .about-actions > :is(a, button) {
     flex: 1 1 auto;
   }
 }
