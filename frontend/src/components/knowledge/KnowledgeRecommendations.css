@@ -85,8 +85,10 @@
   font-size: 15px;
 }
 
-.recommendations-card .category-label {
-  color: #9a4732;
+.recommendation-category {
+  justify-self: start;
+  padding: 3px 8px;
+  border-radius: 7px;
 }
 
 .recommendations-summary {

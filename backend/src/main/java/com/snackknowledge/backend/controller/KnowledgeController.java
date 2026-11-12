@@ -1,6 +1,7 @@
 package com.snackknowledge.backend.controller;
 
 import com.snackknowledge.backend.dto.KnowledgeQuestionRequest;
+import com.snackknowledge.backend.service.GeneratedStudyCards;
 import com.snackknowledge.backend.service.KnowledgeIllustrationService;
 import com.snackknowledge.backend.service.KnowledgeStudyService;
 import org.springframework.http.CacheControl;
@@ -23,7 +24,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import com.snackknowledge.backend.dto.KnowledgeExplanationRequest;
 import com.snackknowledge.backend.dto.KnowledgeGenerateRequest;
-import com.snackknowledge.backend.dto.KnowledgeGenerateResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -38,19 +38,22 @@ public class KnowledgeController {
     private final QuizAttemptService quizAttemptService;
     private final KnowledgeStudyService study;
     private final KnowledgeIllustrationService illustrations;
+    private final GeneratedStudyCards generatedCards;
 
     public KnowledgeController(
             KnowledgeService knowledgeService,
             KnowledgeAnswerService knowledgeAnswerService,
             QuizAttemptService quizAttemptService,
             KnowledgeStudyService study,
-            KnowledgeIllustrationService illustrations
+            KnowledgeIllustrationService illustrations,
+            GeneratedStudyCards generatedCards
     ){
         this.knowledgeService = knowledgeService;
         this.knowledgeAnswerService = knowledgeAnswerService;
         this.quizAttemptService = quizAttemptService;
         this.study = study;
         this.illustrations = illustrations;
+        this.generatedCards = generatedCards;
     }
 
     @GetMapping("/api/knowledge")
@@ -111,23 +114,15 @@ public class KnowledgeController {
             @PathVariable Long id,
             @RequestBody KnowledgeExplanationRequest request
     ) {
-        String explanation = request.explanation();
-
-        int length = explanation == null ? 0 : explanation.strip().codePointCount(0, explanation.strip().length());
-        if (length < 20 || length > 1500) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "설명을 20~1,500자로 입력해주세요."
-            );
-        }
-        KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
-
-        String feedback = knowledgeAnswerService.giveExplanationFeedback(knowledge, explanation.strip());
-        return Map.of("feedback", feedback);
+        return Map.of("feedback", study.explain(knowledgeService.getKnowledge(id), request.explanation()));
     }
 
+    public record GeneratedPreview(UUID studyId, String category, String title, String summary, String content,
+                                   String imageBase64) {}
+
     @PostMapping("/api/knowledge/generate")
-    public KnowledgeGenerateResponse generateKnowledge(
-            @RequestBody KnowledgeGenerateRequest request
+    public GeneratedPreview generateKnowledge(
+            @RequestBody KnowledgeGenerateRequest request, HttpSession session
     ) {
         String topic = request.topic();
 
@@ -138,6 +133,9 @@ public class KnowledgeController {
             );
         }
 
-        return knowledgeAnswerService.generateKnowledge(topic.strip());
+        var card = knowledgeAnswerService.generateKnowledge(topic.strip());
+        UUID studyId = generatedCards.remember(session, card.category(), card.title(), card.summary(), card.content());
+        return new GeneratedPreview(studyId, card.category(), card.title(), card.summary(), card.content(),
+                knowledgeAnswerService.generateCardImage(card.title(), card.summary()));
     }
 }

@@ -39,7 +39,7 @@ function CommunityCards({ id }) {
     </div>
   )
   if (data === null) return <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>
-  if (id) return <GeneratedArticle card={data} />
+  if (id) return <GeneratedArticle card={data} studyPath={`/api/study/generated/community/${id}`} />
   if (!data.length) return <p className="generated-cards-panel">아직 공개된 카드가 없어요.</p>
 
   return (

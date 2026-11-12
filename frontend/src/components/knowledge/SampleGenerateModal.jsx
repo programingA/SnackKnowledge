@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { generateKnowledge } from '../../api/knowledge'
+import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import Icon from '../ui/Icon'
 import Modal from '../ui/Modal'
 
@@ -24,7 +25,7 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
 
     try {
       const card = await generateKnowledge(trimmedTopic, controller.signal)
-      if (!controller.signal.aborted) onGenerated(card)
+      if (!controller.signal.aborted) await onGenerated(card)
     } catch (error) {
       if (!controller.signal.aborted) setError(error.message)
     } finally {
@@ -36,6 +37,7 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
     <Modal
       label="새로운 지식 만들기"
       onClose={onClose}
+      dismissible={!loading}
       className="generate-modal"
     >
       <span className="large-icon">
@@ -73,11 +75,12 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
           className="primary-button full-width"
           disabled={loading || !topic.trim()}
         >
-          <Icon name="sparkle" size={17} />
-          {loading ? '지식 카드를 만드는 중...' : '지식 카드 만들기'}
+          {loading ? <LoadingSpinner /> : <Icon name="sparkle" size={17} />}
+          {loading ? '생성 중…' : '지식 카드 만들기'}
         </button>
       </form>
 
+      {loading && <GenerationProgress>카드 내용과 삽화를 준비하고 있어요.</GenerationProgress>}
       {error && <p role="alert">{error}</p>}
     </Modal>
   )

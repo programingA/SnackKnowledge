@@ -71,8 +71,110 @@
   object-fit: contain;
 }
 
-.generated-article .generated-card-actions + .text-button {
-  margin-top: 16px;
+.generated-preview-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: 14px;
+}
+
+.generated-preview-nav > .article-back {
+  margin: 0;
+}
+
+.generated-preview-nav .generated-preview-secondary {
+  min-height: 38px;
+  padding: 8px 12px;
+  gap: 6px;
+  border: 1px solid #923827;
+  background: #923827;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.generated-preview-nav .generated-preview-secondary:hover:not(:disabled) {
+  border-color: #762b1d;
+  background: #762b1d;
+}
+
+.generated-preview-article .article-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.generated-preview-article .article-heading > h1,
+.generated-preview-article .article-heading > p {
+  grid-column: 1 / -1;
+}
+
+.generated-preview-article .article-heading > h1 {
+  grid-row: 2;
+}
+
+.generated-preview-article .article-heading > p {
+  grid-row: 3;
+  max-width: none;
+}
+
+.generated-preview-save {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  max-inline-size: min(190px, 100%);
+  text-align: right;
+}
+
+.generated-preview-save .primary-button {
+  min-height: 40px;
+  padding: 8px 12px;
+  gap: 6px;
+}
+
+.generated-preview-save .generated-card-actions {
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+}
+
+.generated-preview-save .generated-card-actions p {
+  font-size: 12px;
+}
+
+.generated-preview-article .article-heading > .generated-preview-hint {
+  grid-row: 4;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 5px 9px;
+  border: 1px solid #e7d9c9;
+  border-radius: 7px;
+  background: #fffaf3;
+  color: #705744;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.generated-preview-hint > svg {
+  flex-shrink: 0;
+}
+
+.generated-study-status {
+  margin-bottom: 12px;
+  color: #715d4d;
+  font-size: 13px;
+}
+
+.generated-study-status .text-button {
+  margin-top: 6px;
+  text-decoration: underline;
 }
 
 .generated-card-actions {

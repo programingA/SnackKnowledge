@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getSession } from './api/account'
 import { getKnowledgeList } from './api/knowledge'
+import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
 import AccountModal from './components/account/AccountModal'
 import InterestSettingsPage from './components/account/InterestSettingsPage'
 import MyPage from './components/account/MyPage'
@@ -27,6 +28,7 @@ import './styles/App.css'
 export default function App() {
   const [modal, setModal] = useState(null)
   const [preview, setPreview] = useState(null)
+  const [previewLoading, setPreviewLoading] = useState(true)
   const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: '' })
   const [username, setUsername] = useState(null)
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
@@ -100,8 +102,24 @@ export default function App() {
     return () => controller.abort()
   }, [])
 
-  function showGeneratedCard(card) {
-    setPreview((current) => ({ card, revision: (current?.revision ?? 0) + 1 }))
+  useEffect(() => {
+    let active = true
+    loadGeneratedPreview().then((card) => {
+      if (active && card) setPreview((current) => current ?? { card, revision: 1, restored: true })
+    }).catch(() => {}).finally(() => {
+      if (active) setPreviewLoading(false)
+    })
+    return () => { active = false }
+  }, [])
+
+  async function showGeneratedCard(card) {
+    let storageWarning = ''
+    try {
+      await storeGeneratedPreview(card)
+    } catch {
+      storageWarning = '브라우저에 미리보기를 보관하지 못했어요. 새로고침 전에 카드를 저장해 주세요.'
+    }
+    setPreview((current) => ({ card, storageWarning, revision: (current?.revision ?? 0) + 1 }))
     setModal(null)
     window.location.hash = '/generated-preview'
   }
@@ -198,8 +216,12 @@ export default function App() {
         <GeneratedPreviewPage
           key={preview?.revision ?? 0}
           card={preview?.card}
+          restored={preview?.restored}
+          storageWarning={preview?.storageWarning}
+          loading={previewLoading}
           username={username}
           visible={isGeneratedPreview}
+          onSignIn={() => setModal('account')}
           onGenerate={() => setModal('generate')}
         />
       )}

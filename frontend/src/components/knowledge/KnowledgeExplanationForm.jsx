@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { getExplanationFeedback } from '../../api/knowledge'
 import AiResponseText from '../ui/AiResponseText'
+import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 
 const MIN_LENGTH = 20
 const MAX_LENGTH = 1500
 
-export default function KnowledgeExplanationForm({ id, onComplete }) {
+export default function KnowledgeExplanationForm({ studyPath, onComplete }) {
+  const inputId = useId()
   const [explanation, setExplanation] = useState('')
   const [feedback, setFeedback] = useState('')
   const [error, setError] = useState('')
@@ -22,7 +24,7 @@ export default function KnowledgeExplanationForm({ id, onComplete }) {
     setFeedback('')
     setError('')
     try {
-      const result = await getExplanationFeedback(id, text)
+      const result = await getExplanationFeedback(studyPath, text)
       if (!result?.trim()) throw new Error('피드백이 비어 있어요. 다시 시도해보세요.')
       setFeedback(result)
       onComplete?.('explanation')
@@ -35,18 +37,20 @@ export default function KnowledgeExplanationForm({ id, onComplete }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="knowledge-explanation">내 말로 설명하기</label>
-      <textarea id="knowledge-explanation" rows={5} value={explanation}
+      <label htmlFor={inputId}>내 말로 설명하기</label>
+      <textarea id={inputId} rows={5} value={explanation}
         onChange={(event) => setExplanation(event.target.value)}
         placeholder="핵심 개념과 그 이유를 20자 이상 적어주세요."
-        aria-describedby="knowledge-explanation-count"
+        aria-describedby={inputId + '-count'}
         maxLength={MAX_LENGTH} disabled={sending} />
       <div className="form-bottom">
-        <small id="knowledge-explanation-count">{length.toLocaleString('ko-KR')} / 1,500자</small>
+        <small id={inputId + '-count'}>{length.toLocaleString('ko-KR')} / 1,500자</small>
         <button type="submit" className="primary-button" disabled={sending || !valid}>
+          {sending && <LoadingSpinner />}
           {sending ? '피드백을 만드는 중...' : '피드백 받기'}
         </button>
       </div>
+      {sending && <GenerationProgress>작성한 설명을 읽고 피드백을 만들고 있어요.</GenerationProgress>}
       {error && <p role="alert">{error}</p>}
       {feedback && (
         <div className="response" role="status">

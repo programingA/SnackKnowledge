@@ -18,16 +18,35 @@ export function getKnowledge(id, signal) {
   return fetchKnowledge('/api/knowledge/' + id, signal, '상세 조회 실패')
 }
 
-export function getKnowledgeConversation(id, signal) {
-  return fetchKnowledge('/api/knowledge/' + id + '/questions', signal, '대화를 불러오지 못했어요')
+async function postStudy(studyPath, activity, body) {
+  const csrf = studyPath.startsWith('/api/study/') ? await getCsrfHeaders() : {}
+  return fetch(studyPath + '/' + activity, {
+    method: 'POST',
+    headers: body === undefined ? csrf : { ...csrf, 'Content-Type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  })
 }
 
-export async function askKnowledgeQuestion(id, question) {
-  const response = await fetch(`/api/knowledge/${id}/questions`, {
+export async function reconnectGeneratedPreview({ category, title, summary, content }, signal) {
+  const csrf = await getCsrfHeaders(signal)
+  const response = await fetch('/api/study/generated/previews', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question }),
+    headers: { ...csrf, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category, title, summary, content }),
+    signal,
   })
+  if (!response.ok) throw new Error('이 카드의 학습 기능에 연결하지 못했어요.')
+  const result = await response.json()
+  if (!result.studyId) throw new Error('이 카드의 학습 기능에 연결하지 못했어요.')
+  return result.studyId
+}
+
+export function getKnowledgeConversation(studyPath, signal) {
+  return fetchKnowledge(studyPath + '/questions', signal, '대화를 불러오지 못했어요')
+}
+
+export async function askKnowledgeQuestion(studyPath, question) {
+  const response = await postStudy(studyPath, 'questions', { question })
 
   if (!response.ok) {
     const messages = {
@@ -43,8 +62,8 @@ export async function askKnowledgeQuestion(id, question) {
   return data.conversation
 }
 
-export async function generateKnowledgeQuiz(id) {
-  const response = await fetch(`/api/knowledge/${id}/quiz`, { method: 'POST' })
+export async function generateKnowledgeQuiz(studyPath) {
+  const response = await postStudy(studyPath, 'quiz')
 
   if (!response.ok) {
     throw new Error(response.status === 409 ? '이 카드에서 다른 문제를 만들지 못했어요. 다시 시도해 주세요.' : `퀴즈를 만들지 못했어요 (${response.status}).`)
@@ -83,12 +102,8 @@ export async function submitKnowledgeQuiz(quizId, selectedIndex) {
 }
 
 
-export async function getExplanationFeedback(id, explanation) {
-  const response = await fetch(`/api/knowledge/${id}/explanations`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(({explanation})),
-  })
+export async function getExplanationFeedback(studyPath, explanation) {
+  const response = await postStudy(studyPath, 'explanations', { explanation })
 
   if (!response.ok) {
     throw new Error(`피드백을 가져오지 못했어요(${response.status}).`)

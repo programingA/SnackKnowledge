@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { categories } from '../../data/sampleKnowledge'
+import { categories, getCategoryStyle } from '../../data/sampleKnowledge'
 import Icon from '../ui/Icon'
 import BookmarkButton from './BookmarkButton'
 
@@ -59,27 +59,30 @@ export default function KnowledgeFeed({ cards, error, bookmarks }) {
       {bookmarks?.error && <p role="alert">{bookmarks.error}</p>}
       {cards === null && !error && <p>불러오는 중...</p>}
       <div className="card-grid" key={`${category}-${search}`}>
-        {visible.map((article, index) => (
-          <article className="knowledge-card" key={article.id} style={{ '--index': index }}>
-            <div className="card-top">
-              <span className="topic-icon tint-blue text-blue">
-                <Icon name="book" size={23} />
-              </span>
-              <span className="category-label text-blue">
-                {article.category}
-              </span>
-              {bookmarks ? <BookmarkButton card={article} bookmarks={bookmarks} compact />
-                : <span className="card-number">#{article.id}</span>}
-            </div>
-            <h3><a className="knowledge-card-link" href={`#/knowledge/${article.id}`}>{article.title}</a></h3>
-            <p>{article.summary}</p>
-            <div className="card-bottom">
-              <span className="card-link">
-                한 입 읽기 <Icon name="arrow" size={16} />
-              </span>
-            </div>
-          </article>
-        ))}
+        {visible.map((article, index) => {
+          const { color, icon } = getCategoryStyle(article.category)
+          return (
+            <article className="knowledge-card" key={article.id} style={{ '--index': index }}>
+              <div className="card-top">
+                <span className={`topic-icon tint-${color} text-${color}`}>
+                  <Icon name={icon} size={23} />
+                </span>
+                <span className={`category-label text-${color}`}>
+                  {article.category}
+                </span>
+                {bookmarks ? <BookmarkButton card={article} bookmarks={bookmarks} compact />
+                  : <span className="card-number">#{article.id}</span>}
+              </div>
+              <h3><a className="knowledge-card-link" href={`#/knowledge/${article.id}`}>{article.title}</a></h3>
+              <p>{article.summary}</p>
+              <div className="card-bottom">
+                <span className="card-link">
+                  한 입 읽기 <Icon name="arrow" size={16} />
+                </span>
+              </div>
+            </article>
+          )
+        })}
       </div>
       {cards !== null && !error && visible.length === 0 && (
         <div className="empty-state">
