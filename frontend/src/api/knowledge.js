@@ -18,6 +18,10 @@ export function getKnowledge(id, signal) {
   return fetchKnowledge('/api/knowledge/' + id, signal, '상세 조회 실패')
 }
 
+export function getKnowledgeConversation(id, signal) {
+  return fetchKnowledge('/api/knowledge/' + id + '/questions', signal, '대화를 불러오지 못했어요')
+}
+
 export async function askKnowledgeQuestion(id, question) {
   const response = await fetch(`/api/knowledge/${id}/questions`, {
     method: 'POST',
@@ -26,18 +30,20 @@ export async function askKnowledgeQuestion(id, question) {
   })
 
   if (!response.ok) {
-    throw new Error(`답변을 가져오지 못했어요(${response.status}).`)
+    const error = new Error(response.status === 429 ? '이 카드의 질문 5회를 모두 사용했어요.' : `답변을 가져오지 못했어요(${response.status}).`)
+    error.status = response.status
+    throw error
   }
 
   const data = await response.json()
-  return data.answer
+  return data.conversation
 }
 
 export async function generateKnowledgeQuiz(id) {
   const response = await fetch(`/api/knowledge/${id}/quiz`, { method: 'POST' })
 
   if (!response.ok) {
-    throw new Error(`퀴즈를 만들지 못했어요 (${response.status}).`)
+    throw new Error(response.status === 409 ? '이 카드에서 다른 문제를 만들지 못했어요. 다시 시도해 주세요.' : `퀴즈를 만들지 못했어요 (${response.status}).`)
   }
 
   return parseKnowledgeQuiz(await response.json())

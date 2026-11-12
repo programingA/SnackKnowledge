@@ -46,15 +46,12 @@ export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onCo
 
   return (
     <section>
-      <h3>퀴즈로 복습하기</h3>
-      <button
-        type="button"
-        className="primary-button"
-        onClick={handleGenerate}
-        disabled={busy}
-      >
-        {loading ? '문제를 불러오는 중...' : practiceId ? '처음부터 다시 풀기' : quiz ? '새 퀴즈 만들기' : '퀴즈 만들기'}
-      </button>
+      <div className="knowledge-quiz-heading">
+        <h3>퀴즈로 복습하기</h3>
+        <button type="button" className="primary-button" onClick={handleGenerate} disabled={busy}>
+          {loading ? '문제를 불러오는 중...' : practiceId ? '처음부터 다시 풀기' : quiz ? '새 퀴즈 만들기' : '퀴즈 만들기'}
+        </button>
+      </div>
 
       {error && <p role="alert">{error}</p>}
 
@@ -88,14 +85,12 @@ export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onCo
               <p>{grade.explanation}</p>
             </div>
           ) : (
-            <button
-              type="button"
-              className="primary-button"
-              disabled={busy || selectedIndex === null}
-              onClick={handleSubmit}
-            >
-              {submitting ? '채점 중...' : '정답 확인하기'}
-            </button>
+            <div className="knowledge-actions">
+              <button type="button" className="primary-button"
+                disabled={busy || selectedIndex === null} onClick={handleSubmit}>
+                {submitting ? '채점 중...' : '정답 확인하기'}
+              </button>
+            </div>
           )}
         </>
       )}

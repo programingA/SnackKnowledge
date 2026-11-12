@@ -128,6 +128,16 @@ npm run dev
 
 백엔드 실행 방법, Java 버전, MySQL 연결 설정 및 AI 환경변수 이름은 구현 후 추가할 예정입니다.
 
+## 기존 지식 카드 삽화 생성
+
+이미지가 없는 DB 카드만 채우려면 MySQL과 OpenAI API 키를 설정한 뒤 `backend` 디렉터리에서 한 번 실행합니다.
+
+```powershell
+.\gradlew.bat bootRun --args="--knowledge.images.backfill=true"
+```
+
+로그에 저장 건수가 나오면 종료하고 평소처럼 서버를 실행합니다. 생성된 삽화는 MySQL의 `knowledge_illustration`에 저장되며, 이미 저장된 삽화는 다시 생성하지 않습니다.
+
 ## 관련 링크
 
 - [GitHub 저장소](https://github.com/programingA/SnackKnowledge)
