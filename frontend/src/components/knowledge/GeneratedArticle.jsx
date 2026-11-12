@@ -1,19 +1,14 @@
-import { articles } from '../../data/sampleKnowledge'
 import AiResponseText from '../ui/AiResponseText'
 import ArticleHeading from './ArticleHeading'
 import './GeneratedCards.css'
 
 export default function GeneratedArticle({ card, showImageFallback = false, children }) {
-  const categoryStyle = articles.find((article) => article.category === card.category)
-
   return (
     <article className="article-page-card generated-article" aria-label={card.title}>
       <ArticleHeading
         category={card.category}
         title={card.title}
         summary={card.summary}
-        color={categoryStyle?.color}
-        icon={categoryStyle?.icon}
       />
       <div className="article-tabs generated-reading-tabs">
         <h2>지식 읽기</h2>

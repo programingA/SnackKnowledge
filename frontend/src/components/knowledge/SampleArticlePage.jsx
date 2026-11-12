@@ -48,10 +48,12 @@ export default function SampleArticlePage({ article }) {
       <div className="article-body" key={tab}>
         {tab === 'read' && (
           <>
-            <p className="article-intro">{article.intro}</p>
-            {article.paragraphs.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
+            <div className="article-reading">
+              <p className="article-intro">{article.intro}</p>
+              {article.paragraphs.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
+            </div>
             <div className="takeaway">
               <Icon name="sparkle" />
               <div>

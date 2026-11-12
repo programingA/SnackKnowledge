@@ -780,7 +780,6 @@ h1 > span:first-of-type:after {
 .article-page {
   max-width: 880px;
   margin-inline: auto;
-  padding-block: 28px 56px;
 }
 
 .article-back {
@@ -800,9 +799,63 @@ h1 > span:first-of-type:after {
   border-radius: 15px 15px 0 0;
 }
 
+.page-shell.article-page {
+  padding-block: clamp(24px, 4vw, 38px) clamp(44px, 7vw, 68px);
+}
+
 .article-page .article-tabs {
   position: static;
   padding-inline: clamp(8px, 4vw, 30px);
+}
+
+.article-reading {
+  display: grid;
+  gap: clamp(18px, 3vw, 24px);
+  max-inline-size: 39rem;
+}
+
+.article-reading > p {
+  margin: 0;
+  color: #625a50;
+  font-size: 15px;
+  line-height: 1.95;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.article-reading > .article-intro {
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.database-article .article-heading {
+  padding-block: clamp(28px, 4vw, 38px) clamp(24px, 4vw, 32px);
+}
+
+.database-article .article-heading > p {
+  max-inline-size: 39rem;
+  font-size: 14px;
+}
+
+.database-article .bookmark-control {
+  margin-top: 20px;
+}
+
+.database-article .article-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  row-gap: 0;
+}
+
+@media (max-width: 400px) {
+  .database-article .article-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.database-article .article-body {
+  padding-block: clamp(26px, 4vw, 36px) clamp(36px, 6vw, 52px);
 }
 
 .takeaway {
