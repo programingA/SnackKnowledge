@@ -19,7 +19,7 @@ export default function SiteHeader({ onBrowse, onAbout, onAccount, username }) {
           <button onClick={onAbout}>한입지식 소개</button>
         </nav>
         <button type="button" className="account-button" onClick={onAccount}>
-          {username ? '내 계정' : '로그인'}
+          {username ? '마이페이지' : '로그인'}
         </button>
       </div>
     </header>
