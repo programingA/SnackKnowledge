@@ -1,6 +1,13 @@
 package com.snackknowledge.backend.controller;
 
 import com.snackknowledge.backend.dto.KnowledgeQuestionRequest;
+import com.snackknowledge.backend.service.KnowledgeIllustrationService;
+import com.snackknowledge.backend.service.KnowledgeStudyService;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+import java.time.Duration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,15 +36,21 @@ public class KnowledgeController {
     private final KnowledgeService knowledgeService;
     private final KnowledgeAnswerService knowledgeAnswerService;
     private final QuizAttemptService quizAttemptService;
+    private final KnowledgeStudyService study;
+    private final KnowledgeIllustrationService illustrations;
 
     public KnowledgeController(
             KnowledgeService knowledgeService,
             KnowledgeAnswerService knowledgeAnswerService,
-            QuizAttemptService quizAttemptService
+            QuizAttemptService quizAttemptService,
+            KnowledgeStudyService study,
+            KnowledgeIllustrationService illustrations
     ){
         this.knowledgeService = knowledgeService;
         this.knowledgeAnswerService = knowledgeAnswerService;
         this.quizAttemptService = quizAttemptService;
+        this.study = study;
+        this.illustrations = illustrations;
     }
 
     @GetMapping("/api/knowledge")
@@ -52,30 +65,32 @@ public class KnowledgeController {
         return knowledgeService.getKnowledge(id);
     }
 
+    @GetMapping("/api/knowledge/{id}/image")
+    public ResponseEntity<byte[]> image(@PathVariable("id") Long id) {
+        return illustrations.find(id).map(bytes -> ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("image/webp"))
+                .cacheControl(CacheControl.maxAge(Duration.ofHours(24)))
+                .body(bytes)).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/api/knowledge/{id}/questions")
+    public KnowledgeStudyService.Conversation conversation(@PathVariable("id") Long id, HttpSession session) {
+        knowledgeService.getKnowledge(id);
+        return study.conversation(session, id);
+    }
+
     @PostMapping("/api/knowledge/{id}/questions")
-    public Map<String, String> receiveQuestion(
+    public KnowledgeStudyService.QuestionResult receiveQuestion(
             @PathVariable("id") Long id,
-            @RequestBody KnowledgeQuestionRequest request
+            @RequestBody KnowledgeQuestionRequest request,
+            HttpSession session
     ) {
-        if (request.question() == null || request.question().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "질문을 입력해주세요."
-            );
-        }
-
-        KnowledgeResponse knowledge =
-                knowledgeService.getKnowledge(id);
-        String answer = knowledgeAnswerService.answer(knowledge, request.question());
-
-        return Map.of("answer", answer);
+        return study.ask(session, knowledgeService.getKnowledge(id), request.question());
     }
 
     @PostMapping("/api/knowledge/{id}/quiz")
     public QuizAttemptService.QuizQuestion generateQuiz(@PathVariable("id") Long id, HttpSession session) {
-        KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
-
-        return quizAttemptService.start(session, id, knowledge.title(), knowledgeAnswerService.generateQuiz(knowledge));
+        return study.nextQuiz(session, knowledgeService.getKnowledge(id));
     }
 
     @PostMapping("/api/quizzes/{quizId}/submissions")
@@ -98,14 +113,15 @@ public class KnowledgeController {
     ) {
         String explanation = request.explanation();
 
-        if (explanation == null || explanation.isBlank()) {
+        int length = explanation == null ? 0 : explanation.strip().codePointCount(0, explanation.strip().length());
+        if (length < 20 || length > 1500) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "설명을 입력해주세요."
+                    HttpStatus.BAD_REQUEST, "설명을 20~1,500자로 입력해주세요."
             );
         }
         KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
 
-        String feedback = knowledgeAnswerService.giveExplanationFeedback(knowledge, explanation);
+        String feedback = knowledgeAnswerService.giveExplanationFeedback(knowledge, explanation.strip());
         return Map.of("feedback", feedback);
     }
 

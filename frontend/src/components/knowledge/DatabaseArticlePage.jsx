@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Icon from '../ui/Icon'
 import { getKnowledge } from '../../api/knowledge'
 import ArticleHeading from './ArticleHeading'
 import BookmarkButton from './BookmarkButton'
@@ -42,6 +43,8 @@ export default function DatabaseArticlePage({ id, username }) {
   const [error, setError] = useState('')
   const learning = useLearningActivity(id, username, Boolean(knowledge))
   const [activity, setActivity] = useState('read')
+  const [imageUnavailable, setImageUnavailable] = useState(false)
+  const quizTab = useRef(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -79,6 +82,7 @@ export default function DatabaseArticlePage({ id, username }) {
               <button
                 type="button"
                 key={value}
+                ref={value === 'quiz' ? quizTab : undefined}
                 className={activity === value ? 'active' : ''}
                 aria-pressed={activity === value}
                 onClick={() => setActivity(value)}
@@ -90,13 +94,35 @@ export default function DatabaseArticlePage({ id, username }) {
           <div className="article-body">
             {learning.error && <p role="alert">{learning.error}</p>}
             {activity === 'read' && (
-              <div className="article-reading">
-                {getReadingParagraphs(knowledge.content).map((paragraph, index) => (
-                  <p key={index} className={index === 0 ? 'article-intro' : undefined}>
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
+              <>
+                {!imageUnavailable && (
+                  <img className="knowledge-illustration" src={`/api/knowledge/${id}/image`}
+                    alt={knowledge.title + ' 주제 삽화'} onError={() => setImageUnavailable(true)} />
+                )}
+                <div className="article-reading">
+                  {getReadingParagraphs(knowledge.content).map((paragraph, index) => (
+                    <p key={index} className={index === 0 ? 'article-intro' : undefined}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+                <div className="takeaway">
+                  <Icon name="sparkle" />
+                  <div>
+                    <strong>이것만 기억해요</strong>
+                    <p>{knowledge.summary}</p>
+                  </div>
+                </div>
+                <div className="knowledge-actions">
+                  <button type="button" className="primary-button" onClick={() => {
+                    setActivity('quiz')
+                    quizTab.current?.focus()
+                  }}>
+                    잘 이해했는지 확인해볼까요?
+                    <Icon name="arrow" size={17} />
+                  </button>
+                </div>
+              </>
             )}
             <div hidden={activity !== 'ask'}>
               <KnowledgeQuestionForm id={id} onComplete={learning.track} />

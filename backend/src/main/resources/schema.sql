@@ -70,3 +70,8 @@ CREATE TABLE IF NOT EXISTS community_share (
     INDEX community_share_status (status, submitted_at),
     FOREIGN KEY (username, card_id) REFERENCES member_generated_card(username, card_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS knowledge_illustration (
+    knowledge_id BIGINT PRIMARY KEY,
+    image MEDIUMBLOB NOT NULL
+);
