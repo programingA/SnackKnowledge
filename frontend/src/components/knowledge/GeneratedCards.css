@@ -45,14 +45,6 @@
   color: #a53428;
 }
 
-.saved-generated-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-top: 12px;
-  border-radius: 10px;
-}
-
 .generated-article {
   overflow-wrap: anywhere;
 }
@@ -63,12 +55,6 @@
   border-bottom: 2px solid var(--coral);
   color: var(--coral);
   font-size: 12px;
-}
-
-.generated-article .saved-generated-image {
-  margin: 0 0 20px;
-  max-height: 400px;
-  object-fit: contain;
 }
 
 .generated-preview-nav {
@@ -102,31 +88,36 @@
 
 .generated-preview-article .article-heading {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  column-gap: 12px;
-}
-
-.generated-preview-article .article-heading > h1,
-.generated-preview-article .article-heading > p {
-  grid-column: 1 / -1;
-}
-
-.generated-preview-article .article-heading > h1 {
-  grid-row: 2;
-}
-
-.generated-preview-article .article-heading > p {
-  grid-row: 3;
-  max-width: none;
+  justify-items: center;
 }
 
 .generated-preview-save {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: end;
   max-inline-size: min(190px, 100%);
-  text-align: right;
+  margin-top: 10px;
+}
+
+@media (min-width: 600px) {
+  .generated-preview-article .article-heading {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 12px;
+  }
+
+  .generated-preview-article .article-heading > .category-label {
+    grid-area: 1 / 2;
+  }
+
+  .generated-preview-article .article-heading > :is(h1, p) {
+    grid-column: 1 / -1;
+  }
+
+  .generated-preview-save {
+    grid-area: 1 / 3;
+    justify-self: end;
+    margin-top: 0;
+    text-align: right;
+  }
 }
 
 .generated-preview-save .primary-button {
@@ -136,7 +127,7 @@
 }
 
 .generated-preview-save .generated-card-actions {
-  align-items: flex-end;
+  align-items: center;
   flex-direction: column;
   gap: 4px;
   margin-top: 0;
@@ -147,12 +138,10 @@
 }
 
 .generated-preview-article .article-heading > .generated-preview-hint {
-  grid-row: 4;
-  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 12px 0 0;
+  margin: 8px auto 0;
   padding: 5px 9px;
   border: 1px solid #e7d9c9;
   border-radius: 7px;

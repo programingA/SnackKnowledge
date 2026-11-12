@@ -9,7 +9,7 @@ export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(
   const reading = (
     <>
       {card.imageBase64 && (
-        <img className="saved-generated-image knowledge-illustration"
+        <img className="knowledge-illustration"
           src={'data:image/webp;base64,' + card.imageBase64} alt={card.title + ' 주제 삽화'} />
       )}
       {showImageFallback && !card.imageBase64 && (
