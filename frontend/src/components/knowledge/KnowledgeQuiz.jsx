@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/knowledge'
 import { startWrongAnswerQuiz } from '../../api/wrongAnswers'
+import Icon from '../ui/Icon'
 
 export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onComplete }) {
   const questionId = useId()
@@ -44,19 +45,29 @@ export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onCo
     }
   }
 
-  const generateButton = (
-    <button type="button" className="primary-button" onClick={handleGenerate} disabled={busy}>
-      {loading ? '문제를 불러오는 중...' : practiceId ? '처음부터 다시 풀기' : quiz ? '새 퀴즈 만들기' : '퀴즈 만들기'}
-    </button>
-  )
+  const generateLabel = loading ? '문제를 불러오는 중...'
+    : practiceId ? '처음부터 다시 풀기'
+      : quiz ? '새 퀴즈 만들기' : '퀴즈 만들기'
 
   return (
     <section className="knowledge-quiz-panel" aria-labelledby={questionId + '-title'}>
-      <h3 id={questionId + '-title'}>퀴즈로 복습하기</h3>
+      <div className="knowledge-quiz-header">
+        <h3 id={questionId + '-title'}>퀴즈로 복습하기</h3>
+        {quiz && (
+          <button type="button" className="text-button quiz-regenerate-button" onClick={handleGenerate} disabled={busy}>
+            <Icon name="refresh" size={16} />
+            {generateLabel}
+          </button>
+        )}
+      </div>
       {error && <p role="alert">{error}</p>}
 
       {!quiz ? (
-        <div className="knowledge-quiz-start">{generateButton}</div>
+        <div className="knowledge-quiz-start">
+          <button type="button" className="primary-button" onClick={handleGenerate} disabled={busy}>
+            {generateLabel}
+          </button>
+        </div>
       ) : (
         <>
           <div className="quiz-question">
@@ -79,15 +90,14 @@ export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onCo
               <p>{grade.explanation}</p>
             </div>
           )}
-          <div className="knowledge-quiz-footer">
-            {generateButton}
-            {!grade && (
+          {!grade && (
+            <div className="knowledge-quiz-footer">
               <button type="button" className="primary-button quiz-submit-button"
                 disabled={busy || selectedIndex === null} onClick={handleSubmit}>
                 {submitting ? '채점 중...' : '정답 확인하기'}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </>
       )}
     </section>
