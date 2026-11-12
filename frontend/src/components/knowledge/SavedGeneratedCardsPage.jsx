@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { deleteGeneratedCard, getGeneratedCard, getGeneratedCards } from '../../api/generatedCards'
 import GeneratedCardBody from './GeneratedCardBody'
+import CommunityShareControls from './CommunityShareControls'
 import './GeneratedCards.css'
 
 export default function SavedGeneratedCardsPage({ username, id, onSignIn }) {
@@ -67,6 +68,7 @@ function SavedCards({ id }) {
         <p className="category-label">{data.category}</p>
         <h2>{data.title}</h2>
         <GeneratedCardBody card={data} />
+        <CommunityShareControls id={id} />
         <div className="generated-card-actions">
           {confirmDelete ? (
             <>
