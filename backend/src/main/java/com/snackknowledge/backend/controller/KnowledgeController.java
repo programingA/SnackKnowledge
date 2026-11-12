@@ -21,6 +21,7 @@ import com.snackknowledge.backend.dto.KnowledgeGenerateResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.security.Principal;
 
 @RestController
 public class KnowledgeController {
@@ -74,16 +75,18 @@ public class KnowledgeController {
     public QuizAttemptService.QuizQuestion generateQuiz(@PathVariable("id") Long id, HttpSession session) {
         KnowledgeResponse knowledge = knowledgeService.getKnowledge(id);
 
-        return quizAttemptService.start(session, knowledgeAnswerService.generateQuiz(knowledge));
+        return quizAttemptService.start(session, id, knowledge.title(), knowledgeAnswerService.generateQuiz(knowledge));
     }
 
     @PostMapping("/api/quizzes/{quizId}/submissions")
     public QuizAttemptService.QuizGrade submitQuiz(
             @PathVariable("quizId") UUID quizId,
             @RequestBody QuizSubmission submission,
-            HttpServletRequest request
+            HttpServletRequest request,
+            Principal principal
     ) {
-        return quizAttemptService.grade(request.getSession(false), quizId, submission.selectedIndex());
+        return quizAttemptService.grade(request.getSession(false), quizId, submission.selectedIndex(),
+                principal == null ? null : principal.getName());
     }
 
     public record QuizSubmission(Integer selectedIndex) {}

@@ -1,9 +1,10 @@
 import { useId, useState } from 'react'
 import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/knowledge'
+import { startWrongAnswerQuiz } from '../../api/wrongAnswers'
 
-export default function KnowledgeQuiz({ id, onComplete }) {
+export default function KnowledgeQuiz({ id, practiceId, initialQuiz = null, onComplete }) {
   const questionId = useId()
-  const [quiz, setQuiz] = useState(null)
+  const [quiz, setQuiz] = useState(initialQuiz)
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [grade, setGrade] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -17,7 +18,7 @@ export default function KnowledgeQuiz({ id, onComplete }) {
     setLoading(true)
     setError('')
     try {
-      setQuiz(await generateKnowledgeQuiz(id))
+      setQuiz(await (practiceId ? startWrongAnswerQuiz(practiceId) : generateKnowledgeQuiz(id)))
       setSelectedIndex(null)
       setGrade(null)
     } catch (error) {
@@ -52,7 +53,7 @@ export default function KnowledgeQuiz({ id, onComplete }) {
         onClick={handleGenerate}
         disabled={busy}
       >
-        {loading ? '문제를 만드는 중...' : quiz ? '새 퀴즈 만들기' : '퀴즈 만들기'}
+        {loading ? '문제를 불러오는 중...' : practiceId ? '처음부터 다시 풀기' : quiz ? '새 퀴즈 만들기' : '퀴즈 만들기'}
       </button>
 
       {error && <p role="alert">{error}</p>}

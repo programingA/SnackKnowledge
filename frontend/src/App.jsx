@@ -4,6 +4,7 @@ import AccountModal from './components/account/AccountModal'
 import BookmarksPage from './components/knowledge/BookmarksPage'
 import LearningHistoryPage from './components/knowledge/LearningHistoryPage'
 import SavedGeneratedCardsPage from './components/knowledge/SavedGeneratedCardsPage'
+import WrongAnswersPage from './components/knowledge/WrongAnswersPage'
 import { articles } from './data/sampleKnowledge'
 import AboutModal from './components/layout/AboutModal'
 import CuriosityBanner from './components/layout/CuriosityBanner'
@@ -25,10 +26,12 @@ export default function App() {
   const [listRevision, setListRevision] = useState(0)
   const isBookmarksPage = locationHash === '#/bookmarks'
   const isLearningHistoryPage = locationHash === '#/learning-history'
+  const isWrongAnswersPage = locationHash === '#/wrong-answers'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const focusedPageId = isBookmarksPage ? 'bookmarks-page'
     : isLearningHistoryPage ? 'learning-history-page'
-      : generatedCardRoute ? 'generated-cards-page' : null
+      : generatedCardRoute ? 'generated-cards-page'
+        : isWrongAnswersPage ? 'wrong-answers-page' : null
 
   useEffect(() => {
     const controller = new AbortController()
@@ -122,6 +125,9 @@ export default function App() {
           id={generatedCardRoute[1]}
           onSignIn={() => setModal('account')}
         />
+      )}
+      {isWrongAnswersPage && (
+        <WrongAnswersPage username={username} onSignIn={() => setModal('account')} />
       )}
       <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero
