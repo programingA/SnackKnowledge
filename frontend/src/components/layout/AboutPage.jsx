@@ -38,7 +38,7 @@ export default function AboutPage({ onGenerate }) {
         </p>
 
         <div className="about-actions">
-          <a className="primary-button about-browse" href="#knowledge-feed">
+          <a className="primary-button about-browse" href="#">
             지식 둘러보기 <Icon name="arrow" size={17} />
           </a>
           <button type="button" className="primary-button about-generate" onClick={onGenerate}>

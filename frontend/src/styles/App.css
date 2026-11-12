@@ -1314,8 +1314,8 @@ textarea {
 
 .about-intro {
   padding: clamp(34px, 7vw, 72px) 20px;
-  border-block: 1px solid #ead8c9;
-  background: #f7eee5;
+  border-block: 1px solid #efe4d9;
+  background: #faf4ed;
   text-align: center;
 }
 

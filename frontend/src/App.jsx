@@ -130,7 +130,7 @@ export default function App() {
 
   function scrollToFeed() {
     if (focusedPageId) {
-      window.location.hash = 'knowledge-feed'
+      window.location.hash = isAboutPage ? '' : 'knowledge-feed'
       return
     }
     const reduceMotion = window.matchMedia(
