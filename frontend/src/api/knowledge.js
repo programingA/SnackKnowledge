@@ -40,7 +40,10 @@ export async function generateKnowledgeQuiz(id) {
     throw new Error(`퀴즈를 만들지 못했어요 (${response.status}).`)
   }
 
-  const quiz = await response.json()
+  return parseKnowledgeQuiz(await response.json())
+}
+
+export function parseKnowledgeQuiz(quiz) {
   if (typeof quiz?.quizId !== 'string' || typeof quiz.question !== 'string' || !quiz.question.trim()
       || !Array.isArray(quiz.options) || quiz.options.length !== 4
       || quiz.options.some((option) => typeof option !== 'string' || !option.trim())) {

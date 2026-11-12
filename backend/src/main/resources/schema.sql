@@ -34,3 +34,21 @@ CREATE TABLE IF NOT EXISTS member_generated_card (
     INDEX member_generated_recent (username, saved_at),
     FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS member_wrong_answer (
+    username VARCHAR(30) NOT NULL,
+    quiz_id CHAR(36) NOT NULL,
+    knowledge_id BIGINT NOT NULL,
+    knowledge_title VARCHAR(255) NOT NULL,
+    question TEXT NOT NULL,
+    option_a TEXT NOT NULL,
+    option_b TEXT NOT NULL,
+    option_c TEXT NOT NULL,
+    option_d TEXT NOT NULL,
+    correct_index TINYINT NOT NULL,
+    explanation TEXT NOT NULL,
+    saved_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (username, quiz_id),
+    INDEX member_wrong_recent (username, saved_at),
+    FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
