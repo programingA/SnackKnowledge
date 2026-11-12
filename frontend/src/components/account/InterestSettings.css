@@ -1,0 +1,91 @@
+.page-shell.interests-page {
+  max-width: 820px;
+  min-height: 48vh;
+  padding-block: 30px 60px;
+}
+
+.interests-back {
+  color: #a44833;
+  font-weight: 700;
+}
+
+.interests-page h1 {
+  margin: 14px 0 8px;
+  font-size: clamp(26px, 5vw, 36px);
+}
+
+.interests-description {
+  color: #706255;
+  margin-bottom: 20px;
+}
+
+.interests-panel {
+  padding: clamp(16px, 5vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fffefa;
+}
+
+.interests-panel > .primary-button {
+  margin-top: 12px;
+}
+
+.interest-form fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.interest-form legend {
+  margin-bottom: 12px;
+  font-weight: 750;
+}
+
+.interest-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.interest-options .interest-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #eadfd0;
+  border-radius: 9px;
+  background: #fffaf5;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.interest-option:has(input:checked) {
+  border-color: #c27c64;
+  background: #f8e7dc;
+}
+
+.interest-option input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #a44833;
+}
+
+.interest-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  color: #706255;
+}
+
+.interest-message {
+  margin-top: 12px;
+}
+
+.interest-message [role='alert'] {
+  color: #a53428;
+}

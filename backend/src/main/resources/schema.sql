@@ -52,3 +52,10 @@ CREATE TABLE IF NOT EXISTS member_wrong_answer (
     INDEX member_wrong_recent (username, saved_at),
     FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS member_interest (
+    username VARCHAR(30) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    PRIMARY KEY (username, category),
+    FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
