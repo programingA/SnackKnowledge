@@ -220,8 +220,6 @@ export default function App() {
         <MyPage
           username={username}
           onSignIn={() => setModal('account')}
-          onSignOut={handleSignOut}
-          signingOut={signingOut}
         />
       )}
       {communityRoute && <CommunityPage id={communityRoute[1]} />}

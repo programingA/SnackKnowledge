@@ -10,12 +10,12 @@ const destinations = [
   { route: 'wrong-answers', title: '오답 노트', icon: 'check', key: 'wrongAnswers', unit: '개', description: '다시 풀 수 있는 문제' },
 ]
 
-export default function MyPage({ username, onSignIn, onSignOut, signingOut }) {
+export default function MyPage({ username, onSignIn }) {
   return (
     <main className="page-shell my-page" id="my-page" tabIndex={-1}>
       <a className="my-page-back" href="#knowledge-feed">← 지식 목록으로</a>
       <h1>마이페이지</h1>
-      {username ? <MemberDashboard key={username} username={username} onSignOut={onSignOut} signingOut={signingOut} /> : (
+      {username ? <MemberDashboard key={username} username={username} /> : (
         <div className="my-page-panel">
           <p>로그인하면 내 카드와 학습 활동을 볼 수 있어요.</p>
           <button className="primary-button" type="button" onClick={onSignIn}>로그인</button>
@@ -25,7 +25,7 @@ export default function MyPage({ username, onSignIn, onSignOut, signingOut }) {
   )
 }
 
-function MemberDashboard({ username, onSignOut, signingOut }) {
+function MemberDashboard({ username }) {
   const [overview, setOverview] = useState(null)
   const [loadError, setLoadError] = useState('')
   const [revision, setRevision] = useState(0)
@@ -44,9 +44,6 @@ function MemberDashboard({ username, onSignOut, signingOut }) {
     <>
       <div className="my-page-panel my-page-member">
         <p><strong>{username}</strong>님</p>
-        <button type="button" className="my-page-logout" disabled={signingOut} onClick={onSignOut}>
-          {signingOut ? '로그아웃 중…' : '로그아웃'}
-        </button>
       </div>
       {loadError && (
         <div className="my-page-error">
@@ -75,7 +72,7 @@ function MemberDashboard({ username, onSignOut, signingOut }) {
       <div className="my-page-panel my-page-interests">
         <div className="my-page-interests-heading">
           <h2>관심 분야</h2>
-          <a className="text-button" href="#/interests">관심 분야 설정 <Icon name="arrow" size={16} /></a>
+          <a className="primary-button" href="#/interests">관심 분야 설정 <Icon name="arrow" size={16} /></a>
         </div>
         {overview && (overview.interests.length ? (
           <ul aria-label="선택한 관심 분야">
