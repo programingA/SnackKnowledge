@@ -1,15 +1,21 @@
+import Icon from '../ui/Icon'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 
-export default function GeneratedPreviewPage({ card, username, visible, onGenerate }) {
+export default function GeneratedPreviewPage({ card, username, visible, onSignIn, onGenerate }) {
   return (
     <main className="page-shell article-page" id="generated-preview-page" tabIndex={-1} hidden={!visible}>
       <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
       {card ? (
         <GeneratedArticle card={card} studyPath={card.studyId ? `/api/study/generated/preview/${card.studyId}` : undefined}
           showImageFallback={Object.hasOwn(card, 'imageBase64')}>
-          <SaveGeneratedCardButton card={card} username={username} />
-          <button className="text-button" type="button" onClick={onGenerate}>다른 지식 만들기</button>
+          <SaveGeneratedCardButton card={card} username={username} onSignIn={onSignIn} />
+          <div className="generated-preview-actions">
+            <button className="generated-secondary-button" type="button" onClick={onGenerate}>
+              <Icon name="sparkle" size={17} />
+              다른 지식 만들기
+            </button>
+          </div>
         </GeneratedArticle>
       ) : (
         <div className="generated-cards-panel">

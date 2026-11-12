@@ -71,8 +71,33 @@
   object-fit: contain;
 }
 
-.generated-article .generated-card-actions + .text-button {
+.generated-sign-in-note .generated-sign-in-link {
+  margin-top: 10px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.generated-preview-actions {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 16px;
+}
+
+.generated-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: 1px solid #dec5b4;
+  border-radius: 9px;
+  background: #fff8ef;
+  color: #864d38;
+  font-weight: 700;
+}
+
+.generated-secondary-button:hover {
+  border-color: #c76e51;
+  background: #f8e4d8;
 }
 
 .generated-card-actions {

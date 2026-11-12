@@ -200,6 +200,7 @@ export default function App() {
           card={preview?.card}
           username={username}
           visible={isGeneratedPreview}
+          onSignIn={() => setModal('account')}
           onGenerate={() => setModal('generate')}
         />
       )}
