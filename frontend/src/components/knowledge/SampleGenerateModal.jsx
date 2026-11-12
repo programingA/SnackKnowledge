@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { generateKnowledge } from '../../api/knowledge'
-import AiResponseText from '../ui/AiResponseText'
+import GeneratedCardBody from './GeneratedCardBody'
+import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 import Icon from '../ui/Icon'
 import Modal from '../ui/Modal'
 
-export default function SampleGenerateModal({ onClose }) {
+export default function SampleGenerateModal({ onClose, username }) {
   const [topic, setTopic] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -79,11 +80,11 @@ export default function SampleGenerateModal({ onClose }) {
       {error && <p role="alert">{error}</p>}
 
       {result && (
-        <div className="response" role="status">
+        <div className="response">
           <small>{result.category}</small>
           <strong>{result.title}</strong>
-          <p>{result.summary}</p>
-          <AiResponseText text={result.content} />
+          <GeneratedCardBody card={result} />
+          <SaveGeneratedCardButton card={result} username={username} onClose={onClose} />
         </div>
       )}
     </Modal>
