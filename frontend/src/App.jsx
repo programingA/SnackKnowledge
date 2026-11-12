@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getSession } from './api/account'
+import { getSession, signOut } from './api/account'
 import { getKnowledgeList } from './api/knowledge'
 import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
 import AccountModal from './components/account/AccountModal'
@@ -31,6 +31,8 @@ export default function App() {
   const [previewLoading, setPreviewLoading] = useState(true)
   const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: '' })
   const [username, setUsername] = useState(null)
+  const [signingOut, setSigningOut] = useState(false)
+  const [signOutError, setSignOutError] = useState('')
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
   const databaseId = locationHash.match(/^#\/knowledge\/(\d+)$/)?.[1]
   const sampleId = locationHash.match(/^#\/sample\/([a-z]+)$/)?.[1]
@@ -146,9 +148,19 @@ export default function App() {
     window.location.hash = '/knowledge/' + card.id
   }
 
-  function openAccount() {
-    if (username) window.location.hash = '/my-page'
-    else setModal('account')
+  async function handleSignOut() {
+    if (signingOut) return
+    setSigningOut(true)
+    setSignOutError('')
+    try {
+      await signOut()
+      setUsername(null)
+      if (window.location.hash === '#/my-page') window.location.hash = 'knowledge-feed'
+    } catch (error) {
+      setSignOutError(error.message)
+    } finally {
+      setSigningOut(false)
+    }
   }
 
   return (
@@ -160,7 +172,11 @@ export default function App() {
         isCommunity={Boolean(communityRoute)}
         onBrowse={scrollToFeed}
         onAbout={() => setModal('about')}
-        onAccount={openAccount}
+        onAccount={() => setModal('account')}
+        isMyPage={isMyPage}
+        onSignOut={handleSignOut}
+        signingOut={signingOut}
+        signOutError={signOutError}
         username={username}
       />
       {(databaseId || sample) && (
@@ -204,10 +220,8 @@ export default function App() {
         <MyPage
           username={username}
           onSignIn={() => setModal('account')}
-          onSignedOut={() => {
-            setUsername(null)
-            window.location.hash = 'knowledge-feed'
-          }}
+          onSignOut={handleSignOut}
+          signingOut={signingOut}
         />
       )}
       {communityRoute && <CommunityPage id={communityRoute[1]} />}

@@ -7,39 +7,3 @@
   line-height: 1.6;
 }
 
-.site-header .community-link {
-  color: #794937;
-  font-size: 13px;
-  white-space: nowrap;
-}
-
-.site-header .community-link[aria-current='page'] {
-  color: #a44833;
-  font-weight: 750;
-}
-
-@media (max-width: 480px) {
-  .site-header .header-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    height: auto;
-    gap: 0 12px;
-    padding-block: 10px 0;
-  }
-
-  .site-header nav {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    height: 38px;
-    gap: 16px;
-  }
-
-  .site-header .account-button {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .site-header .community-link {
-    font-size: 11px;
-  }
-}

@@ -1,6 +1,8 @@
 import Icon from '../ui/Icon'
 
-export default function SiteHeader({ onBrowse, onAbout, onAccount, username, isCommunity }) {
+export default function SiteHeader({
+  onBrowse, onAbout, onAccount, username, isCommunity, isMyPage, onSignOut, signingOut, signOutError,
+}) {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -13,17 +15,28 @@ export default function SiteHeader({ onBrowse, onAbout, onAccount, username, isC
           </span>
         </a>
         <nav aria-label="주 메뉴">
-          <button className="nav-active" onClick={onBrowse}>
+          <button className={!isCommunity && !isMyPage ? 'nav-active' : undefined} onClick={onBrowse}>
             지식 둘러보기
           </button>
           <button onClick={onAbout}>한입지식 소개</button>
-          <a className="community-link" href="#/community" aria-current={isCommunity ? 'page' : undefined}>
-            커뮤니티
-          </a>
+          <a href="#/community" aria-current={isCommunity ? 'page' : undefined}>커뮤니티</a>
+          {username && (
+            <a href="#/my-page" aria-current={isMyPage ? 'page' : undefined}>마이페이지</a>
+          )}
         </nav>
-        <button type="button" className="account-button" onClick={onAccount}>
-          {username ? '마이페이지' : '로그인'}
-        </button>
+        <div className="header-account">
+          {username ? (
+            <>
+              <span className="header-username" title={username}>{username}</span>
+              <button type="button" className="account-button" onClick={onSignOut} disabled={signingOut}>
+                {signingOut ? '로그아웃 중…' : '로그아웃'}
+              </button>
+              {signOutError && <p className="header-account-error" role="alert">{signOutError}</p>}
+            </>
+          ) : (
+            <button type="button" className="account-button" onClick={onAccount}>로그인</button>
+          )}
+        </div>
       </div>
     </header>
   )
