@@ -150,6 +150,9 @@ export default function AccountModal({ username, onChange, onClose }) {
       {username && (
         <a className="text-button" href="#/learning-history" onClick={onClose}>학습 기록</a>
       )}
+      {username && (
+        <a className="text-button" href="#/generated-cards" onClick={onClose}>생성한 카드</a>
+      )}
       {!username && (
         <div className="account-footer">
           <span>{registering ? '이미 계정이 있나요?' : '처음 오셨나요?'}</span>
