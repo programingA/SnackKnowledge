@@ -1,15 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { generateKnowledge } from '../../api/knowledge'
-import GeneratedCardBody from './GeneratedCardBody'
-import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 import Icon from '../ui/Icon'
 import Modal from '../ui/Modal'
 
-export default function SampleGenerateModal({ onClose, username }) {
+export default function SampleGenerateModal({ onClose, onGenerated }) {
   const [topic, setTopic] = useState('')
-  const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const request = useRef(null)
+
+  useEffect(() => () => request.current?.abort(), [])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -19,15 +19,16 @@ export default function SampleGenerateModal({ onClose, username }) {
 
     setLoading(true)
     setError('')
-    setResult(null)
+    const controller = new AbortController()
+    request.current = controller
 
     try {
-      const card = await generateKnowledge(trimmedTopic)
-      setResult(card)
+      const card = await generateKnowledge(trimmedTopic, controller.signal)
+      if (!controller.signal.aborted) onGenerated(card)
     } catch (error) {
-      setError(error.message)
+      if (!controller.signal.aborted) setError(error.message)
     } finally {
-      setLoading(false)
+      if (!controller.signal.aborted) setLoading(false)
     }
   }
 
@@ -78,15 +79,6 @@ export default function SampleGenerateModal({ onClose, username }) {
       </form>
 
       {error && <p role="alert">{error}</p>}
-
-      {result && (
-        <div className="response">
-          <small>{result.category}</small>
-          <strong>{result.title}</strong>
-          <GeneratedCardBody card={result} />
-          <SaveGeneratedCardButton card={result} username={username} onClose={onClose} />
-        </div>
-      )}
     </Modal>
   )
 }

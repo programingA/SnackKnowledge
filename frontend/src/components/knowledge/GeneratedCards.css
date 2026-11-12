@@ -35,8 +35,7 @@
   list-style: none;
 }
 
-.saved-generated-list h2,
-.saved-generated-card h2 {
+.saved-generated-list h2 {
   margin: 7px 0;
   font-size: 20px;
 }
@@ -54,9 +53,26 @@
   border-radius: 10px;
 }
 
-.saved-generated-card .generated-card-summary {
-  margin: 12px 0;
-  font-weight: 600;
+.generated-article {
+  overflow-wrap: anywhere;
+}
+
+.generated-reading-tabs h2 {
+  margin: 0;
+  padding: 17px 6px 15px;
+  border-bottom: 2px solid var(--coral);
+  color: var(--coral);
+  font-size: 12px;
+}
+
+.generated-article .saved-generated-image {
+  margin: 0 0 20px;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.generated-article .generated-card-actions + .text-button {
+  margin-top: 16px;
 }
 
 .generated-card-actions {

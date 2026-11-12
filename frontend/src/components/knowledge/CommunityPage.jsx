@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 import { getCommunityCard, getCommunityCards } from '../../api/community'
-import GeneratedCardBody from './GeneratedCardBody'
+import GeneratedArticle from './GeneratedArticle'
 import './Community.css'
 
 export default function CommunityPage({ id }) {
   return (
-    <main className="page-shell generated-cards-page" id="community-page" tabIndex={-1}>
-      <a className="generated-cards-back" href={id ? '#/community' : '#knowledge-feed'}>
+    <main className={id ? "page-shell article-page" : "page-shell generated-cards-page"} id="community-page" tabIndex={-1}>
+      <a className="article-back" href={id ? '#/community' : '#knowledge-feed'}>
         {id ? '← 커뮤니티 목록으로' : '← 지식 목록으로'}
       </a>
-      <h1>커뮤니티</h1>
+      {!id && <h1>커뮤니티</h1>}
       <CommunityCards key={id ?? 'list'} id={id} />
     </main>
   )
@@ -39,13 +39,7 @@ function CommunityCards({ id }) {
     </div>
   )
   if (data === null) return <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>
-  if (id) return (
-    <article className="generated-cards-panel saved-generated-card">
-      <p className="category-label">{data.category}</p>
-      <h2>{data.title}</h2>
-      <GeneratedCardBody card={data} />
-    </article>
-  )
+  if (id) return <GeneratedArticle card={data} />
   if (!data.length) return <p className="generated-cards-panel">아직 공개된 카드가 없어요.</p>
 
   return (

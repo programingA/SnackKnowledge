@@ -88,11 +88,12 @@ export async function getExplanationFeedback(id, explanation) {
   return data.feedback
 }
 
-export async function generateKnowledge(topic) {
+export async function generateKnowledge(topic, signal) {
   const response = await fetch('/api/knowledge/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ topic }),
+    signal,
   })
 
   if (!response.ok) {
