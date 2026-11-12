@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getExplanationFeedback } from "../../api/knowledge";
 import AiResponseText from '../ui/AiResponseText'
 
-export default function KnowledgeExplanationForm({ id }) {
+export default function KnowledgeExplanationForm({ id, onComplete }) {
     const [explanation, setExplanation] = useState('')
     const [feedback, setFeedback] = useState('')
     const [error, setError] = useState('')
@@ -24,6 +24,7 @@ export default function KnowledgeExplanationForm({ id }) {
                 throw new Error('피드백이 비어 있어요. 다시 시도해보세요.')
             }
             setFeedback(result)
+            onComplete?.('explanation')
         } catch (error) {
             setError(error.message)
         } finally {

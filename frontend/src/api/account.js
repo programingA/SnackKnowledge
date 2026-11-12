@@ -12,8 +12,8 @@ async function request(path, options) {
   return response
 }
 
-export async function getCsrfHeaders() {
-  const tokenResponse = await request('csrf', { cache: 'no-store' })
+export async function getCsrfHeaders(signal) {
+  const tokenResponse = await request('csrf', { cache: 'no-store', signal })
   const { header, token } = await tokenResponse.json()
   return { [header]: token }
 }

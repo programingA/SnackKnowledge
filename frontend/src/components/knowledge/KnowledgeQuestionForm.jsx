@@ -2,7 +2,7 @@ import { useState } from "react";
 import { askKnowledgeQuestion } from "../../api/knowledge";
 import AiResponseText from '../ui/AiResponseText'
 
-export default function KnowledgeQuestionForm({ id }) {
+export default function KnowledgeQuestionForm({ id, onComplete }) {
     const [question, setQuestion] = useState('')
     const [answer, setAnswer] = useState('')
     const [error, setError] = useState('')
@@ -23,6 +23,7 @@ export default function KnowledgeQuestionForm({ id }) {
                 throw new Error('답변이 비어 있어요. 다시 질문해보세요.')
             }
             setAnswer(reply)
+            onComplete?.('question')
         } catch (error) {
             setError(error.message)
         } finally {

@@ -1,0 +1,67 @@
+.page-shell.learning-page {
+  max-width: 820px;
+  min-height: 48vh;
+  padding-block: 30px 60px;
+}
+
+.learning-back {
+  color: var(--coral);
+  font-weight: 700;
+}
+
+.learning-page h1 {
+  margin: 14px 0 22px;
+  font-size: clamp(26px, 5vw, 36px);
+  letter-spacing: -1px;
+}
+
+.learning-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.learning-list li,
+.learning-state {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffefa;
+}
+
+.learning-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 14px;
+}
+
+.learning-list h2 button {
+  background: none;
+  padding: 4px 0;
+  font-size: 16px;
+  font-weight: 750;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.learning-list h2 button:hover,
+.learning-activity {
+  color: #9a4732;
+}
+
+.learning-activity,
+.learning-list time {
+  font-size: 12px;
+}
+
+.learning-list time {
+  color: #74695f;
+}
+
+.learning-state .primary-button {
+  margin-top: 12px;
+}

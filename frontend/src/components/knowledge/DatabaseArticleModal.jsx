@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getKnowledge } from '../../api/knowledge'
 import BookmarkButton from './BookmarkButton'
+import useLearningActivity from './useLearningActivity'
 import KnowledgeQuestionForm from './KnowledgeQuestionForm'
 import KnowledgeQuiz from './KnowledgeQuiz'
 import KnowledgeExplanationForm from './KnowledgeExplanationForm'
@@ -9,6 +10,7 @@ import Modal from '../ui/Modal'
 export default function DatabaseArticleModal({ id, username, onClose }) {
   const [knowledge, setKnowledge] = useState(null)
   const [error, setError] = useState('')
+  const learning = useLearningActivity(id, username, Boolean(knowledge))
 
   useEffect(() => {
     const controller = new AbortController()
@@ -48,9 +50,10 @@ export default function DatabaseArticleModal({ id, username, onClose }) {
           </div>
           <div className="article-body">
             <p>{knowledge.content}</p>
-            <KnowledgeQuestionForm id={id} />
-            <KnowledgeQuiz id={id} />
-            <KnowledgeExplanationForm key={id} id={id} />
+            {learning.error && <p role="alert">{learning.error}</p>}
+            <KnowledgeQuestionForm id={id} onComplete={learning.track} />
+            <KnowledgeQuiz id={id} onComplete={learning.track} />
+            <KnowledgeExplanationForm key={id} id={id} onComplete={learning.track} />
           </div>
         </>
       )}
