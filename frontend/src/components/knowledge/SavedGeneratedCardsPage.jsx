@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { deleteGeneratedCard, getGeneratedCard, getGeneratedCards } from '../../api/generatedCards'
-import GeneratedCardBody from './GeneratedCardBody'
+import GeneratedArticle from './GeneratedArticle'
 import CommunityShareControls from './CommunityShareControls'
 import './GeneratedCards.css'
 
 export default function SavedGeneratedCardsPage({ username, id, onSignIn }) {
   return (
-    <main className="page-shell generated-cards-page" id="generated-cards-page" tabIndex={-1}>
-      <a className="generated-cards-back" href={id ? '#/generated-cards' : '#knowledge-feed'}>
+    <main className={id ? "page-shell article-page" : "page-shell generated-cards-page"} id="generated-cards-page" tabIndex={-1}>
+      <a className="article-back" href={id ? '#/generated-cards' : '#knowledge-feed'}>
         {id ? '← 생성한 카드로' : '← 지식 목록으로'}
       </a>
-      <h1>생성한 카드</h1>
+      {(!id || !username) && <h1>생성한 카드</h1>}
       {username ? <SavedCards key={username + ':' + (id ?? 'list')} id={id} /> : (
         <div className="generated-cards-panel">
           <p>로그인하면 저장한 카드를 볼 수 있어요.</p>
@@ -64,10 +64,7 @@ function SavedCards({ id }) {
   if (data === null) return <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>
   if (id) {
     return (
-      <article className="generated-cards-panel saved-generated-card">
-        <p className="category-label">{data.category}</p>
-        <h2>{data.title}</h2>
-        <GeneratedCardBody card={data} />
+      <GeneratedArticle card={data}>
         <CommunityShareControls id={id} />
         <div className="generated-card-actions">
           {confirmDelete ? (
@@ -84,7 +81,7 @@ function SavedCards({ id }) {
           ) : <button className="generated-delete" type="button" onClick={() => setConfirmDelete(true)}>카드 삭제</button>}
           {deleteError && <p className="generated-card-error" role="alert">{deleteError}</p>}
         </div>
-      </article>
+      </GeneratedArticle>
     )
   }
   if (!data.length) return <p className="generated-cards-panel">아직 저장한 카드가 없어요.</p>

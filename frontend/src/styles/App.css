@@ -708,7 +708,7 @@ h1 > span:first-of-type:after {
 .article-heading {
   padding: 34px 38px 25px;
 }
-.article-heading h2 {
+.article-heading :is(h1, h2) {
   font-size: 28px;
   letter-spacing: -1px;
   line-height: 1.45;
@@ -777,6 +777,34 @@ h1 > span:first-of-type:after {
   font-weight: 500;
   color: #4f483e;
 }
+.article-page {
+  max-width: 880px;
+  margin-inline: auto;
+  padding-block: 28px 56px;
+}
+
+.article-back {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--coral);
+  font-weight: 700;
+}
+
+.article-page-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fffefa;
+}
+
+.article-page-card .article-heading {
+  border-radius: 15px 15px 0 0;
+}
+
+.article-page .article-tabs {
+  position: static;
+  padding-inline: clamp(8px, 4vw, 30px);
+}
+
 .takeaway {
   display: flex;
   align-items: start;
@@ -1266,7 +1294,7 @@ textarea {
   .article-heading {
     padding: 29px 23px 23px;
   }
-  .article-heading h2 {
+  .article-heading :is(h1, h2) {
     font-size: 23px;
   }
   .article-body {

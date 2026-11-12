@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { saveGeneratedCard } from '../../api/generatedCards'
 import './GeneratedCards.css'
 
-export default function SaveGeneratedCardButton({ card, username, onClose }) {
+export default function SaveGeneratedCardButton({ card, username }) {
   const cardId = useRef(null)
   const [saving, setSaving] = useState(false)
   const [savedId, setSavedId] = useState(null)
@@ -28,7 +28,7 @@ export default function SaveGeneratedCardButton({ card, username, onClose }) {
         savedId ? (
           <>
             <p role="status">내 카드에 저장했어요.</p>
-            <a className="text-button" href={`#/generated-cards/${savedId}`} onClick={onClose}>저장한 카드 보기</a>
+            <a className="text-button" href={`#/generated-cards/${savedId}`}>저장한 카드 보기</a>
           </>
         ) : (
           <button className="primary-button" type="button" onClick={handleSave} disabled={saving}>

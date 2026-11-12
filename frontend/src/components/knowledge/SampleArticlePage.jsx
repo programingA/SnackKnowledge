@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import Icon from '../ui/Icon'
-import Modal from '../ui/Modal'
+import ArticleHeading from './ArticleHeading'
 
-export default function SampleArticleModal({ article, onClose }) {
+export default function SampleArticlePage({ article }) {
   const [tab, setTab] = useState('read')
   const [question, setQuestion] = useState('')
   const [asked, setAsked] = useState(false)
@@ -20,23 +20,19 @@ export default function SampleArticleModal({ article, onClose }) {
     explanation.includes(word),
   )
   return (
-    <Modal
-      label={article.title.replace('\n', ' ')}
-      onClose={onClose}
-      className="article-modal"
-    >
-      <div className={`article-heading tint-${article.color}`}>
-        <span className={`category-label text-${article.color}`}>
-          <Icon name={article.icon} size={17} />
-          {article.category} 한 입
-        </span>
-        <h2>{article.title.replace('\n', ' ')}</h2>
-        <p>{article.summary}</p>
+    <article className="article-page-card" aria-label={article.title.replace('\n', ' ')}>
+      <ArticleHeading
+        category={article.category}
+        title={article.title.replace('\n', ' ')}
+        summary={article.summary}
+        color={article.color}
+        icon={article.icon}
+      >
         <span className="reading-time">
           <Icon name="clock" size={14} />
           {article.time}분 읽기 · 샘플 콘텐츠
         </span>
-      </div>
+      </ArticleHeading>
       <div className="article-tabs" aria-label="학습 활동">
         {tabs.map(([id, label]) => (
           <button
@@ -250,6 +246,6 @@ export default function SampleArticleModal({ article, onClose }) {
           </>
         )}
       </div>
-    </Modal>
+    </article>
   )
 }
