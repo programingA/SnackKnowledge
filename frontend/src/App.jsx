@@ -271,6 +271,7 @@ export default function App() {
       )}
       {modal === 'about' && (
         <AboutModal
+          onGenerate={() => setModal('generate')}
           onClose={closeModal}
           onBrowse={() => {
             closeModal()
