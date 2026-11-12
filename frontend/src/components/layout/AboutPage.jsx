@@ -2,13 +2,13 @@ import Icon from '../ui/Icon'
 
 export default function AboutPage({ onGenerate }) {
   return (
-    <main className="page-shell about-page" id="about-page" tabIndex={-1}>
+    <main className="about-page" id="about-page" tabIndex={-1}>
       <header className="about-intro">
         <h1>한입지식 소개</h1>
         <p>일상에서 생긴 궁금증을 짧게 읽고, 질문과 복습을 통해 이해를 넓히는 학습 서비스예요.</p>
       </header>
 
-      <div className="about-content">
+      <div className="page-shell about-content">
         <section className="about-section" aria-labelledby="about-discover-title">
           <h2 id="about-discover-title">궁금한 주제에서 시작해요</h2>
           <p>하늘의 색부터 와이파이의 원리까지, 과학·기술·일상 속 지식을 카드로 읽을 수 있어요. 목록에 없는 주제는 AI로 새 카드를 만들어 살펴볼 수 있어요.</p>
