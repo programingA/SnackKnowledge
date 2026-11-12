@@ -3,7 +3,7 @@ import { getKnowledgeList } from '../../api/knowledge'
 import { categories } from '../../data/sampleKnowledge'
 import Icon from '../ui/Icon'
 
-export default function KnowledgeFeed({ onOpenArticle }) {
+export default function KnowledgeFeed() {
   const [category, setCategory] = useState('전체')
   const [search, setSearch] = useState('')
   const [dbKnowledge, setDbKnowledge] = useState(null)
@@ -75,11 +75,11 @@ export default function KnowledgeFeed({ onOpenArticle }) {
       {dbKnowledge === null && !dbError && <p>불러오는 중...</p>}
       <div className="card-grid" key={`${category}-${search}`}>
         {visible.map((article, index) => (
-          <button
+          <a
             className="knowledge-card"
             key={article.id}
             style={{ '--index': index }}
-            onClick={() => onOpenArticle(article)}
+            href={`#/knowledge/${article.id}`}
           >
             <div className="card-top">
               <span className="topic-icon tint-blue text-blue">
@@ -97,7 +97,7 @@ export default function KnowledgeFeed({ onOpenArticle }) {
                 한 입 읽기 <Icon name="arrow" size={16} />
               </span>
             </div>
-          </button>
+          </a>
         ))}
       </div>
       {dbKnowledge !== null && !dbError && visible.length === 0 && (

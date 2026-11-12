@@ -805,6 +805,11 @@ h1 > span:first-of-type:after {
   padding-inline: clamp(8px, 4vw, 30px);
 }
 
+.article-page-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .takeaway {
   display: flex;
   align-items: start;

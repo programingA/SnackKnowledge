@@ -14,7 +14,7 @@ import Hero from './components/layout/Hero'
 import SiteFooter from './components/layout/SiteFooter'
 import CommunityPage from './components/knowledge/CommunityPage'
 import SiteHeader from './components/layout/SiteHeader'
-import DatabaseArticleModal from './components/knowledge/DatabaseArticleModal'
+import DatabaseArticlePage from './components/knowledge/DatabaseArticlePage'
 import KnowledgeFeed from './components/knowledge/KnowledgeFeed'
 import KnowledgeRecommendations from './components/knowledge/KnowledgeRecommendations'
 import SampleArticlePage from './components/knowledge/SampleArticlePage'
@@ -23,12 +23,11 @@ import GeneratedPreviewPage from './components/knowledge/GeneratedPreviewPage'
 import './styles/App.css'
 
 export default function App() {
-  const [selected, setSelected] = useState(null)
   const [modal, setModal] = useState(null)
   const [preview, setPreview] = useState(null)
   const [username, setUsername] = useState(null)
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
-  const [listRevision, setListRevision] = useState(0)
+  const databaseId = locationHash.match(/^#\/knowledge\/(\d+)$/)?.[1]
   const sampleId = locationHash.match(/^#\/sample\/([a-z]+)$/)?.[1]
   const sample = articles.find((article) => article.id === sampleId)
   const isGeneratedPreview = locationHash === '#/generated-preview'
@@ -40,7 +39,7 @@ export default function App() {
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
   const focusedPageId = isGeneratedPreview ? 'generated-preview-page'
-    : sample ? 'article-page'
+    : databaseId || sample ? 'article-page'
     : communityRoute ? 'community-page'
     : isBookmarksPage ? 'bookmarks-page'
     : isLearningHistoryPage ? 'learning-history-page'
@@ -60,7 +59,6 @@ export default function App() {
   useEffect(() => {
     function handleHashChange() {
       setLocationHash(window.location.hash)
-      setSelected(null)
       setModal(null)
     }
     window.addEventListener('hashchange', handleHashChange)
@@ -76,14 +74,8 @@ export default function App() {
     }
   }, [focusedPageId, locationHash, preview?.revision])
 
-  function openArticle(article) {
-    setModal(null)
-    setSelected(article)
-  }
-
-  function closeArticle() {
-    setSelected(null)
-    if (focusedPageId) setListRevision((current) => current + 1)
+  function openArticle(card) {
+    window.location.hash = '/knowledge/' + card.id
   }
 
   function closeModal() {
@@ -131,26 +123,28 @@ export default function App() {
         onAccount={openAccount}
         username={username}
       />
-      {sample && (
+      {(databaseId || sample) && (
         <main className="page-shell article-page" id="article-page" tabIndex={-1}>
           <a className="article-back" href="#knowledge-feed">← 지식 목록으로</a>
-          <SampleArticlePage key={sample.id} article={sample} />
+          {databaseId ? (
+            <DatabaseArticlePage key={databaseId} id={databaseId} username={username} />
+          ) : (
+            <SampleArticlePage key={sample.id} article={sample} />
+          )}
         </main>
       )}
       {isBookmarksPage && (
         <BookmarksPage
-          key={listRevision}
           username={username}
           onSignIn={() => setModal('account')}
-          onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
+          onOpenArticle={openArticle}
         />
       )}
       {isLearningHistoryPage && (
         <LearningHistoryPage
-          key={listRevision}
           username={username}
           onSignIn={() => setModal('account')}
-          onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
+          onOpenArticle={openArticle}
         />
       )}
       {generatedCardRoute && (
@@ -197,15 +191,10 @@ export default function App() {
         {username && !focusedPageId && (
           <KnowledgeRecommendations
             key={username}
-            paused={Boolean(selected)}
-            onOpenArticle={(card) => openArticle({ ...card, source: 'database' })}
+            onOpenArticle={openArticle}
           />
         )}
-        <KnowledgeFeed
-          onOpenArticle={(article) =>
-            openArticle({ ...article, source: 'database' })
-          }
-        />
+        <KnowledgeFeed />
         <CuriosityBanner onGenerate={() => setModal('generate')} />
         <div className="closing-note">
           어제보다 조금 더 넓어진 세상.<span>오늘도 한 입, 잘 먹었습니다.</span>
@@ -213,14 +202,6 @@ export default function App() {
       </main>
       <SiteFooter />
 
-      {selected && (
-        <DatabaseArticleModal
-          key={selected.id}
-          id={selected.id}
-          username={username}
-          onClose={closeArticle}
-        />
-      )}
       {modal === 'generate' && (
         <SampleGenerateModal onGenerated={showGeneratedCard} onClose={closeModal} />
       )}
