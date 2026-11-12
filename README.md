@@ -128,6 +128,19 @@ npm run dev
 
 백엔드 실행 방법, Java 버전, MySQL 연결 설정 및 AI 환경변수 이름은 구현 후 추가할 예정입니다.
 
+## 커뮤니티 관리자 설정
+
+1. 검토에 사용할 계정을 회원가입하고, Spring Boot를 실행해 테이블을 생성합니다.
+2. DBeaver에서 프로젝트의 MySQL 데이터베이스를 선택한 뒤, `your_username`을 가입한 아이디로 바꿔 아래 SQL을 한 번 실행합니다.
+
+```sql
+INSERT INTO community_moderator (username)
+SELECT username FROM member_account WHERE username = 'your_username';
+```
+
+3. 해당 계정으로 접속해 **마이페이지 → 커뮤니티 검토**를 엽니다. 이미 로그인 중이라면 페이지를 새로고침합니다. 일반 계정으로 생성 카드를 보관하고 공개 검토를 요청하면, 관리자 화면에서 본문과 이미지를 확인한 뒤 승인하거나 반려할 수 있습니다.
+4. 승인된 카드는 커뮤니티에 공개되며, 반려된 카드는 작성자의 보관함에서 상태를 확인할 수 있습니다.
+
 ## 관련 링크
 
 - [GitHub 저장소](https://github.com/programingA/SnackKnowledge)

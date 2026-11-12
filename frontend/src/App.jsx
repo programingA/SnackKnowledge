@@ -13,6 +13,7 @@ import CuriosityBanner from './components/layout/CuriosityBanner'
 import Hero from './components/layout/Hero'
 import SiteFooter from './components/layout/SiteFooter'
 import CommunityPage from './components/knowledge/CommunityPage'
+import CommunityReviewPage from './components/knowledge/CommunityReviewPage'
 import SiteHeader from './components/layout/SiteHeader'
 import DatabaseArticleModal from './components/knowledge/DatabaseArticleModal'
 import KnowledgeFeed from './components/knowledge/KnowledgeFeed'
@@ -24,7 +25,8 @@ import './styles/App.css'
 export default function App() {
   const [selected, setSelected] = useState(null)
   const [modal, setModal] = useState(null)
-  const [username, setUsername] = useState(null)
+  const [session, setSession] = useState(null)
+  const username = session?.username
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
   const [listRevision, setListRevision] = useState(0)
   const isBookmarksPage = locationHash === '#/bookmarks'
@@ -34,7 +36,9 @@ export default function App() {
   const isMyPage = locationHash === '#/my-page'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
-  const focusedPageId = communityRoute ? 'community-page'
+  const reviewRoute = locationHash.match(/^#\/community-review(?:\/([0-9a-f-]{36}))?$/i)
+  const focusedPageId = reviewRoute ? 'community-review-page'
+    : communityRoute ? 'community-page'
     : isBookmarksPage ? 'bookmarks-page'
     : isLearningHistoryPage ? 'learning-history-page'
       : generatedCardRoute ? 'generated-cards-page'
@@ -45,7 +49,7 @@ export default function App() {
   useEffect(() => {
     const controller = new AbortController()
     getSession(controller.signal)
-      .then((session) => setUsername(session.username))
+      .then(setSession)
       .catch(() => {})
     return () => controller.abort()
   }, [])
@@ -150,14 +154,16 @@ export default function App() {
       {isMyPage && (
         <MyPage
           username={username}
+          canReviewCommunity={session?.canReviewCommunity}
           onSignIn={() => setModal('account')}
           onSignedOut={() => {
-            setUsername(null)
+            setSession(null)
             window.location.hash = 'knowledge-feed'
           }}
         />
       )}
       {communityRoute && <CommunityPage id={communityRoute[1]} />}
+      {reviewRoute && <CommunityReviewPage id={reviewRoute[1]} />}
 
       <main className="page-shell" hidden={Boolean(focusedPageId)}>
         <Hero
@@ -204,7 +210,7 @@ export default function App() {
       )}
       {modal === 'account' && !username && (
         <AccountModal
-          onChange={setUsername}
+          onChange={setSession}
           onClose={() => setModal(null)}
         />
       )}
