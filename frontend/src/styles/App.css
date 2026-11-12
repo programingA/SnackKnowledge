@@ -206,7 +206,7 @@ h1 > span:first-of-type:after {
     box-shadow 0.3s;
   animation: rise-in 0.7s 0.1s both;
 }
-.featured-card:hover {
+a.featured-card:hover {
   transform: translateY(-5px) rotate(1deg);
   box-shadow: 8px 14px 0 #f0ebe3;
 }
@@ -320,7 +320,35 @@ h1 > span:first-of-type:after {
   margin-top: 6px;
   color: #594530;
 }
+.featured-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 5px 0 0;
+  color: #6d543b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.featured-bottom {
+  gap: 12px;
+}
+
+.featured-bottom > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.featured-bottom h2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
 .round-arrow {
+  flex-shrink: 0;
   width: 43px;
   height: 43px;
   border: 1px solid #b59b7b;
@@ -330,7 +358,7 @@ h1 > span:first-of-type:after {
   color: #7f6242;
   transition: transform 0.25s;
 }
-.featured-card:hover .round-arrow {
+a.featured-card:hover .round-arrow {
   transform: rotate(-30deg);
 }
 .knowledge-section {
@@ -1251,9 +1279,6 @@ textarea {
     left: 70%;
     top: 20px;
     transform: translateX(-50%) scale(0.95);
-  }
-  .featured-bottom > div {
-    max-width: 60%;
   }
   .featured-top {
     font-size: 9px;

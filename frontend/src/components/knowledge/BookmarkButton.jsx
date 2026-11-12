@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getBookmarkStatus, setBookmark } from '../../api/bookmarks'
+import Icon from '../ui/Icon'
 import './Bookmarks.css'
 
 export default function BookmarkButton({ id }) {
@@ -35,18 +36,22 @@ export default function BookmarkButton({ id }) {
     }
   }
 
+  const label = pending ? '북마크 처리 중' : saved === null
+    ? (error ? '북마크 다시 확인' : '북마크 확인 중')
+    : (saved ? '북마크 해제' : '북마크 저장')
+
   return (
     <div className="bookmark-control">
       <button
         type="button"
-        className="bookmark-button"
+        className="bookmark-button bookmark-icon-button"
+        aria-label={label}
+        title={label}
         aria-pressed={saved ?? undefined}
         disabled={pending || (saved === null && !error)}
         onClick={handleClick}
       >
-        {pending ? '처리 중...' : saved === null
-          ? (error ? '북마크 다시 확인' : '북마크 확인 중...')
-          : (saved ? '북마크 해제' : '북마크 저장')}
+        <Icon name="bookmark" size={20} fill={saved ? 'currentColor' : 'none'} />
       </button>
       {error && <p role="alert">{error}</p>}
     </div>

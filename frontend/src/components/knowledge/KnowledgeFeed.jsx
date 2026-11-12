@@ -1,28 +1,11 @@
-import { useEffect, useState } from 'react'
-import { getKnowledgeList } from '../../api/knowledge'
+import { useState } from 'react'
 import { categories } from '../../data/sampleKnowledge'
 import Icon from '../ui/Icon'
 
-export default function KnowledgeFeed() {
+export default function KnowledgeFeed({ cards, error }) {
   const [category, setCategory] = useState('전체')
   const [search, setSearch] = useState('')
-  const [dbKnowledge, setDbKnowledge] = useState(null)
-  const [dbError, setDbError] = useState('')
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    getKnowledgeList(controller.signal)
-      .then((data) => setDbKnowledge(data))
-      .catch((error) => {
-        if (error.name !== 'AbortError') {
-          setDbError(error.message)
-        }
-      })
-
-    return () => controller.abort()
-  }, [])
-  const visible = (dbKnowledge ?? []).filter((article) => {
+  const visible = (cards ?? []).filter((article) => {
     const matchesCategory = category === '전체' || article.category === category
     const searchableText = `${article.title.replace('\n', ' ')} ${article.summary} ${article.category}`
     return matchesCategory && searchableText.includes(search.trim())
@@ -71,8 +54,8 @@ export default function KnowledgeFeed() {
           총 <b>{visible.length}</b>개의 지식
         </span>
       </div>
-      {dbError && <p role="alert">{dbError}</p>}
-      {dbKnowledge === null && !dbError && <p>불러오는 중...</p>}
+      {error && <p role="alert">{error}</p>}
+      {cards === null && !error && <p>불러오는 중...</p>}
       <div className="card-grid" key={`${category}-${search}`}>
         {visible.map((article, index) => (
           <a
@@ -100,7 +83,7 @@ export default function KnowledgeFeed() {
           </a>
         ))}
       </div>
-      {dbKnowledge !== null && !dbError && visible.length === 0 && (
+      {cards !== null && !error && visible.length === 0 && (
         <div className="empty-state">
           <Icon name="search" size={32} />
           <h3>아직 준비되지 않은 호기심이에요.</h3>

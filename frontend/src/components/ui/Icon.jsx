@@ -59,6 +59,7 @@ export default function Icon({ name, size = 20, ...props }) {
       </>
     ),
     check: <path d="m5 12 4 4L19 6" />,
+    bookmark: <path d="M6 4h12v16l-6-4-6 4V4Z" />,
     book: (
       <>
         <path d="M12 5C8 2 4 3 2 4v15c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-1-7-2-10 1v15" />
