@@ -933,11 +933,18 @@ a.featured-card:hover .round-arrow {
 }
 
 .study-article .article-heading {
-  padding-block: clamp(28px, 4vw, 38px) clamp(24px, 4vw, 32px);
+  padding-block: clamp(16px, 2.6vw, 24px) clamp(14px, 2.3vw, 22px);
+  text-align: center;
+}
+
+.study-article .article-heading > h1 {
+  padding-inline: 0;
+  margin-block: 8px 6px;
 }
 
 .study-article .article-heading > p {
   max-inline-size: 39rem;
+  margin-inline: auto;
   font-size: 14px;
 }
 
