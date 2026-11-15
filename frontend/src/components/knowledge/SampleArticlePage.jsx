@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import Icon from '../ui/Icon'
 import ArticleHeading from './ArticleHeading'
+import QuizOptions from './QuizOptions'
 
 export default function SampleArticlePage({ article }) {
+  const questionId = useId()
+  const quizTab = useRef(null)
+  const resultHeading = useRef(null)
   const [tab, setTab] = useState('read')
   const [question, setQuestion] = useState('')
   const [asked, setAsked] = useState(false)
@@ -19,6 +23,11 @@ export default function SampleArticlePage({ article }) {
   const keywordMatch = article.keywords.some((word) =>
     explanation.includes(word),
   )
+
+  useEffect(() => {
+    if (submitted) resultHeading.current?.focus()
+  }, [submitted])
+
   return (
     <article className="article-page-card" aria-label={article.title.replace('\n', ' ')}>
       <ArticleHeading
@@ -33,10 +42,12 @@ export default function SampleArticlePage({ article }) {
           {article.time}분 읽기 · 샘플 콘텐츠
         </span>
       </ArticleHeading>
-      <div className="article-tabs" aria-label="학습 활동">
+      <div className="article-tabs" role="group" aria-label="학습 활동">
         {tabs.map(([id, label]) => (
           <button
+            type="button"
             key={id}
+            ref={id === 'quiz' ? quizTab : undefined}
             className={tab === id ? 'active' : ''}
             aria-pressed={tab === id}
             onClick={() => setTab(id)}
@@ -61,7 +72,10 @@ export default function SampleArticlePage({ article }) {
                 <p>{article.takeaway}</p>
               </div>
             </div>
-            <button className="primary-button" onClick={() => setTab('quiz')}>
+            <button className="primary-button" onClick={() => {
+              setTab('quiz')
+              quizTab.current?.focus()
+            }}>
               잘 이해했는지 확인해볼까요?
               <Icon name="arrow" size={17} />
             </button>
@@ -137,31 +151,10 @@ export default function SampleArticlePage({ article }) {
             <p className="muted">미리 준비한 객관식 퀴즈로 가볍게 확인해요.</p>
             <div className="quiz-question">
               <span>QUESTION 01</span>
-              <h4>{article.question}</h4>
+              <h4 id={questionId}>{article.question}</h4>
             </div>
-            <fieldset className="quiz-options">
-              <legend className="sr-only">정답 선택</legend>
-              {article.options.map((option, index) => (
-                <label
-                  key={option}
-                  className={`option ${choice === index ? 'chosen' : ''} ${submitted && index === article.correct ? 'correct' : ''} ${submitted && choice === index && index !== article.correct ? 'wrong' : ''}`}
-                >
-                  <input
-                    type="radio"
-                    name="quiz"
-                    value={index}
-                    checked={choice === index}
-                    disabled={submitted}
-                    onChange={() => setChoice(index)}
-                  />
-                  <span className="option-number">{index + 1}</span>
-                  {option}
-                  {submitted && index === article.correct && (
-                    <Icon name="check" size={18} />
-                  )}
-                </label>
-              ))}
-            </fieldset>
+            <QuizOptions questionId={questionId} options={article.options} selectedIndex={choice}
+              correctIndex={submitted ? article.correct : undefined} onSelect={setChoice} />
             {!submitted ? (
               <button
                 className="primary-button full-width"
@@ -172,12 +165,11 @@ export default function SampleArticlePage({ article }) {
                 <Icon name="arrow" size={17} />
               </button>
             ) : (
-              <div className="response" role="status">
-                <strong>
-                  {choice === article.correct
-                    ? '정답이에요! 지식 한 입, 잘 소화했네요.'
-                    : '괜찮아요. 알아가는 과정이니까요.'}
-                </strong>
+              <div className="response quiz-result" role="status">
+                <h4 className="quiz-result-title" ref={resultHeading} tabIndex={-1}>
+                  {choice === article.correct ? '정답이에요' : '오답이에요'}
+                </h4>
+                <p>정답: {article.options[article.correct]}</p>
                 <p>{article.explanation}</p>
                 <button
                   className="text-button"

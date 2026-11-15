@@ -1,8 +1,12 @@
 import Icon from '../ui/Icon'
 
 export default function SiteHeader({
-  onBrowse, isAboutPage, onAccount, username, isCommunity, isMyPage, onSignOut, signingOut, signOutError,
+  onBrowse, isAboutPage, onAccount, username, isCommunity, isMyPage, isMemberSubpage,
+  onSignOut, signingOut, signOutError,
 }) {
+  const isBrowseSection = !isAboutPage && !isCommunity && !isMyPage && !isMemberSubpage
+  const memberCurrent = isMyPage ? 'page' : isMemberSubpage ? 'location' : undefined
+
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -15,13 +19,13 @@ export default function SiteHeader({
           </span>
         </a>
         <nav aria-label="주 메뉴">
-          <button className={!isAboutPage && !isCommunity && !isMyPage ? 'nav-active' : undefined} onClick={onBrowse}>
+          <button type="button" aria-current={isBrowseSection ? 'location' : undefined} onClick={onBrowse}>
             지식 둘러보기
           </button>
           <a href="#/about" aria-current={isAboutPage ? 'page' : undefined}>한입지식 소개</a>
           <a href="#/community" aria-current={isCommunity ? 'page' : undefined}>커뮤니티</a>
           {username && (
-            <a href="#/my-page" aria-current={isMyPage ? 'page' : undefined}>마이페이지</a>
+            <a href="#/my-page" aria-current={memberCurrent}>마이페이지</a>
           )}
         </nav>
         <div className="header-account">

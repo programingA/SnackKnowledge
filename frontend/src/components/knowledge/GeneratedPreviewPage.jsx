@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { reconnectGeneratedPreview } from '../../api/study'
-import Icon from '../ui/Icon'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 
@@ -23,14 +22,6 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
 
   return (
     <main className="page-shell article-page" id="generated-preview-page" tabIndex={-1} hidden={!visible}>
-      {card && (
-        <div className="generated-preview-nav">
-          <button className="primary-button generated-preview-secondary" type="button" onClick={onGenerate}>
-            <Icon name="sparkle" size={16} />
-            다른 지식 만들기
-          </button>
-        </div>
-      )}
       {storageWarning && <p className="generated-study-status" role="status">{storageWarning}</p>}
       {card && !studyId && (studyError ? (
         <div className="generated-study-status">
@@ -46,13 +37,17 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
           showImageFallback={Object.hasOwn(card, 'imageBase64')}
           headerActions={(
             <>
-              <div className="generated-preview-save">
-                <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
+              <div className="generated-preview-actions" role="group" aria-label="생성한 카드 관리">
+                <div className="generated-preview-save">
+                  <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
+                </div>
+                <button className="generated-preview-secondary" type="button" onClick={onGenerate}>
+                  다른 지식 만들기
+                </button>
               </div>
               {!username && (
                 <p className="generated-preview-hint">
-                  <Icon name="info" size={14} />
-                  로그인하면 이 카드를 보관함에 저장할 수 있어요.
+                  로그인한 뒤 저장 버튼을 눌러주세요.
                 </p>
               )}
             </>
