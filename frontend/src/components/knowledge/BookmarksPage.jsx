@@ -1,11 +1,11 @@
-import BookmarkButton from './BookmarkButton'
+import KnowledgeCard from './KnowledgeCard'
 import './Bookmarks.css'
 
-export default function BookmarksPage({ bookmarks, onSignIn, onOpenArticle }) {
+export default function BookmarksPage({ bookmarks, onSignIn }) {
   return (
     <main className="page-shell bookmarks-page" id="bookmarks-page" tabIndex={-1}>
       <h1>내 북마크</h1>
-      {bookmarks ? <BookmarkList bookmarks={bookmarks} onOpenArticle={onOpenArticle} /> : (
+      {bookmarks ? <BookmarkList bookmarks={bookmarks} /> : (
         <div className="bookmark-empty">
           <p>로그인하면 저장한 카드를 볼 수 있어요.</p>
           <button className="primary-button" type="button" onClick={onSignIn}>로그인</button>
@@ -15,7 +15,7 @@ export default function BookmarksPage({ bookmarks, onSignIn, onOpenArticle }) {
   )
 }
 
-function BookmarkList({ bookmarks, onOpenArticle }) {
+function BookmarkList({ bookmarks }) {
   const { cards, error, retry } = bookmarks
 
   if (error) return (
@@ -29,15 +29,10 @@ function BookmarkList({ bookmarks, onOpenArticle }) {
   if (!cards.length) return <p className="bookmark-empty">아직 저장한 카드가 없어요. 지식 목록에서 북마크를 저장해보세요.</p>
 
   return (
-    <ul className="bookmark-list">
+    <ul className="knowledge-card-list" role="list">
       {cards.map((card) => (
         <li key={card.id}>
-          <div>
-            <p className="category-label">{card.category}</p>
-            <h2><button className="bookmark-card-title" type="button" onClick={() => onOpenArticle(card)}>{card.title}</button></h2>
-            <p>{card.summary}</p>
-          </div>
-          <BookmarkButton card={card} bookmarks={bookmarks} compact />
+          <KnowledgeCard card={card} bookmarks={bookmarks} heading="h2" />
         </li>
       ))}
     </ul>

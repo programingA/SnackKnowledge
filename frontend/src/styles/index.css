@@ -11,15 +11,23 @@
   font-weight: 400;
   font-size: 14px;
   --coral: #d65e43;
+  --coral-ink: #ad4632;
+  --coral-ink-hover: #923a29;
   --muted: #817e75;
   --line: #e9e6df;
+  --text-primary: #34332e;
+  --text-secondary: #5e554a;
+  --text-muted: #70665b;
+  --surface-paper: #fffefa;
+  --surface-raised: #f3efe8;
+  --border-neutral: #e2dcd1;
+  --surface-transition: 160ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  min-width: 360px;
 }
 button,
 input,
@@ -46,6 +54,13 @@ button:focus-visible,
 a:focus-visible {
   outline: 3px solid #c75a3f;
   outline-offset: 5px;
+}
+main[tabindex='-1']:focus {
+  outline: none;
+}
+:is(h1, h2)[tabindex='-1']:focus-visible {
+  outline: 2px solid var(--coral-ink);
+  outline-offset: 4px;
 }
 a {
   color: inherit;

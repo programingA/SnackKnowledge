@@ -1,11 +1,14 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { generateKnowledgeQuiz, submitKnowledgeQuiz } from '../../api/study'
 import { startWrongAnswerQuiz } from '../../api/wrongAnswers'
 import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import Icon from '../ui/Icon'
+import QuizOptions from './QuizOptions'
 
 export default function KnowledgeQuiz({ studyPath, practiceId, initialQuiz = null, onComplete }) {
   const questionId = useId()
+  const questionHeading = useRef(null)
+  const resultHeading = useRef(null)
   const [quiz, setQuiz] = useState(initialQuiz)
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [grade, setGrade] = useState(null)
@@ -13,6 +16,14 @@ export default function KnowledgeQuiz({ studyPath, practiceId, initialQuiz = nul
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const busy = loading || submitting
+
+  useEffect(() => {
+    if (quiz && document.activeElement === document.body) questionHeading.current?.focus()
+  }, [quiz])
+
+  useEffect(() => {
+    if (grade && document.activeElement === document.body) resultHeading.current?.focus()
+  }, [grade])
 
   async function handleGenerate() {
     if (busy) return
@@ -76,21 +87,16 @@ export default function KnowledgeQuiz({ studyPath, practiceId, initialQuiz = nul
       ) : (
         <>
           <div className="quiz-question">
-            <h4 id={questionId}>{quiz.question}</h4>
+            <h4 id={questionId} ref={questionHeading} tabIndex={-1}>{quiz.question}</h4>
           </div>
-          <fieldset className="quiz-options" aria-labelledby={questionId} disabled={busy || grade !== null}>
-            {quiz.options.map((option, index) => (
-              <label className="option" key={index}>
-                <input type="radio" name={questionId} checked={selectedIndex === index}
-                  onChange={() => setSelectedIndex(index)} />
-                {option}
-              </label>
-            ))}
-          </fieldset>
+          <QuizOptions questionId={questionId} options={quiz.options} selectedIndex={selectedIndex}
+            correctIndex={grade?.correctIndex} onSelect={setSelectedIndex} disabled={busy} />
 
           {grade && (
-            <div className="response" role="status">
-              <strong>{grade.correct ? '정답이에요!' : '오답이에요.'}</strong>
+            <div className="response quiz-result" role="status">
+              <h4 className="quiz-result-title" ref={resultHeading} tabIndex={-1}>
+                {grade.correct ? '정답이에요' : '오답이에요'}
+              </h4>
               <p>정답: {quiz.options[grade.correctIndex]}</p>
               <p>{grade.explanation}</p>
             </div>

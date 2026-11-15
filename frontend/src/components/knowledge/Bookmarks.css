@@ -71,44 +71,12 @@
   font-size: 12px;
 }
 
-.bookmark-list {
-  display: grid;
-  gap: 12px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bookmark-list li,
 .bookmark-empty {
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #fffefa;
   line-height: 1.65;
-}
-
-.bookmark-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 12px;
-}
-
-.bookmark-list li > div {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.bookmark-card-title {
-  padding: 4px 0;
-  background: transparent;
-  text-align: left;
-  font-weight: 800;
-}
-
-.bookmark-card-title:hover {
-  color: var(--coral);
 }
 
 .bookmark-empty .primary-button {

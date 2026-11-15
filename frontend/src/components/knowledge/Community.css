@@ -1,9 +1,44 @@
 .community-share {
-  margin-top: 16px;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: #fff8ef;
-  line-height: 1.6;
+  max-width: 38rem;
+  margin: 16px auto 0;
+  padding: 12px;
+  border: 1px solid var(--border-neutral);
+  border-radius: 8px;
+  background: var(--surface-paper);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.community-share-row,
+.community-share-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.community-share-row {
+  justify-content: space-between;
+}
+
+.community-share-status strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.community-share .text-button {
+  min-height: 32px;
+  color: var(--coral-ink);
+  font-size: 13px;
+}
+
+.community-share > p {
+  margin-top: 4px;
+}
+
+.community-share .generated-card-error {
+  color: #a53428;
 }
 

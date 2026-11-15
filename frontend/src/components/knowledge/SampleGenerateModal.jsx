@@ -35,15 +35,12 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
 
   return (
     <Modal
-      label="새로운 지식 만들기"
+      label="새 지식 만들기"
       onClose={onClose}
       dismissible={!loading}
       className="generate-modal"
     >
-      <span className="large-icon">
-        <Icon name="sparkle" size={29} />
-      </span>
-      <h2>오늘은 무엇이 궁금한가요?</h2>
+      <h2>새 지식 만들기</h2>
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="topic">알고 싶은 주제</label>
@@ -57,26 +54,30 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
           required
         />
 
-        <div className="topic-suggestions">
-          {['하늘의 색', '와이파이의 원리', '달빛의 비밀'].map((suggestion) => (
-            <button
-              type="button"
-              key={suggestion}
-              onClick={() => setTopic(suggestion)}
-              disabled={loading}
-            >
-              {suggestion} +
-            </button>
-          ))}
-        </div>
+        <fieldset className="topic-suggestions">
+          <legend>예시 주제</legend>
+          <div>
+            {['하늘의 색', '와이파이의 원리', '달빛의 비밀'].map((suggestion) => (
+              <button
+                type="button"
+                key={suggestion}
+                onClick={() => setTopic(suggestion)}
+                aria-pressed={topic === suggestion}
+                disabled={loading}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </fieldset>
 
         <button
           type="submit"
           className="primary-button full-width"
           disabled={loading || !topic.trim()}
         >
-          {loading ? <LoadingSpinner /> : <Icon name="sparkle" size={17} />}
           {loading ? '생성 중…' : '지식 카드 만들기'}
+          {loading ? <LoadingSpinner /> : <Icon name="arrow" size={18} strokeWidth={1.5} />}
         </button>
       </form>
 

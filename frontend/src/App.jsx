@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getSession, signOut } from './api/account'
 import { getKnowledgeList } from './api/knowledge'
 import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
@@ -25,20 +25,29 @@ import SampleGenerateModal from './components/knowledge/SampleGenerateModal'
 import GeneratedPreviewPage from './components/knowledge/GeneratedPreviewPage'
 import './styles/App.css'
 
+function focusPageTarget(element) {
+  if (!element) return
+  element.tabIndex = -1
+  element.focus({ preventScroll: true })
+}
+
 export default function App() {
   const [modal, setModal] = useState(null)
   const [preview, setPreview] = useState(null)
   const [previewLoading, setPreviewLoading] = useState(true)
-  const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: '' })
+  const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: false })
+  const [knowledgeAttempt, setKnowledgeAttempt] = useState(0)
   const [username, setUsername] = useState(null)
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState('')
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
+  const previousHash = useRef(locationHash)
   const databaseId = locationHash.match(/^#\/knowledge\/(\d+)$/)?.[1]
   const sampleId = locationHash.match(/^#\/sample\/([a-z]+)$/)?.[1]
   const sample = articles.find((article) => article.id === sampleId)
   const bookmarks = useKnowledgeBookmarks(username)
   const isGeneratedPreview = locationHash === '#/generated-preview'
+  const previewRevision = isGeneratedPreview ? preview?.revision : undefined
   const isBookmarksPage = locationHash === '#/bookmarks'
   const isLearningHistoryPage = locationHash === '#/learning-history'
   const isWrongAnswersPage = locationHash === '#/wrong-answers'
@@ -47,6 +56,8 @@ export default function App() {
   const isAboutPage = locationHash === '#/about'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
+  const isMemberSubpage = isBookmarksPage || isLearningHistoryPage || isWrongAnswersPage
+    || isInterestsPage || Boolean(generatedCardRoute)
   const focusedPageId = isAboutPage ? 'about-page'
     : isGeneratedPreview ? 'generated-preview-page'
     : databaseId || sample ? 'article-page'
@@ -76,13 +87,42 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    const hashChanged = previousHash.current !== locationHash
+    previousHash.current = locationHash
+
     if (focusedPageId) {
+      const page = document.getElementById(focusedPageId)
+      if (!page) return
+
       window.scrollTo(0, 0)
-      document.getElementById(focusedPageId)?.focus({ preventScroll: true })
-    } else if (locationHash === '#knowledge-feed') {
-      document.getElementById('knowledge-feed')?.scrollIntoView()
+      let target = page.querySelector('h1') ?? page
+      focusPageTarget(target)
+
+      // Data can replace the loading view or the signed-out heading.
+      const observer = new MutationObserver(() => {
+        const active = document.activeElement
+        if (active !== target && (target.isConnected || active !== document.body)) {
+          observer.disconnect()
+          return
+        }
+        const nextTarget = page.querySelector('h1') ?? page
+        if (nextTarget !== target) {
+          target = nextTarget
+          focusPageTarget(target)
+        }
+      })
+      observer.observe(page, { childList: true, subtree: true })
+      return () => observer.disconnect()
     }
-  }, [focusedPageId, locationHash, preview?.revision])
+
+    if (locationHash === '#knowledge-feed') {
+      document.getElementById('knowledge-feed')?.scrollIntoView()
+      focusPageTarget(document.getElementById('feed-title'))
+    } else if (hashChanged) {
+      window.scrollTo(0, 0)
+      focusPageTarget(document.getElementById('hero-title'))
+    }
+  }, [focusedPageId, locationHash, previewRevision])
 
   function openArticle(card) {
     window.location.hash = '/knowledge/' + card.id
@@ -98,13 +138,19 @@ export default function App() {
       .then((cards) => {
         if (controller.signal.aborted) return
         const featured = cards[Math.floor(Math.random() * cards.length)] ?? null
-        setKnowledge({ cards, featured, error: '' })
+        setKnowledge({ cards, featured, error: false })
       })
-      .catch((error) => {
-        if (!controller.signal.aborted) setKnowledge({ cards: null, featured: null, error: error.message })
+      .catch(() => {
+        if (!controller.signal.aborted) setKnowledge({ cards: null, featured: null, error: true })
       })
     return () => controller.abort()
-  }, [])
+  }, [knowledgeAttempt])
+
+  function retryKnowledge() {
+    focusPageTarget(document.getElementById('feed-title'))
+    setKnowledge({ cards: null, featured: null, error: false })
+    setKnowledgeAttempt((attempt) => attempt + 1)
+  }
 
   useEffect(() => {
     let active = true
@@ -139,6 +185,7 @@ export default function App() {
     document.getElementById('knowledge-feed').scrollIntoView({
       behavior: reduceMotion ? 'instant' : 'smooth',
     })
+    focusPageTarget(document.getElementById('feed-title'))
   }
 
   function openRandomArticle() {
@@ -176,6 +223,7 @@ export default function App() {
         isAboutPage={isAboutPage}
         onAccount={() => setModal('account')}
         isMyPage={isMyPage}
+        isMemberSubpage={isMemberSubpage}
         onSignOut={handleSignOut}
         signingOut={signingOut}
         signOutError={signOutError}
@@ -194,7 +242,6 @@ export default function App() {
         <BookmarksPage
           bookmarks={bookmarks}
           onSignIn={() => setModal('account')}
-          onOpenArticle={openArticle}
         />
       )}
       {isLearningHistoryPage && (
@@ -240,7 +287,7 @@ export default function App() {
       )}
 
       {isAboutPage && <AboutPage onGenerate={() => setModal('generate')} />}
-      <main className="page-shell" hidden={Boolean(focusedPageId)}>
+      <main className="page-shell home" hidden={Boolean(focusedPageId)}>
         <Hero
           onBrowse={scrollToFeed}
           onRandom={knowledge.cards?.length ? openRandomArticle : undefined}
@@ -252,10 +299,9 @@ export default function App() {
           <KnowledgeRecommendations
             key={username}
             bookmarks={bookmarks}
-            onOpenArticle={openArticle}
           />
         )}
-        <KnowledgeFeed cards={knowledge.cards} error={knowledge.error} bookmarks={bookmarks} />
+        <KnowledgeFeed cards={knowledge.cards} error={knowledge.error} bookmarks={bookmarks} onRetry={retryKnowledge} />
         <CuriosityBanner onGenerate={() => setModal('generate')} />
         <div className="closing-note">
           어제보다 조금 더 넓어진 세상.<span>오늘도 한 입, 잘 먹었습니다.</span>
