@@ -1,7 +1,7 @@
 import { getCategoryStyle } from '../../data/sampleKnowledge'
 import Icon from '../ui/Icon'
 
-export default function ArticleHeading({ category, title, summary, color, icon, children }) {
+export default function ArticleHeading({ category, title, summary, color, icon, titleAction, children }) {
   const categoryStyle = getCategoryStyle(category)
   const tint = color ?? categoryStyle.color
   const categoryIcon = icon ?? categoryStyle.icon
@@ -12,7 +12,12 @@ export default function ArticleHeading({ category, title, summary, color, icon, 
         <Icon name={categoryIcon} size={17} />
         {category} 한 입
       </span>
-      <h1>{title}</h1>
+      {titleAction ? (
+        <div className="article-title-row">
+          <h1>{title}</h1>
+          {titleAction}
+        </div>
+      ) : <h1>{title}</h1>}
       <p>{summary}</p>
       {children}
     </div>

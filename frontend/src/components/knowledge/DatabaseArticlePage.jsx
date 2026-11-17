@@ -30,9 +30,8 @@ export default function DatabaseArticlePage({ id, username, bookmarks }) {
 
       {knowledge && (
         <>
-          <ArticleHeading category={knowledge.category} title={knowledge.title} summary={knowledge.summary}>
-            {bookmarks && <BookmarkButton key={username} card={knowledge} bookmarks={bookmarks} />}
-          </ArticleHeading>
+          <ArticleHeading category={knowledge.category} title={knowledge.title} summary={knowledge.summary}
+            titleAction={bookmarks && <BookmarkButton key={username} card={knowledge} bookmarks={bookmarks} />} />
           <KnowledgeStudyTabs studyPath={`/api/knowledge/${id}`} summary={knowledge.summary}
             onComplete={learning.track} error={learning.error}>
             {!imageUnavailable && (
