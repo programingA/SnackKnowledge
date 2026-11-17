@@ -3,7 +3,11 @@ import { getCsrfHeaders } from './account'
 
 async function request(path, options) {
   const response = await requestApi('/api/' + path, { cache: 'no-store', ...options })
-  if (response.status === 404) throw new Error('카드를 찾을 수 없어요.')
+  if (response.status === 404) {
+    const error = new Error('카드를 찾을 수 없어요.')
+    error.status = response.status
+    throw error
+  }
   if (!isSuccessful(response)) throw new Error('커뮤니티 요청을 처리하지 못했어요.')
   return response
 }

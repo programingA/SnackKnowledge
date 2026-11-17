@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { reconnectGeneratedPreview } from '../../api/study'
+import LoadError from '../ui/LoadError'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 
@@ -24,13 +25,10 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
     <main className="page-shell article-page" id="generated-preview-page" tabIndex={-1} hidden={!visible}>
       {storageWarning && <p className="generated-study-status" role="status">{storageWarning}</p>}
       {card && !studyId && (studyError ? (
-        <div className="generated-study-status">
-          <p role="alert">{studyError}</p>
-          <button className="text-button" type="button" onClick={() => {
-            setStudyError('')
-            setAttempt((current) => current + 1)
-          }}>학습 기능 다시 연결하기</button>
-        </div>
+        <LoadError message="이 카드의 학습 기능에 연결하지 못했어요." onRetry={() => {
+          setStudyError('')
+          setAttempt((current) => current + 1)
+        }} />
       ) : <p className="generated-study-status" role="status">학습 기능을 연결하는 중이에요.</p>)}
       {card ? (
         <GeneratedArticle card={card} showStudy studyPath={studyId ? `/api/study/generated/preview/${studyId}` : undefined}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { categories } from '../../data/sampleKnowledge'
 import Icon from '../ui/Icon'
+import LoadError from '../ui/LoadError'
 import KnowledgeCard from './KnowledgeCard'
 
 export default function KnowledgeFeed({ cards, error, bookmarks, onRetry }) {
@@ -50,13 +51,8 @@ export default function KnowledgeFeed({ cards, error, bookmarks, onRetry }) {
           </span>
         )}
       </div>
-      {error && (
-        <div className="empty-state">
-          <h3 role="alert">지식 목록을 불러오지 못했어요</h3>
-          <button type="button" className="text-button" onClick={onRetry}>다시 불러오기</button>
-        </div>
-      )}
-      {bookmarks?.error && <p role="alert">{bookmarks.error}</p>}
+      {error && <LoadError heading="h3" message="지식 목록을 불러오지 못했어요." onRetry={onRetry} />}
+      {bookmarks?.error && <LoadError heading="h3" message="북마크를 불러오지 못했어요." onRetry={bookmarks.retry} />}
       {cards === null && !error && <p role="status">지식 목록을 불러오는 중이에요.</p>}
       <div className="card-grid">
         {visible.map((card) => (

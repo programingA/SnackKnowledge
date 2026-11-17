@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getInterests, saveInterests } from '../../api/interests'
+import LoadError from '../ui/LoadError'
 import './InterestSettings.css'
 
 export default function InterestSettingsPage({ username, onSignIn }) {
@@ -29,6 +30,7 @@ function InterestForm() {
   useEffect(() => {
     const controller = new AbortController()
     getInterests(controller.signal).then((result) => {
+      if (controller.signal.aborted) return
       setSettings(result)
       setChosen(new Set(result.selected))
     }).catch((error) => {
@@ -79,12 +81,7 @@ function InterestForm() {
   }
 
   if (loadError) {
-    return (
-      <div className="interests-panel">
-        <p role="alert">{loadError}</p>
-        <button className="primary-button" type="button" onClick={reload}>다시 불러오기</button>
-      </div>
-    )
+    return <LoadError message="관심 분야를 불러오지 못했어요." onRetry={reload} />
   }
   if (!settings) return <p className="interests-panel" role="status">분야를 불러오는 중이에요.</p>
   if (!settings.categories.length) return <p className="interests-panel">아직 선택할 수 있는 분야가 없어요.</p>
