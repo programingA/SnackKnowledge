@@ -1,8 +1,9 @@
 import Icon from '../ui/Icon'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import { getCategoryStyle } from '../../data/sampleKnowledge'
 import BookmarkButton from '../knowledge/BookmarkButton'
 
-export default function Hero({ onBrowse, onRandom, featured, featuredStatus, bookmarks }) {
+export default function Hero({ onBrowse, onRandom, featured, featuredLoading, featuredStatus, bookmarks }) {
   const FeaturedCard = featured ? 'a' : 'div'
   const categoryStyle = featured ? getCategoryStyle(featured.category) : null
   return (
@@ -50,6 +51,8 @@ export default function Hero({ onBrowse, onRandom, featured, featuredStatus, boo
                 한 입 읽기 <Icon name="arrow" size={18} strokeWidth={1.5} />
               </span>
             </>
+          ) : featuredLoading ? (
+            <LoadingSkeleton layout="inline" label="오늘의 한입을 불러오는 중이에요." />
           ) : <p className="featured-status" role="status">{featuredStatus}</p>}
         </FeaturedCard>
         {featured && bookmarks && <BookmarkButton card={featured} bookmarks={bookmarks} compact />}

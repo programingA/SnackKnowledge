@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { deleteWrongAnswer, getWrongAnswers, startWrongAnswerQuiz } from '../../api/wrongAnswers'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import KnowledgeQuiz from './KnowledgeQuiz'
 import './WrongAnswers.css'
 
@@ -79,7 +80,7 @@ function WrongAnswerList() {
   return (
     <>
       {error && <p className="wrong-answer-error" role="alert">{error}</p>}
-      {notes === null && <p role="status">오답을 불러오는 중이에요.</p>}
+      {notes === null && <LoadingSkeleton layout="rows" label="오답을 불러오는 중이에요." />}
       {notes?.length === 0 && <p className="wrong-answer-panel">아직 기록된 오답이 없어요.</p>}
       {notes?.length > 0 && (
         <ul className="wrong-answer-list">

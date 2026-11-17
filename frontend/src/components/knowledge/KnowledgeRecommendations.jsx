@@ -1,6 +1,7 @@
 import { getRecommendations } from '../../api/recommendations'
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import KnowledgeCard from './KnowledgeCard'
 import './KnowledgeRecommendations.css'
 
@@ -18,7 +19,7 @@ export default function KnowledgeRecommendations({ bookmarks, paused = false }) 
         )}
       </header>
       {error && <LoadError heading="h3" message="추천 지식을 불러오지 못했어요." onRetry={retry} />}
-      {!error && cards === null && <p className="recommendations-state" role="status">추천을 불러오는 중이에요.</p>}
+      {!error && cards === null && <LoadingSkeleton layout="cards" label="추천을 불러오는 중이에요." />}
       {!error && cards?.length === 0 && (
         <div className="recommendations-empty">
           <h3>추천할 새 카드가 아직 없어요</h3>

@@ -25,6 +25,7 @@ import SampleArticlePage from './components/knowledge/SampleArticlePage'
 import SampleGenerateModal from './components/knowledge/SampleGenerateModal'
 import GeneratedPreviewPage from './components/knowledge/GeneratedPreviewPage'
 import LoadError from './components/ui/LoadError'
+import LoadingSkeleton from './components/ui/LoadingSkeleton'
 import './styles/App.css'
 
 function focusPageTarget(element) {
@@ -232,7 +233,7 @@ export default function App() {
         <main className="page-shell session-status" id={focusedPageId} tabIndex={-1}>
           {sessionError ? (
             <LoadError heading="h1" message="로그인 상태를 확인하지 못했어요." onRetry={retrySession} />
-          ) : <p role="status">로그인 상태를 확인하는 중이에요.</p>}
+          ) : <LoadingSkeleton label="로그인 상태를 확인하는 중이에요." />}
         </main>
       )}
       {!isAccountPage && sessionError && (
@@ -304,7 +305,8 @@ export default function App() {
           onRandom={knowledge.cards?.length ? openRandomArticle : undefined}
           featured={knowledge.featured}
           bookmarks={bookmarks}
-          featuredStatus={knowledge.error ? '지식을 불러오지 못했어요.' : knowledge.cards ? '등록된 지식이 없어요.' : '지식을 불러오는 중이에요.'}
+          featuredLoading={!knowledge.error && knowledge.cards === null}
+          featuredStatus={knowledge.error ? '지식을 불러오지 못했어요.' : '등록된 지식이 없어요.'}
         />
         {username && !focusedPageId && (
           <KnowledgeRecommendations

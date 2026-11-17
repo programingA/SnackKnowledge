@@ -1,6 +1,7 @@
 import { getLearningHistory } from '../../api/learningHistory'
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import './LearningHistory.css'
 
 const activityLabels = {
@@ -32,7 +33,7 @@ function LearningHistoryList({ onOpenArticle }) {
   if (error) {
     return <LoadError message="학습 기록을 불러오지 못했어요." onRetry={retry} />
   }
-  if (records === null) return <p className="learning-state" role="status">학습 기록을 불러오는 중이에요.</p>
+  if (records === null) return <LoadingSkeleton layout="rows" label="학습 기록을 불러오는 중이에요." />
   if (!records.length) return <p className="learning-state">아직 학습 기록이 없어요. 지식 카드부터 읽어보세요.</p>
 
   return (
