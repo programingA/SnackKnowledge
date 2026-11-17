@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getSession, signOut } from './api/account'
 import { getKnowledgeList } from './api/knowledge'
+import { getGeneratedCards } from './api/generatedCards'
 import useApiQuery from './api/useApiQuery'
 import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
 import AccountModal from './components/account/AccountModal'
@@ -43,6 +44,7 @@ export default function App() {
   const [accountOverride, setAccountOverride] = useState(null)
   const { data: session, error: sessionError, retry: retrySession } = useApiQuery(getSession, undefined, !accountOverride)
   const username = (accountOverride ?? session)?.username ?? null
+  const savedCards = useApiQuery(getGeneratedCards, username, Boolean(username))
   const sessionLoading = !accountOverride && !session && !sessionError
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState('')
@@ -267,6 +269,7 @@ export default function App() {
         <SavedGeneratedCardsPage
           username={username}
           id={generatedCardRoute[1]}
+          onSavedCardsChange={savedCards.retry}
           onSignIn={() => setModal('account')}
         />
       )}
@@ -293,6 +296,7 @@ export default function App() {
           loading={previewLoading}
           username={username}
           visible={isGeneratedPreview}
+          onSavedCardsChange={savedCards.retry}
           onSignIn={() => setModal('account')}
           onGenerate={() => setModal('generate')}
         />
@@ -314,7 +318,8 @@ export default function App() {
             bookmarks={bookmarks}
           />
         )}
-        <KnowledgeFeed cards={knowledge.cards} error={knowledge.error} bookmarks={bookmarks} onRetry={retryKnowledge} />
+        <KnowledgeFeed cards={knowledge.cards} error={knowledge.error} bookmarks={bookmarks}
+          savedCards={username ? savedCards : null} onRetry={retryKnowledge} />
         <CuriosityBanner onGenerate={() => setModal('generate')} />
         <div className="closing-note">
           어제보다 조금 더 넓어진 세상.<span>오늘도 한 입, 잘 먹었습니다.</span>
