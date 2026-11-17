@@ -1,12 +1,13 @@
 import Icon from '../ui/Icon'
 import BookmarkButton from './BookmarkButton'
 
-export default function KnowledgeCard({ card, bookmarks, href = `#/knowledge/${card.id}`, heading: Heading = 'h3' }) {
+export default function KnowledgeCard({ card, bookmarks, href = `#/knowledge/${card.id}`, heading: Heading = 'h3', actions }) {
   return (
     <article className="knowledge-card">
       <div className="card-top">
         <span className="knowledge-card-category">{card.category}</span>
         {bookmarks && <BookmarkButton card={card} bookmarks={bookmarks} compact />}
+        {actions}
       </div>
       <Heading><a className="knowledge-card-link" href={href}>{card.title}</a></Heading>
       <p>{card.summary}</p>

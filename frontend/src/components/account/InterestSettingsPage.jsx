@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getInterests, saveInterests } from '../../api/interests'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import './InterestSettings.css'
 
 export default function InterestSettingsPage({ username, onSignIn }) {
@@ -83,7 +84,7 @@ function InterestForm() {
   if (loadError) {
     return <LoadError message="관심 분야를 불러오지 못했어요." onRetry={reload} />
   }
-  if (!settings) return <p className="interests-panel" role="status">분야를 불러오는 중이에요.</p>
+  if (!settings) return <LoadingSkeleton label="관심 분야를 불러오는 중이에요." />
   if (!settings.categories.length) return <p className="interests-panel">아직 선택할 수 있는 분야가 없어요.</p>
 
   return (

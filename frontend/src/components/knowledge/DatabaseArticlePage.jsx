@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { getKnowledge } from '../../api/knowledge'
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import ArticleHeading from './ArticleHeading'
 import BookmarkButton from './BookmarkButton'
 import useLearningActivity from './useLearningActivity'
@@ -25,7 +26,7 @@ export default function DatabaseArticlePage({ id, username, bookmarks }) {
       )}
 
       {!knowledge && !error && (
-        <p className="article-body" role="status">본문을 불러오는 중...</p>
+        <LoadingSkeleton layout="article" label="지식 카드 본문을 불러오는 중이에요." />
       )}
 
       {knowledge && (

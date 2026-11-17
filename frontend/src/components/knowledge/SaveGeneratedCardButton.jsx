@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from '../ui/Icon'
-import { saveGeneratedCard } from '../../api/generatedCards'
+import { deleteGeneratedCard, saveGeneratedCard } from '../../api/generatedCards'
 import './GeneratedCards.css'
 
-export default function SaveGeneratedCardButton({ card, studyId, username, onSignIn }) {
+export default function SaveGeneratedCardButton({ card, studyId, username, onSignIn, onSavedCardsChange }) {
   const cardId = useRef(null)
   const signInRequested = useRef(false)
   const saveButton = useRef(null)
-  const [saving, setSaving] = useState(false)
-  const [savedId, setSavedId] = useState(null)
+  const [pending, setPending] = useState(false)
+  const [saved, setSaved] = useState(null)
+  const [showSavedNotice, setShowSavedNotice] = useState(false)
   const [error, setError] = useState('')
+  const savedId = saved && saved.username === username ? saved.id : null
 
   useEffect(() => {
     if (username && signInRequested.current) {
@@ -18,19 +20,35 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
     }
   }, [username])
 
-  async function handleSave() {
-    setSaving(true)
+  useEffect(() => {
+    if (!showSavedNotice) return
+    const timeout = window.setTimeout(() => setShowSavedNotice(false), 4000)
+    return () => window.clearTimeout(timeout)
+  }, [showSavedNotice])
+
+  async function toggleSave() {
+    if (pending) return
+
+    setPending(true)
     setError('')
     try {
-      const payload = { category: card.category, title: card.title, summary: card.summary,
-        content: card.content, imageBase64: card.imageBase64 }
-      cardId.current ??= studyId ?? crypto.randomUUID()
-      await saveGeneratedCard(cardId.current, payload)
-      setSavedId(cardId.current)
+      if (savedId) {
+        await deleteGeneratedCard(savedId)
+        setSaved(null)
+        setShowSavedNotice(false)
+      } else {
+        const payload = { category: card.category, title: card.title, summary: card.summary,
+          content: card.content, imageBase64: card.imageBase64 }
+        cardId.current ??= studyId ?? crypto.randomUUID()
+        await saveGeneratedCard(cardId.current, payload)
+        setSaved({ id: cardId.current, username })
+        setShowSavedNotice(true)
+      }
+      onSavedCardsChange()
     } catch (error) {
       setError(error.message)
     } finally {
-      setSaving(false)
+      setPending(false)
     }
   }
 
@@ -44,18 +62,17 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
     </button>
   )
 
+  const label = savedId ? (pending ? '저장 취소 중...' : '저장 취소') : (pending ? '저장 중...' : '내 카드에 저장')
+  const showNotice = showSavedNotice && savedId
+
   return (
     <div className="generated-card-actions">
-      {savedId ? (
-        <>
-          <p role="status">내 카드에 저장했어요.</p>
-          <a className="text-button" href={`#/generated-cards/${savedId}`}>저장한 카드 보기</a>
-        </>
-      ) : (
-        <button className="primary-button" type="button" ref={saveButton} onClick={handleSave} disabled={saving}>
-          {saving ? '저장 중...' : '내 카드에 저장'}
-        </button>
-      )}
+      <button className="primary-button" type="button" ref={saveButton} onClick={toggleSave} disabled={pending}>
+        {label}
+      </button>
+      <span className={showNotice ? 'generated-save-notice' : 'sr-only'} role="status">
+        {showNotice ? '저장된 지식' : ''}
+      </span>
       {error && <p className="generated-card-error" role="alert">{error}</p>}
     </div>
   )

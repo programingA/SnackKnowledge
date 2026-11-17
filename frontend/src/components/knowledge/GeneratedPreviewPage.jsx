@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { reconnectGeneratedPreview } from '../../api/study'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 
-export default function GeneratedPreviewPage({ card, restored, storageWarning, loading, username, visible, onSignIn, onGenerate }) {
+export default function GeneratedPreviewPage({ card, restored, storageWarning, loading, username, visible, onSignIn, onGenerate, onSavedCardsChange }) {
   const [reconnectedId, setReconnectedId] = useState(null)
   const [studyError, setStudyError] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -37,7 +38,8 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
             <>
               <div className="generated-preview-actions" role="group" aria-label="생성한 카드 관리">
                 <div className="generated-preview-save">
-                  <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
+                  <SaveGeneratedCardButton card={card} studyId={studyId} username={username}
+                    onSignIn={onSignIn} onSavedCardsChange={onSavedCardsChange} />
                 </div>
                 <button className="generated-preview-secondary" type="button" onClick={onGenerate}>
                   다른 지식 만들기
@@ -52,7 +54,7 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
           )}
         />
       ) : loading ? (
-        <p className="generated-cards-panel" role="status">생성한 카드를 불러오는 중이에요.</p>
+        <LoadingSkeleton layout="article" label="생성한 카드를 불러오는 중이에요." />
       ) : (
         <div className="generated-cards-panel">
           <p>열어볼 생성 카드가 없어요.</p>

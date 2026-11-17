@@ -2,6 +2,7 @@ import { getMemberOverview } from '../../api/memberOverview'
 import useApiQuery from '../../api/useApiQuery'
 import Icon from '../ui/Icon'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import './MyPage.css'
 
 const destinations = [
@@ -34,7 +35,7 @@ function MemberDashboard({ username }) {
         <p><strong>{username}</strong>님</p>
       </div>
       {error && <LoadError message="내 활동을 불러오지 못했어요." onRetry={retry} />}
-      {!overview && !error && <p className="my-page-loading" role="status">내 활동을 불러오는 중이에요.</p>}
+      {!overview && !error && <LoadingSkeleton label="내 활동을 불러오는 중이에요." />}
       <ul className="my-page-grid" aria-label="내 활동">
         {destinations.map(({ route, title, icon, key, unit, description }) => (
           <li key={route}>

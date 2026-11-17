@@ -4,7 +4,7 @@ import KnowledgeStudyTabs from './KnowledgeStudyTabs'
 import { getReadingParagraphs } from './readingParagraphs'
 import './GeneratedCards.css'
 
-export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(studyPath), showImageFallback = false, headerActions, children }) {
+export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(studyPath), showImageFallback = false, backLink, headerActions, children }) {
   const text = /[\n*_`\\$]/.test(card.content) ? card.content : getReadingParagraphs(card.content).join('\n\n')
   const reading = (
     <>
@@ -21,7 +21,7 @@ export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(
 
   return (
     <article className="article-page-card generated-article study-article" aria-label={card.title}>
-      <ArticleHeading category={card.category} title={card.title} summary={card.summary}>
+      <ArticleHeading category={card.category} title={card.title} summary={card.summary} backLink={backLink}>
         {headerActions}
       </ArticleHeading>
       {showStudy ? (
