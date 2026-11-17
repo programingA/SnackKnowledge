@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getSession, signOut } from './api/account'
 import { getKnowledgeList } from './api/knowledge'
+import useApiQuery from './api/useApiQuery'
 import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
 import AccountModal from './components/account/AccountModal'
 import InterestSettingsPage from './components/account/InterestSettingsPage'
@@ -23,6 +24,7 @@ import KnowledgeRecommendations from './components/knowledge/KnowledgeRecommenda
 import SampleArticlePage from './components/knowledge/SampleArticlePage'
 import SampleGenerateModal from './components/knowledge/SampleGenerateModal'
 import GeneratedPreviewPage from './components/knowledge/GeneratedPreviewPage'
+import LoadError from './components/ui/LoadError'
 import './styles/App.css'
 
 function focusPageTarget(element) {
@@ -37,7 +39,10 @@ export default function App() {
   const [previewLoading, setPreviewLoading] = useState(true)
   const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: false })
   const [knowledgeAttempt, setKnowledgeAttempt] = useState(0)
-  const [username, setUsername] = useState(null)
+  const [accountOverride, setAccountOverride] = useState(null)
+  const { data: session, error: sessionError, retry: retrySession } = useApiQuery(getSession, undefined, !accountOverride)
+  const username = (accountOverride ?? session)?.username ?? null
+  const sessionLoading = !accountOverride && !session && !sessionError
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState('')
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
@@ -58,6 +63,8 @@ export default function App() {
   const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
   const isMemberSubpage = isBookmarksPage || isLearningHistoryPage || isWrongAnswersPage
     || isInterestsPage || Boolean(generatedCardRoute)
+  const isAccountPage = isMyPage || isMemberSubpage
+  const showAccountPage = isAccountPage && !sessionLoading && !sessionError
   const focusedPageId = isAboutPage ? 'about-page'
     : isGeneratedPreview ? 'generated-preview-page'
     : databaseId || sample ? 'article-page'
@@ -68,14 +75,6 @@ export default function App() {
         : isWrongAnswersPage ? 'wrong-answers-page'
           : isInterestsPage ? 'interests-page'
             : isMyPage ? 'my-page' : null
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getSession(controller.signal)
-      .then((session) => setUsername(session.username))
-      .catch(() => {})
-    return () => controller.abort()
-  }, [])
 
   useEffect(() => {
     function handleHashChange() {
@@ -122,7 +121,7 @@ export default function App() {
       window.scrollTo(0, 0)
       focusPageTarget(document.getElementById('hero-title'))
     }
-  }, [focusedPageId, locationHash, previewRevision])
+  }, [focusedPageId, locationHash, previewRevision, showAccountPage])
 
   function openArticle(card) {
     window.location.hash = '/knowledge/' + card.id
@@ -203,7 +202,7 @@ export default function App() {
     setSignOutError('')
     try {
       await signOut()
-      setUsername(null)
+      setAccountOverride({ username: null })
       if (window.location.hash === '#/my-page') window.location.hash = 'knowledge-feed'
     } catch (error) {
       setSignOutError(error.message)
@@ -229,6 +228,18 @@ export default function App() {
         signOutError={signOutError}
         username={username}
       />
+      {isAccountPage && !showAccountPage && (
+        <main className="page-shell session-status" id={focusedPageId} tabIndex={-1}>
+          {sessionError ? (
+            <LoadError heading="h1" message="로그인 상태를 확인하지 못했어요." onRetry={retrySession} />
+          ) : <p role="status">로그인 상태를 확인하는 중이에요.</p>}
+        </main>
+      )}
+      {!isAccountPage && sessionError && (
+        <div className="page-shell session-status">
+          <LoadError message="로그인 상태를 확인하지 못했어요." onRetry={retrySession} />
+        </div>
+      )}
       {(databaseId || sample) && (
         <main className="page-shell article-page" id="article-page" tabIndex={-1}>
           {databaseId ? (
@@ -238,33 +249,33 @@ export default function App() {
           )}
         </main>
       )}
-      {isBookmarksPage && (
+      {showAccountPage && isBookmarksPage && (
         <BookmarksPage
           bookmarks={bookmarks}
           onSignIn={() => setModal('account')}
         />
       )}
-      {isLearningHistoryPage && (
+      {showAccountPage && isLearningHistoryPage && (
         <LearningHistoryPage
           username={username}
           onSignIn={() => setModal('account')}
           onOpenArticle={openArticle}
         />
       )}
-      {generatedCardRoute && (
+      {showAccountPage && generatedCardRoute && (
         <SavedGeneratedCardsPage
           username={username}
           id={generatedCardRoute[1]}
           onSignIn={() => setModal('account')}
         />
       )}
-      {isWrongAnswersPage && (
+      {showAccountPage && isWrongAnswersPage && (
         <WrongAnswersPage username={username} onSignIn={() => setModal('account')} />
       )}
-      {isInterestsPage && (
+      {showAccountPage && isInterestsPage && (
         <InterestSettingsPage username={username} onSignIn={() => setModal('account')} />
       )}
-      {isMyPage && (
+      {showAccountPage && isMyPage && (
         <MyPage
           username={username}
           onSignIn={() => setModal('account')}
@@ -314,7 +325,7 @@ export default function App() {
       )}
       {modal === 'account' && !username && (
         <AccountModal
-          onChange={setUsername}
+          onChange={(username) => setAccountOverride({ username })}
           onClose={() => setModal(null)}
         />
       )}

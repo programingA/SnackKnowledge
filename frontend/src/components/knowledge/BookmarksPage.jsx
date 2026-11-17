@@ -1,3 +1,4 @@
+import LoadError from '../ui/LoadError'
 import KnowledgeCard from './KnowledgeCard'
 import './Bookmarks.css'
 
@@ -18,12 +19,7 @@ export default function BookmarksPage({ bookmarks, onSignIn }) {
 function BookmarkList({ bookmarks }) {
   const { cards, error, retry } = bookmarks
 
-  if (error) return (
-    <>
-      <p role="alert">{error}</p>
-      <button className="bookmark-button" type="button" onClick={retry}>목록 다시 불러오기</button>
-    </>
-  )
+  if (error) return <LoadError message="북마크를 불러오지 못했어요." onRetry={retry} />
 
   if (!cards) return <p role="status">북마크를 불러오는 중이에요.</p>
   if (!cards.length) return <p className="bookmark-empty">아직 저장한 카드가 없어요. 지식 목록에서 북마크를 저장해보세요.</p>

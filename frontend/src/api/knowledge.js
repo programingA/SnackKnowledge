@@ -4,18 +4,20 @@ async function fetchKnowledge(path, signal, errorLabel) {
   const response = await requestApi(path, { signal })
 
   if (!isSuccessful(response)) {
-    throw new Error(errorLabel + ' (' + response.status + ')')
+    const error = new Error(errorLabel)
+    error.status = response.status
+    throw error
   }
 
   return response.data
 }
 
 export function getKnowledgeList(signal) {
-  return fetchKnowledge('/api/knowledge', signal, '조회 실패')
+  return fetchKnowledge('/api/knowledge', signal, '지식 목록을 불러오지 못했어요.')
 }
 
 export function getKnowledge(id, signal) {
-  return fetchKnowledge('/api/knowledge/' + id, signal, '상세 조회 실패')
+  return fetchKnowledge('/api/knowledge/' + id, signal, '지식 카드를 불러오지 못했어요.')
 }
 
 export async function generateKnowledge(topic, signal) {

@@ -1,26 +1,11 @@
-import { useEffect, useState } from 'react'
 import { getRecommendations } from '../../api/recommendations'
+import useApiQuery from '../../api/useApiQuery'
+import LoadError from '../ui/LoadError'
 import KnowledgeCard from './KnowledgeCard'
 import './KnowledgeRecommendations.css'
 
 export default function KnowledgeRecommendations({ bookmarks, paused = false }) {
-  const [cards, setCards] = useState(null)
-  const [error, setError] = useState('')
-  const [attempt, setAttempt] = useState(0)
-
-  useEffect(() => {
-    if (paused) return
-    const controller = new AbortController()
-    getRecommendations(controller.signal)
-      .then((result) => {
-        setCards(result)
-        setError('')
-      })
-      .catch((error) => {
-        if (!controller.signal.aborted) setError(error.message)
-      })
-    return () => controller.abort()
-  }, [attempt, paused])
+  const { data: cards, error, retry } = useApiQuery(getRecommendations, undefined, !paused)
 
   return (
     <section className="recommendations" aria-labelledby="recommendations-title">
@@ -32,15 +17,7 @@ export default function KnowledgeRecommendations({ bookmarks, paused = false }) 
             : '아직 읽거나 저장하지 않은 카드부터 골랐어요.'}</p>
         )}
       </header>
-      {error && (
-        <div className="recommendations-state">
-          <p role="alert">{error}</p>
-          <button type="button" className="text-button" onClick={() => {
-            setError('')
-            setAttempt((current) => current + 1)
-          }}>다시 불러오기</button>
-        </div>
-      )}
+      {error && <LoadError heading="h3" message="추천 지식을 불러오지 못했어요." onRetry={retry} />}
       {!error && cards === null && <p className="recommendations-state" role="status">추천을 불러오는 중이에요.</p>}
       {!error && cards?.length === 0 && <p className="recommendations-state">추천할 새 카드가 아직 없어요.</p>}
       {cards?.length > 0 && (

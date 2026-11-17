@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { deleteGeneratedCard, getGeneratedCard, getGeneratedCards } from '../../api/generatedCards'
+import useApiQuery from '../../api/useApiQuery'
+import LoadError from '../ui/LoadError'
 import GeneratedArticle from './GeneratedArticle'
 import CommunityShareControls from './CommunityShareControls'
 import KnowledgeCard from './KnowledgeCard'
@@ -26,22 +28,16 @@ export default function SavedGeneratedCardsPage({ username, id, onSignIn }) {
   )
 }
 
+function loadGeneratedCards(signal, id) {
+  return id ? getGeneratedCard(id, signal) : getGeneratedCards(signal)
+}
+
 function SavedCards({ id, backLink }) {
-  const [data, setData] = useState(null)
-  const [loadError, setLoadError] = useState('')
-  const [attempt, setAttempt] = useState(0)
+  const { data, error: loadError, retry } = useApiQuery(loadGeneratedCards, id)
+  const errorMessage = id ? '저장한 카드를 불러오지 못했어요.' : '저장한 카드 목록을 불러오지 못했어요.'
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
-
-  useEffect(() => {
-    const controller = new AbortController()
-    const request = id ? getGeneratedCard(id, controller.signal) : getGeneratedCards(controller.signal)
-    request.then(setData).catch((error) => {
-      if (!controller.signal.aborted) setLoadError(error.message)
-    })
-    return () => controller.abort()
-  }, [id, attempt])
 
   async function handleDelete() {
     setDeleting(true)
@@ -59,17 +55,10 @@ function SavedCards({ id, backLink }) {
     return (
       <>
         {backLink}
-        <div className="generated-cards-panel">
-          {loadError ? (
-            <>
-              <p role="alert">{loadError}</p>
-              <button className="primary-button" type="button" onClick={() => {
-                setLoadError('')
-                setAttempt((current) => current + 1)
-              }}>다시 불러오기</button>
-            </>
-          ) : <p role="status">카드를 불러오는 중이에요.</p>}
-        </div>
+        {loadError ? (
+          <LoadError heading={id ? 'h1' : 'h2'} message={id && loadError.status === 404 ? loadError.message : errorMessage}
+            onRetry={retry} />
+        ) : <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>}
       </>
     )
   }

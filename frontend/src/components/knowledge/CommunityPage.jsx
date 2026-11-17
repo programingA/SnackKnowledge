@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
 import { getCommunityCard, getCommunityCards } from '../../api/community'
+import useApiQuery from '../../api/useApiQuery'
+import LoadError from '../ui/LoadError'
 import GeneratedArticle from './GeneratedArticle'
 import KnowledgeCard from './KnowledgeCard'
 import useArticleBackLinkRef from './useArticleBackLinkRef'
@@ -13,36 +14,23 @@ export default function CommunityPage({ id }) {
   )
 }
 
+function loadCommunityCards(signal, id) {
+  return id ? getCommunityCard(id, signal) : getCommunityCards(signal)
+}
+
 function CommunityCards({ id }) {
-  const [data, setData] = useState(null)
-  const [error, setError] = useState('')
-  const [attempt, setAttempt] = useState(0)
+  const { data, error, retry } = useApiQuery(loadCommunityCards, id)
   const backLinkRef = useArticleBackLinkRef()
   const backLink = id && <a className="article-back" href="#/community" ref={backLinkRef}>← 커뮤니티 목록으로</a>
-
-  useEffect(() => {
-    const controller = new AbortController()
-    const result = id ? getCommunityCard(id, controller.signal) : getCommunityCards(controller.signal)
-    result.then(setData).catch((error) => {
-      if (!controller.signal.aborted) setError(error.message)
-    })
-    return () => controller.abort()
-  }, [id, attempt])
+  const errorMessage = id ? '공개 카드를 불러오지 못했어요.' : '커뮤니티 목록을 불러오지 못했어요.'
 
   if (error || data === null) return (
     <>
       {backLink}
-      <div className="generated-cards-panel">
-        {error ? (
-          <>
-            <p role="alert">{error}</p>
-            <button type="button" className="primary-button" onClick={() => {
-              setError('')
-              setAttempt((current) => current + 1)
-            }}>다시 불러오기</button>
-          </>
-        ) : <p role="status">카드를 불러오는 중이에요.</p>}
-      </div>
+      {error ? (
+        <LoadError heading={id ? 'h1' : 'h2'} message={id && error.status === 404 ? error.message : errorMessage}
+          onRetry={retry} />
+      ) : <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>}
     </>
   )
   if (id) return <GeneratedArticle card={data} studyPath={`/api/study/generated/community/${id}`} headerActions={backLink} />

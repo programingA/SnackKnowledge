@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
 import { getLearningHistory } from '../../api/learningHistory'
+import useApiQuery from '../../api/useApiQuery'
+import LoadError from '../ui/LoadError'
 import './LearningHistory.css'
 
 const activityLabels = {
@@ -26,30 +27,10 @@ export default function LearningHistoryPage({ username, onSignIn, onOpenArticle 
 }
 
 function LearningHistoryList({ onOpenArticle }) {
-  const [records, setRecords] = useState(null)
-  const [error, setError] = useState('')
-  const [attempt, setAttempt] = useState(0)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getLearningHistory(controller.signal)
-      .then(setRecords)
-      .catch((error) => {
-        if (!controller.signal.aborted) setError(error.message)
-      })
-    return () => controller.abort()
-  }, [attempt])
+  const { data: records, error, retry } = useApiQuery(getLearningHistory)
 
   if (error) {
-    return (
-      <div className="learning-state">
-        <p role="alert">{error}</p>
-        <button type="button" className="primary-button" onClick={() => {
-          setError('')
-          setAttempt((current) => current + 1)
-        }}>다시 불러오기</button>
-      </div>
-    )
+    return <LoadError message="학습 기록을 불러오지 못했어요." onRetry={retry} />
   }
   if (records === null) return <p className="learning-state" role="status">학습 기록을 불러오는 중이에요.</p>
   if (!records.length) return <p className="learning-state">아직 학습 기록이 없어요. 지식 카드부터 읽어보세요.</p>

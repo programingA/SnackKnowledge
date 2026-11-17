@@ -10,7 +10,9 @@ async function request(path, options) {
       404: '저장한 카드를 찾을 수 없어요.',
       413: '이미지가 너무 커서 저장할 수 없어요.',
     }
-    throw new Error(messages[response.status] ?? '카드를 처리하지 못했어요. 다시 시도해주세요.')
+    const error = new Error(messages[response.status] ?? '카드를 처리하지 못했어요. 다시 시도해주세요.')
+    error.status = response.status
+    throw error
   }
   return response
 }

@@ -1,37 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { getKnowledge } from '../../api/knowledge'
+import useApiQuery from '../../api/useApiQuery'
+import LoadError from '../ui/LoadError'
 import ArticleHeading from './ArticleHeading'
 import BookmarkButton from './BookmarkButton'
 import useLearningActivity from './useLearningActivity'
 import KnowledgeStudyTabs from './KnowledgeStudyTabs'
 import { getReadingParagraphs } from './readingParagraphs'
 
+function loadKnowledge(signal, id) {
+  return getKnowledge(id, signal)
+}
+
 export default function DatabaseArticlePage({ id, username, bookmarks }) {
-  const [knowledge, setKnowledge] = useState(null)
-  const [error, setError] = useState('')
+  const { data: knowledge, error, retry } = useApiQuery(loadKnowledge, id)
   const learning = useLearningActivity(id, username, Boolean(knowledge))
   const [imageUnavailable, setImageUnavailable] = useState(false)
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    getKnowledge(id, controller.signal)
-      .then((data) => setKnowledge(data))
-      .catch((error) => {
-        if (error.name !== 'AbortError') {
-          setError(error.message)
-        }
-      })
-
-    return () => controller.abort()
-  }, [id])
 
   return (
     <article className="article-page-card study-article" aria-label={knowledge?.title ?? '지식 상세보기'}>
       {error && (
-        <p className="article-body" role="alert">
-          {error}
-        </p>
+        <LoadError heading="h1" message={error.status === 404 ? '지식 카드를 찾을 수 없어요.' : '지식 카드를 불러오지 못했어요.'}
+          onRetry={retry} />
       )}
 
       {!knowledge && !error && (

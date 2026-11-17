@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { deleteWrongAnswer, getWrongAnswers, startWrongAnswerQuiz } from '../../api/wrongAnswers'
+import LoadError from '../ui/LoadError'
 import KnowledgeQuiz from './KnowledgeQuiz'
 import './WrongAnswers.css'
 
@@ -21,6 +22,7 @@ export default function WrongAnswersPage({ username, onSignIn }) {
 
 function WrongAnswerList() {
   const [notes, setNotes] = useState(null)
+  const [loadError, setLoadError] = useState(false)
   const [error, setError] = useState('')
   const [reload, setReload] = useState(0)
   const [pendingId, setPendingId] = useState(null)
@@ -30,9 +32,11 @@ function WrongAnswerList() {
   useEffect(() => {
     const controller = new AbortController()
     getWrongAnswers(controller.signal)
-      .then(setNotes)
-      .catch((error) => {
-        if (!controller.signal.aborted) setError(error.message)
+      .then((result) => {
+        if (!controller.signal.aborted) setNotes(result)
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setLoadError(true)
       })
     return () => controller.abort()
   }, [reload])
@@ -65,15 +69,17 @@ function WrongAnswerList() {
     }
   }
 
+  if (loadError) {
+    return <LoadError message="오답 노트를 불러오지 못했어요." onRetry={() => {
+      setLoadError(false)
+      setReload((current) => current + 1)
+    }} />
+  }
+
   return (
     <>
       {error && <p className="wrong-answer-error" role="alert">{error}</p>}
-      {notes === null && (error ? (
-        <button className="primary-button" type="button" onClick={() => {
-          setError('')
-          setReload((current) => current + 1)
-        }}>다시 불러오기</button>
-      ) : <p role="status">오답을 불러오는 중이에요.</p>)}
+      {notes === null && <p role="status">오답을 불러오는 중이에요.</p>}
       {notes?.length === 0 && <p className="wrong-answer-panel">아직 기록된 오답이 없어요.</p>}
       {notes?.length > 0 && (
         <ul className="wrong-answer-list">

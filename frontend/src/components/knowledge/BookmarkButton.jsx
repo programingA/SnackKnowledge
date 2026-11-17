@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Icon from '../ui/Icon'
+import LoadError from '../ui/LoadError'
 import './Bookmarks.css'
 
 export default function BookmarkButton({ card, bookmarks, compact = false }) {
@@ -38,7 +39,7 @@ export default function BookmarkButton({ card, bookmarks, compact = false }) {
         <Icon name="bookmark" size={20} fill={saved ? 'currentColor' : 'none'} />
       </button>
       {error && <p role="alert">{error}</p>}
-      {!compact && bookmarks.error && <p role="alert">{bookmarks.error}</p>}
+      {!compact && bookmarks.error && <LoadError message="북마크를 불러오지 못했어요." onRetry={bookmarks.retry} />}
     </div>
   )
 }

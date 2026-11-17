@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
 import { getMemberOverview } from '../../api/memberOverview'
+import useApiQuery from '../../api/useApiQuery'
 import Icon from '../ui/Icon'
+import LoadError from '../ui/LoadError'
 import './MyPage.css'
 
 const destinations = [
@@ -25,35 +26,15 @@ export default function MyPage({ username, onSignIn }) {
 }
 
 function MemberDashboard({ username }) {
-  const [overview, setOverview] = useState(null)
-  const [loadError, setLoadError] = useState('')
-  const [revision, setRevision] = useState(0)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    getMemberOverview(controller.signal)
-      .then(setOverview)
-      .catch((error) => {
-        if (!controller.signal.aborted) setLoadError(error.message)
-      })
-    return () => controller.abort()
-  }, [revision])
+  const { data: overview, error, retry } = useApiQuery(getMemberOverview)
 
   return (
     <>
       <div className="my-page-panel my-page-member">
         <p><strong>{username}</strong>님</p>
       </div>
-      {loadError && (
-        <div className="my-page-error">
-          <p role="alert">{loadError}</p>
-          <button type="button" className="text-button" onClick={() => {
-            setLoadError('')
-            setRevision((current) => current + 1)
-          }}>다시 불러오기</button>
-        </div>
-      )}
-      {!overview && !loadError && <p className="my-page-loading" role="status">내 활동을 불러오는 중이에요.</p>}
+      {error && <LoadError message="내 활동을 불러오지 못했어요." onRetry={retry} />}
+      {!overview && !error && <p className="my-page-loading" role="status">내 활동을 불러오는 중이에요.</p>}
       <ul className="my-page-grid" aria-label="내 활동">
         {destinations.map(({ route, title, icon, key, unit, description }) => (
           <li key={route}>

@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/study'
 import AiResponseText from '../ui/AiResponseText'
 import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
+import LoadError from '../ui/LoadError'
 
 export default function KnowledgeQuestionForm({ studyPath, onComplete, active }) {
   const composerId = useId()
@@ -9,6 +10,7 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
   const [question, setQuestion] = useState('')
   const [conversation, setConversation] = useState(null)
   const [error, setError] = useState('')
+  const [loadError, setLoadError] = useState(false)
   const [attempt, setAttempt] = useState(0)
   const [sending, setSending] = useState(false)
   const used = conversation?.turns.length ?? 0
@@ -22,8 +24,10 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
 
   useEffect(() => {
     const controller = new AbortController()
-    getKnowledgeConversation(studyPath, controller.signal).then(setConversation).catch((error) => {
-      if (!controller.signal.aborted) setError(error.message)
+    getKnowledgeConversation(studyPath, controller.signal).then((result) => {
+      if (!controller.signal.aborted) setConversation(result)
+    }).catch(() => {
+      if (!controller.signal.aborted) setLoadError(true)
     })
     return () => controller.abort()
   }, [studyPath, attempt])
@@ -57,7 +61,7 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
         <p className="knowledge-question-count" role="status">{used} / {limit}회 · {limit - used}회 남음</p>
       </div>
       <div className="knowledge-chat-log" ref={log} role="log" aria-label="대화 기록" tabIndex={0}>
-        {!conversation && !error && <p role="status">이전 대화를 불러오는 중이에요.</p>}
+        {!conversation && !loadError && <p role="status">이전 대화를 불러오는 중이에요.</p>}
         {conversation && !used && <p className="knowledge-chat-empty">읽은 지식에서 궁금한 점을 질문해 보세요.</p>}
         {used > 0 && (
           <ol className="knowledge-chat-turns" aria-label="AI와 나눈 대화">
@@ -101,13 +105,12 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
         </form>
       )}
       {error && !finished && <p role="alert">{error}</p>}
-      {!conversation && error && (
-        <div className="knowledge-actions">
-          <button type="button" className="text-button" onClick={() => {
-            setError('')
-            setAttempt((value) => value + 1)
-          }}>대화 다시 불러오기</button>
-        </div>
+      {loadError && (
+        <LoadError heading="h4" message="이전 대화를 불러오지 못했어요." onRetry={() => {
+          setError('')
+          setLoadError(false)
+          setAttempt((value) => value + 1)
+        }} />
       )}
     </section>
   )
