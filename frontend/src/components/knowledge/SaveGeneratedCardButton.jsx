@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '../ui/Icon'
+import StatusToast from '../ui/StatusToast'
 import { deleteGeneratedCard, saveGeneratedCard } from '../../api/generatedCards'
 import './GeneratedCards.css'
 
@@ -10,6 +11,7 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
   const [pending, setPending] = useState(false)
   const [saved, setSaved] = useState(null)
   const [showSavedNotice, setShowSavedNotice] = useState(false)
+  const dismissNotice = useCallback(() => setShowSavedNotice(false), [])
   const [error, setError] = useState('')
   const savedId = saved && saved.username === username ? saved.id : null
 
@@ -19,12 +21,6 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
       saveButton.current?.focus({ preventScroll: true })
     }
   }, [username])
-
-  useEffect(() => {
-    if (!showSavedNotice) return
-    const timeout = window.setTimeout(() => setShowSavedNotice(false), 4000)
-    return () => window.clearTimeout(timeout)
-  }, [showSavedNotice])
 
   async function toggleSave() {
     if (pending) return
@@ -70,9 +66,7 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
       <button className="primary-button" type="button" ref={saveButton} onClick={toggleSave} disabled={pending}>
         {label}
       </button>
-      <span className={showNotice ? 'generated-save-notice' : 'sr-only'} role="status">
-        {showNotice ? '저장된 지식' : ''}
-      </span>
+      <StatusToast message={showNotice ? '저장된 지식' : ''} onDismiss={dismissNotice} />
       {error && <p className="generated-card-error" role="alert">{error}</p>}
     </div>
   )

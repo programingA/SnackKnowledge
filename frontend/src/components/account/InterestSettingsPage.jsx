@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getInterests, saveInterests } from '../../api/interests'
 import LoadError from '../ui/LoadError'
 import LoadingSkeleton from '../ui/LoadingSkeleton'
+import StatusToast from '../ui/StatusToast'
 import './InterestSettings.css'
 
 export default function InterestSettingsPage({ username, onSignIn }) {
@@ -26,6 +27,7 @@ function InterestForm() {
   const [loadError, setLoadError] = useState('')
   const [saveError, setSaveError] = useState('')
   const [notice, setNotice] = useState('')
+  const dismissNotice = useCallback(() => setNotice(''), [])
   const [revision, setRevision] = useState(0)
 
   useEffect(() => {
@@ -101,12 +103,12 @@ function InterestForm() {
         </div>
       </fieldset>
       <div className="interest-actions">
-        <button className="primary-button" type="submit" disabled={saving || !changed}>
+        <button className="primary-button primary-button--compact" type="submit" disabled={saving || !changed}>
           {saving ? '저장 중...' : '관심 분야 저장'}
         </button>
         <span>{chosen.size}개 선택</span>
       </div>
-      {notice && <p className="interest-message" role="status">{notice}</p>}
+      <StatusToast message={notice} onDismiss={dismissNotice} />
       {saveError && (
         <div className="interest-message">
           <p role="alert">{saveError}</p>

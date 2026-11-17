@@ -3,7 +3,7 @@ import { deleteGeneratedCard, getGeneratedCard, getGeneratedCards } from '../../
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
 import LoadingSkeleton from '../ui/LoadingSkeleton'
-import Modal from '../ui/Modal'
+import DeleteConfirmationModal from '../ui/DeleteConfirmationModal'
 import GeneratedArticle from './GeneratedArticle'
 import CommunityShareControls from './CommunityShareControls'
 import KnowledgeCard from './KnowledgeCard'
@@ -75,50 +75,23 @@ function SavedCardList({ cards, titleRef, onSavedCardsChange }) {
       <ul className="knowledge-card-list" role="list">
         {visibleCards.map((card) => (
           <li key={card.id}>
-            <KnowledgeCard card={card} href={`#/generated-cards/${card.id}`} heading="h2" actions={(
-              <button className="generated-delete generated-list-delete" type="button"
+            <KnowledgeCard card={card} href={`#/generated-cards/${card.id}`} heading="h2" showReadLabel={false} actions={(
+              <button className="delete-button generated-list-delete" type="button"
                 aria-label={`${card.title} 카드 삭제`} onClick={() => setSelected(card)}>삭제</button>
             )} />
           </li>
         ))}
       </ul>
-      {selected && <DeleteCardModal card={selected} onClose={() => setSelected(null)} onDeleted={() => {
-        setDeletedIds((current) => new Set([...current, selected.id]))
-        setSelected(null)
-        onSavedCardsChange()
-      }} />}
+      {selected && (
+        <DeleteConfirmationModal label="카드 삭제" question="이 카드를 삭제할까요?" itemName={selected.title}
+          description="공개 중이거나 검토를 요청한 카드도 함께 내려가요."
+          onClose={() => setSelected(null)} onConfirm={async () => {
+            await deleteGeneratedCard(selected.id)
+            setDeletedIds((current) => new Set([...current, selected.id]))
+            setSelected(null)
+            onSavedCardsChange()
+          }} />
+      )}
     </>
-  )
-}
-
-function DeleteCardModal({ card, onClose, onDeleted }) {
-  const [deleting, setDeleting] = useState(false)
-  const [error, setError] = useState('')
-
-  async function confirmDelete() {
-    setDeleting(true)
-    setError('')
-    try {
-      await deleteGeneratedCard(card.id)
-      onDeleted()
-    } catch {
-      setError('카드를 삭제하지 못했어요. 다시 시도해 주세요.')
-      setDeleting(false)
-    }
-  }
-
-  return (
-    <Modal label="카드 삭제" className="generated-delete-modal" onClose={onClose} dismissible={!deleting}>
-      <h2>이 카드를 삭제할까요?</h2>
-      <p className="generated-delete-title">{card.title}</p>
-      <p>공개 중이거나 검토를 요청한 카드도 함께 내려가요.</p>
-      {error && <p className="generated-card-error" role="alert">{error}</p>}
-      <div className="generated-delete-actions">
-        <button className="text-button" type="button" onClick={onClose} disabled={deleting}>취소</button>
-        <button className="generated-delete" type="button" onClick={confirmDelete} disabled={deleting}>
-          {deleting ? '삭제 중...' : '카드 삭제'}
-        </button>
-      </div>
-    </Modal>
   )
 }

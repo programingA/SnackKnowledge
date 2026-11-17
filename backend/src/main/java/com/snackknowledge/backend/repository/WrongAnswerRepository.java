@@ -34,13 +34,14 @@ public class WrongAnswerRepository {
 
     public List<NoteSummary> list(String username) {
         return jdbc.sql("""
-                SELECT quiz_id, knowledge_title, question, saved_at
-                FROM member_wrong_answer
-                WHERE username = ?
-                ORDER BY saved_at DESC, quiz_id
+                SELECT note.quiz_id, k.id AS knowledge_id, note.knowledge_title, note.question, note.saved_at
+                FROM member_wrong_answer note
+                LEFT JOIN knowledge k ON k.id = note.knowledge_id
+                WHERE note.username = ?
+                ORDER BY note.saved_at DESC, note.quiz_id
                 """).param(username)
                 .query((row, index) -> new NoteSummary(
-                        UUID.fromString(row.getString("quiz_id")), row.getString("knowledge_title"),
+                        UUID.fromString(row.getString("quiz_id")), row.getString("knowledge_id"), row.getString("knowledge_title"),
                         row.getString("question"), row.getTimestamp("saved_at").toInstant()))
                 .list();
     }
@@ -62,5 +63,5 @@ public class WrongAnswerRepository {
                 .params(username, quizId.toString()).update();
     }
 
-    public record NoteSummary(UUID id, String knowledgeTitle, String question, Instant savedAt) {}
+    public record NoteSummary(UUID id, String knowledgeId, String knowledgeTitle, String question, Instant savedAt) {}
 }

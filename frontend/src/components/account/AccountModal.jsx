@@ -56,8 +56,8 @@ export default function AccountModal({ onChange, onClose }) {
         setNotice('입력한 아이디로 로그인해보세요. 로그인되지 않으면 다른 아이디로 가입해주세요.')
       } else {
         const session = await signIn(trimmedName, password)
+        if (!session.username) throw new Error('로그인 상태를 확인하지 못했어요. 다시 로그인해 주세요.')
         onChange(session.username)
-        onClose()
       }
     } catch (error) {
       setError(error.message)

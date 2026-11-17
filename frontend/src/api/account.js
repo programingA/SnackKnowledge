@@ -8,7 +8,9 @@ async function request(path, options) {
       403: '요청을 확인하지 못했어요. 다시 시도해주세요.',
       429: '요청이 너무 많아요. 잠시 후 다시 시도해주세요.',
     }
-    throw new Error(messages[response.status] ?? '계정 요청을 처리하지 못했어요.')
+    const error = new Error(messages[response.status] ?? '계정 요청을 처리하지 못했어요.')
+    error.status = response.status
+    throw error
   }
   return response
 }
@@ -29,8 +31,13 @@ async function submit(path, body, contentType) {
 }
 
 export async function getSession(signal) {
-  const response = await request('session', { signal, cache: 'no-store' })
-  return response.data
+  try {
+    const response = await request('session', { signal, cache: 'no-store' })
+    return response.data
+  } catch (error) {
+    if (error.status === 401) return { username: null }
+    throw error
+  }
 }
 
 export function registerAccount(username, password, passwordConfirmation) {

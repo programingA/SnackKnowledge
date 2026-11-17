@@ -1,0 +1,41 @@
+.modal.delete-confirmation-modal {
+  width: 420px;
+  padding: 26px;
+  overflow-wrap: anywhere;
+}
+
+.delete-confirmation-modal h2 {
+  margin-bottom: 12px;
+  padding-inline-end: 28px;
+  font-size: 19px;
+}
+
+.delete-confirmation-modal p + p {
+  margin-top: 8px;
+}
+
+.delete-confirmation-item {
+  font-weight: 700;
+}
+
+.delete-confirmation-error {
+  color: #a53428;
+}
+
+.delete-confirmation-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.delete-confirmation-actions > button {
+  min-height: 34px;
+  padding-inline: 10px;
+}
+
+.delete-confirmation-actions > .delete-button {
+  padding-block: 5px;
+  font-size: 13px;
+}
