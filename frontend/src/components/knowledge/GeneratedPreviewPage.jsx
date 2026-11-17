@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { reconnectGeneratedPreview } from '../../api/study'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 
@@ -52,7 +53,7 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
           )}
         />
       ) : loading ? (
-        <p className="generated-cards-panel" role="status">생성한 카드를 불러오는 중이에요.</p>
+        <LoadingSkeleton layout="article" label="생성한 카드를 불러오는 중이에요." />
       ) : (
         <div className="generated-cards-panel">
           <p>열어볼 생성 카드가 없어요.</p>

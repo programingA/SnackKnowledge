@@ -1,0 +1,82 @@
+.loading-skeleton-item {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid var(--border-neutral);
+  border-radius: 12px;
+  background: var(--surface-paper);
+}
+
+.loading-skeleton-bar {
+  display: block;
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--border-neutral);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .loading-skeleton-bar {
+    animation: loading-skeleton-pulse 1.5s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes loading-skeleton-pulse {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+.loading-skeleton-label {
+  width: min(72px, 30%);
+  height: 9px;
+}
+
+.loading-skeleton-title {
+  width: min(360px, 82%);
+  height: 18px;
+}
+
+.loading-skeleton-line {
+  width: min(460px, 65%);
+}
+
+.loading-skeleton--cards .loading-skeleton-item {
+  min-height: 124px;
+}
+
+.loading-skeleton--rows {
+  display: grid;
+  gap: 10px;
+}
+
+.loading-skeleton--rows .loading-skeleton-item {
+  gap: 8px;
+  padding-block: 14px;
+}
+
+.loading-skeleton--article .loading-skeleton-item {
+  gap: 14px;
+  padding: clamp(22px, 5vw, 42px);
+}
+
+.loading-skeleton--article .loading-skeleton-item > .loading-skeleton-bar {
+  justify-self: center;
+}
+
+.loading-skeleton--article .loading-skeleton-title {
+  height: clamp(20px, 3vw, 30px);
+}
+
+.loading-skeleton-body {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 48rem);
+  margin: 20px auto 0;
+}
+
+.loading-skeleton--inline .loading-skeleton-item {
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+}

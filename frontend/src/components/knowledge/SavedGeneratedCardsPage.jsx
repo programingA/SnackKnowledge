@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { deleteGeneratedCard, getGeneratedCard, getGeneratedCards } from '../../api/generatedCards'
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import GeneratedArticle from './GeneratedArticle'
 import CommunityShareControls from './CommunityShareControls'
 import KnowledgeCard from './KnowledgeCard'
@@ -58,7 +59,7 @@ function SavedCards({ id, backLink }) {
         {loadError ? (
           <LoadError heading={id ? 'h1' : 'h2'} message={id && loadError.status === 404 ? loadError.message : errorMessage}
             onRetry={retry} />
-        ) : <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>}
+        ) : <LoadingSkeleton layout={id ? 'article' : 'rows'} label="저장한 카드를 불러오는 중이에요." />}
       </>
     )
   }

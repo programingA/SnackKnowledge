@@ -3,6 +3,7 @@ import { askKnowledgeQuestion, getKnowledgeConversation } from '../../api/study'
 import AiResponseText from '../ui/AiResponseText'
 import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 
 export default function KnowledgeQuestionForm({ studyPath, onComplete, active }) {
   const composerId = useId()
@@ -61,7 +62,7 @@ export default function KnowledgeQuestionForm({ studyPath, onComplete, active })
         <p className="knowledge-question-count" role="status">{used} / {limit}회 · {limit - used}회 남음</p>
       </div>
       <div className="knowledge-chat-log" ref={log} role="log" aria-label="대화 기록" tabIndex={0}>
-        {!conversation && !loadError && <p role="status">이전 대화를 불러오는 중이에요.</p>}
+        {!conversation && !loadError && <LoadingSkeleton layout="inline" label="이전 대화를 불러오는 중이에요." />}
         {conversation && !used && <p className="knowledge-chat-empty">읽은 지식에서 궁금한 점을 질문해 보세요.</p>}
         {used > 0 && (
           <ol className="knowledge-chat-turns" aria-label="AI와 나눈 대화">

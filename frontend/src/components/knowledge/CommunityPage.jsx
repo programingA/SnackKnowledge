@@ -1,6 +1,7 @@
 import { getCommunityCard, getCommunityCards } from '../../api/community'
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import GeneratedArticle from './GeneratedArticle'
 import KnowledgeCard from './KnowledgeCard'
 import useArticleBackLinkRef from './useArticleBackLinkRef'
@@ -30,7 +31,7 @@ function CommunityCards({ id }) {
       {error ? (
         <LoadError heading={id ? 'h1' : 'h2'} message={id && error.status === 404 ? error.message : errorMessage}
           onRetry={retry} />
-      ) : <p className="generated-cards-panel" role="status">카드를 불러오는 중이에요.</p>}
+      ) : <LoadingSkeleton layout={id ? 'article' : 'rows'} label="커뮤니티 카드를 불러오는 중이에요." />}
     </>
   )
   if (id) return <GeneratedArticle card={data} studyPath={`/api/study/generated/community/${id}`} headerActions={backLink} />

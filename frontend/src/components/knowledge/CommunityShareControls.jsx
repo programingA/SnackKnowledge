@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { getShareStatus, submitShare, withdrawShare } from '../../api/community'
 import useApiQuery from '../../api/useApiQuery'
 import LoadError from '../ui/LoadError'
+import LoadingSkeleton from '../ui/LoadingSkeleton'
 import './Community.css'
 
 const statusLabels = {
@@ -40,6 +41,7 @@ export default function CommunityShareControls({ id }) {
   }
 
   if (loadError) return <LoadError message="카드 공개 상태를 불러오지 못했어요." onRetry={retry} />
+  if (data === null) return <LoadingSkeleton layout="inline" label="카드 공개 상태를 확인하는 중이에요." />
 
   return (
     <section className="community-share" aria-label="커뮤니티 공개 관리">
