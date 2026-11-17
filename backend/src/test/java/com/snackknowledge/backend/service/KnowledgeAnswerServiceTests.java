@@ -54,7 +54,7 @@ class KnowledgeAnswerServiceTests {
         stubDrafts(responses, structured(new KnowledgeAiPolicy.Decision(KnowledgeAiPolicy.Verdict.INPUT_REJECTED)));
 
         var error = assertThrows(ResponseStatusException.class,
-                () -> new KnowledgeAnswerService(client).generateKnowledge("검토 대상 주제"));
+                () -> new KnowledgeAnswerService(client, mock(AiUsageMetrics.class)).generateKnowledge("검토 대상 주제"));
 
         assertEquals(422, error.getStatusCode().value());
         verify(responses, times(1)).create(ArgumentMatchers.<StructuredResponseCreateParams<Object>>any());
@@ -71,7 +71,7 @@ class KnowledgeAnswerServiceTests {
                 structured(card), structured(new KnowledgeAiPolicy.Decision(KnowledgeAiPolicy.Verdict.OUTPUT_REJECTED)));
 
         var error = assertThrows(ResponseStatusException.class,
-                () -> new KnowledgeAnswerService(client).generateKnowledge("빛의 산란"));
+                () -> new KnowledgeAnswerService(client, mock(AiUsageMetrics.class)).generateKnowledge("빛의 산란"));
 
         assertEquals(HttpStatus.BAD_GATEWAY, error.getStatusCode());
         verify(responses, times(3)).create(ArgumentMatchers.<StructuredResponseCreateParams<Object>>any());

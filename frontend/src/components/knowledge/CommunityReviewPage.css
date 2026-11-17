@@ -1,0 +1,12 @@
+.article-page-card.study-article .article-heading > .community-review-request {
+  color: var(--text-primary);
+  margin-block-start: 10px;
+  max-inline-size: none;
+  text-align: end;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.community-review-request .community-review-label {
+  font-size: 15px;
+}

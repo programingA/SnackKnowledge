@@ -37,19 +37,23 @@ public class KnowledgeAnswerService {
     private static final long RETRY_TEXT_OUTPUT_TOKENS = 6_144;
 
     private final OpenAIClient client;
+    private final AiUsageMetrics metrics;
 
     @Autowired
-    public KnowledgeAnswerService(@Value("${openai.api-key}") String apiKey) {
-        this(apiKey.isBlank() ? null : OpenAIOkHttpClient.builder().apiKey(apiKey).build());
+    public KnowledgeAnswerService(@Value("${openai.api-key}") String apiKey, AiUsageMetrics metrics) {
+        this(apiKey.isBlank() ? null : OpenAIOkHttpClient.builder().apiKey(apiKey).build(), metrics);
     }
 
-    KnowledgeAnswerService(OpenAIClient client) {
+    KnowledgeAnswerService(OpenAIClient client, AiUsageMetrics metrics) {
         this.client = client;
+        this.metrics = metrics;
     }
 
     public String answer(KnowledgeResponse knowledge, String question, List<KnowledgeStudyService.Turn> history) {
         var input = Map.of("card", knowledge, "history", history, "question", question);
-        return reviewDraft("question", input, requestText(json(input), KnowledgeAiPolicy.QUESTION));
+        String answer = reviewDraft("question", input, requestText(json(input), KnowledgeAiPolicy.QUESTION));
+        metrics.recordAnsweredQuestion();
+        return answer;
     }
 
     public String giveExplanationFeedback(KnowledgeResponse knowledge, String explanation) {
@@ -64,13 +68,18 @@ public class KnowledgeAnswerService {
             );
         }
 
-        var response = requireCompleteTextResponse(maxTokens -> client.responses().create(ResponseCreateParams.builder()
-                .model(TEXT_MODEL)
-                .instructions(KnowledgeAiPolicy.RULES + instructions)
-                .input(input)
-                .store(false)
-                .maxOutputTokens(maxTokens)
-                .build()));
+        var response = requireCompleteTextResponse(maxTokens -> {
+            var attempt = client.responses().create(ResponseCreateParams.builder()
+                    .model(TEXT_MODEL)
+                    .instructions(KnowledgeAiPolicy.RULES + instructions)
+                    .input(input)
+                    .store(false)
+                    .maxOutputTokens(maxTokens)
+                    .build());
+            attempt.usage().ifPresent(usage ->
+                    metrics.recordTokens(usage.inputTokens(), usage.outputTokens(), usage.totalTokens()));
+            return attempt;
+        });
 
         return response.output().stream()
                 .flatMap(item -> item.message().stream())
@@ -149,6 +158,8 @@ public class KnowledgeAnswerService {
                     .maxOutputTokens(maxTokens)
                     .text(type)
                     .build());
+            response.usage().ifPresent(usage ->
+                    metrics.recordTokens(usage.inputTokens(), usage.outputTokens(), usage.totalTokens()));
             if (response.status().filter(ResponseStatus.COMPLETED::equals).isEmpty()) throw invalidOutput();
             return response.output().stream()
                     .flatMap(item -> item.message().stream())
@@ -179,6 +190,14 @@ public class KnowledgeAnswerService {
     }
 
     public String generateCardImage(String title, String summary) {
+        return generateCardImage(title, summary, true);
+    }
+
+    String generateCardImageForBackfill(String title, String summary) {
+        return generateCardImage(title, summary, false);
+    }
+
+    private String generateCardImage(String title, String summary, boolean trackUsage) {
         if (client == null) return null;
 
         var params = ImageGenerateParams.builder()
@@ -198,10 +217,14 @@ public class KnowledgeAnswerService {
                 .build();
 
         try {
-            return client.images()
+            var response = client.images()
                     .withOptions(options -> options.timeout(Duration.ofSeconds(60)).maxRetries(0))
-                    .generate(params)
-                    .data().stream()
+                    .generate(params);
+            if (trackUsage) {
+                response.usage().ifPresent(usage ->
+                        metrics.recordTokens(usage.inputTokens(), usage.outputTokens(), usage.totalTokens()));
+            }
+            return response.data().stream()
                     .flatMap(images -> images.stream())
                     .flatMap(image -> image.b64Json().stream())
                     .filter(image -> !image.isBlank())

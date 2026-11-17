@@ -57,7 +57,7 @@ export default function AccountModal({ onChange, onClose }) {
       } else {
         const session = await signIn(trimmedName, password)
         if (!session.username) throw new Error('로그인 상태를 확인하지 못했어요. 다시 로그인해 주세요.')
-        onChange(session.username)
+        onChange(session)
       }
     } catch (error) {
       setError(error.message)

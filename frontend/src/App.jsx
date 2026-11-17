@@ -6,6 +6,7 @@ import { onSessionUnauthorized } from './api/http'
 import useApiQuery from './api/useApiQuery'
 import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
 import AccountModal from './components/account/AccountModal'
+import AdminDashboard, { AdminHeader } from './components/account/AdminDashboard'
 import InterestSettingsPage from './components/account/InterestSettingsPage'
 import MyPage from './components/account/MyPage'
 import BookmarksPage from './components/knowledge/BookmarksPage'
@@ -18,6 +19,7 @@ import CuriosityBanner from './components/layout/CuriosityBanner'
 import Hero from './components/layout/Hero'
 import SiteFooter from './components/layout/SiteFooter'
 import CommunityPage from './components/knowledge/CommunityPage'
+import CommunityReviewPage from './components/knowledge/CommunityReviewPage'
 import SiteHeader from './components/layout/SiteHeader'
 import DatabaseArticlePage from './components/knowledge/DatabaseArticlePage'
 import KnowledgeFeed from './components/knowledge/KnowledgeFeed'
@@ -46,17 +48,21 @@ export default function App() {
   const [accountOverride, setAccountOverride] = useState(null)
   const [sessionCheck, setSessionCheck] = useState(0)
   const { data: session, error: sessionError, retry: retrySession } = useApiQuery(getSession, sessionCheck, !accountOverride)
-  const username = (accountOverride ?? session)?.username ?? null
-  const savedCards = useApiQuery(getGeneratedCards, username, Boolean(username))
+  const activeSession = accountOverride ?? session
+  const username = activeSession?.username ?? null
+  const isAdmin = activeSession?.isAdmin === true
+  const canReviewCommunity = activeSession?.canReviewCommunity === true
+  const savedCards = useApiQuery(getGeneratedCards, username, Boolean(username) && !isAdmin)
   const sessionLoading = !accountOverride && !session && !sessionError
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState('')
+  const [adminReviewNotice, setAdminReviewNotice] = useState('')
   const [locationHash, setLocationHash] = useState(() => window.location.hash)
   const previousHash = useRef(locationHash)
   const databaseId = locationHash.match(/^#\/knowledge\/(\d+)$/)?.[1]
   const sampleId = locationHash.match(/^#\/sample\/([a-z]+)$/)?.[1]
   const sample = articles.find((article) => article.id === sampleId)
-  const bookmarks = useKnowledgeBookmarks(username)
+  const bookmarks = useKnowledgeBookmarks(isAdmin ? null : username)
   const isGeneratedPreview = locationHash === '#/generated-preview'
   const previewRevision = isGeneratedPreview ? preview?.revision : undefined
   const isBookmarksPage = locationHash === '#/bookmarks'
@@ -64,17 +70,23 @@ export default function App() {
   const isWrongAnswersPage = locationHash === '#/wrong-answers'
   const isInterestsPage = locationHash === '#/interests'
   const isMyPage = locationHash === '#/my-page'
+  const isAdminDashboard = locationHash === '#/admin'
   const isAboutPage = locationHash === '#/about'
   const generatedCardRoute = locationHash.match(/^#\/generated-cards(?:\/([0-9a-f-]{36}))?$/i)
   const communityRoute = locationHash.match(/^#\/community(?:\/([0-9a-f-]{36}))?$/i)
+  const reviewRoute = locationHash.match(/^#\/community-review(?:\/([0-9a-f-]{36}))?$/i)
   const isMemberSubpage = isBookmarksPage || isLearningHistoryPage || isWrongAnswersPage
-    || isInterestsPage || Boolean(generatedCardRoute)
-  const isAccountPage = isMyPage || isMemberSubpage
+    || isInterestsPage || Boolean(generatedCardRoute || reviewRoute)
+  const isAccountPage = isMyPage || isMemberSubpage || isAdminDashboard
   const showAccountPage = isAccountPage && !sessionLoading && !sessionError
   const requiresSignIn = showAccountPage && !username
-  const focusedPageId = isAboutPage ? 'about-page'
+  const isReviewPage = Boolean(reviewRoute)
+  const focusedPageId = isAdmin || isAdminDashboard
+    ? isReviewPage ? 'community-review-page' : 'admin-dashboard'
+    : isAboutPage ? 'about-page'
     : isGeneratedPreview ? 'generated-preview-page'
     : databaseId || sample ? 'article-page'
+    : reviewRoute ? 'community-review-page'
     : communityRoute ? 'community-page'
     : isBookmarksPage ? 'bookmarks-page'
     : isLearningHistoryPage ? 'learning-history-page'
@@ -99,6 +111,10 @@ export default function App() {
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
+
+  useEffect(() => {
+    if (isAdmin && !isAdminDashboard && !isReviewPage) window.location.replace('#/admin')
+  }, [isAdmin, isAdminDashboard, isReviewPage, locationHash])
 
   useEffect(() => {
     const hashChanged = previousHash.current !== locationHash
@@ -152,6 +168,7 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (isAdmin || sessionLoading) return
     const controller = new AbortController()
     getKnowledgeList(controller.signal)
       .then((cards) => {
@@ -163,7 +180,7 @@ export default function App() {
         if (!controller.signal.aborted) setKnowledge({ cards: null, featured: null, error: true })
       })
     return () => controller.abort()
-  }, [knowledgeAttempt])
+  }, [isAdmin, knowledgeAttempt, sessionLoading])
 
   function retryKnowledge() {
     focusPageTarget(document.getElementById('feed-title'))
@@ -172,6 +189,7 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (isAdmin || sessionLoading) return
     let active = true
     loadGeneratedPreview().then((card) => {
       if (active && card) setPreview((current) => current ?? { card, revision: 1, restored: true })
@@ -179,7 +197,7 @@ export default function App() {
       if (active) setPreviewLoading(false)
     })
     return () => { active = false }
-  }, [])
+  }, [isAdmin, sessionLoading])
 
   async function showGeneratedCard(card) {
     let storageWarning = ''
@@ -223,11 +241,33 @@ export default function App() {
     try {
       await signOut()
       setAccountOverride({ username: null })
+      if (isAdmin) window.location.replace('#')
     } catch (error) {
       setSignOutError(error.message)
     } finally {
       setSigningOut(false)
     }
+  }
+
+  if (sessionLoading) {
+    return (
+      <main className="page-shell session-status">
+        <LoadingSkeleton label="로그인 상태를 확인하는 중이에요." />
+      </main>
+    )
+  }
+
+  if (isAdmin) {
+    return (
+      <>
+        <AdminHeader username={username} onSignOut={handleSignOut} signingOut={signingOut} signOutError={signOutError} />
+        {reviewRoute ? (
+          <CommunityReviewPage id={reviewRoute[1]} username={username} canReview={canReviewCommunity}
+            isAdmin onAdminDecision={setAdminReviewNotice} />
+        ) : <AdminDashboard />}
+        <StatusToast message={adminReviewNotice} onDismiss={() => setAdminReviewNotice('')} />
+      </>
+    )
   }
 
   return (
@@ -298,10 +338,20 @@ export default function App() {
       {showAccountPage && isMyPage && (
         <MyPage
           username={username}
+          canReviewCommunity={canReviewCommunity}
           onSignIn={() => setModal('account')}
         />
       )}
       {communityRoute && <CommunityPage id={communityRoute[1]} bookmarks={bookmarks} />}
+      {showAccountPage && reviewRoute && (
+        <CommunityReviewPage id={reviewRoute[1]} username={username} canReview={canReviewCommunity} />
+      )}
+      {showAccountPage && isAdminDashboard && (
+        <main className="page-shell admin-dashboard" id="admin-dashboard" tabIndex={-1}>
+          <h1>관리자 대시보드</h1>
+          <p>{username ? '관리자 계정만 대시보드에 들어갈 수 있어요.' : '관리자 계정으로 로그인해 주세요.'}</p>
+        </main>
+      )}
 
       {(isGeneratedPreview || preview) && (
         <GeneratedPreviewPage
@@ -353,9 +403,10 @@ export default function App() {
       )}
       {(modal === 'account' || requiresSignIn) && !username && (
         <AccountModal
-          onChange={(username) => {
-            setAccountOverride({ username })
+          onChange={(updatedSession) => {
+            setAccountOverride(updatedSession)
             closeModal()
+            if (updatedSession.isAdmin) window.location.replace('#/admin')
           }}
           onClose={closeAccountModal}
         />
