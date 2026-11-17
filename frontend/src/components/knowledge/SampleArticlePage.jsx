@@ -21,15 +21,15 @@ export default function SampleArticlePage({ article }) {
         quiz: <SampleQuiz article={article} onExplain={() => setActivity('explain')} />,
         explain: <SampleExplanation article={article} />,
       })}>
+        <div className="article-reading sample-reading-guide">
+          <SampleActivityIntro eyebrow="A BITE OF KNOWLEDGE" title="익숙한 풍경에도 이유가 있어요."
+            description="짧은 글을 읽으며 일상 속 궁금증을 하나씩 풀어보세요." />
+        </div>
+        {article.id === 'sky' && (
+          <img className="knowledge-illustration" src={`${import.meta.env.BASE_URL}sample-sky.jpg`}
+            alt="초록 언덕 위로 흰 구름이 떠 있는 파란 하늘" />
+        )}
         <div className="article-reading">
-          <div className="sample-reading-intro">
-            <SampleActivityIntro eyebrow="A BITE OF KNOWLEDGE" title="익숙한 풍경에도 이유가 있어요."
-              description="짧은 글을 읽으며 일상 속 궁금증을 하나씩 풀어보세요." />
-            {article.id === 'sky' && (
-              <img src={`${import.meta.env.BASE_URL}sample-sky.jpg`} width={768} height={512}
-                alt="초록 언덕 위로 흰 구름이 떠 있는 파란 하늘" />
-            )}
-          </div>
           <p className="article-intro">{article.intro}</p>
           {article.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </div>

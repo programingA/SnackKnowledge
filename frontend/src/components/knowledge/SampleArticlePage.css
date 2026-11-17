@@ -1,15 +1,5 @@
-.sample-reading-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
-  align-items: center;
-  gap: clamp(14px, 3vw, 24px);
-}
-
-.sample-reading-intro > img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
+.sample-reading-guide {
+  margin-block-end: clamp(22px, 3.4vw, 32px);
 }
 
 .sample-activity-intro {
@@ -28,10 +18,4 @@
 .knowledge-chat-form .suggestion {
   margin-block: 0 12px;
   text-align: start;
-}
-
-@media (max-width: 540px) {
-  .sample-reading-intro {
-    grid-template-columns: 1fr;
-  }
 }
