@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getSession, signOut } from './api/account'
 import { getKnowledgeList } from './api/knowledge'
 import { getGeneratedCards } from './api/generatedCards'
+import { onSessionUnauthorized } from './api/http'
 import useApiQuery from './api/useApiQuery'
 import { loadGeneratedPreview, storeGeneratedPreview } from './api/generatedPreviewStorage'
 import AccountModal from './components/account/AccountModal'
@@ -42,7 +43,8 @@ export default function App() {
   const [knowledge, setKnowledge] = useState({ cards: null, featured: null, error: false })
   const [knowledgeAttempt, setKnowledgeAttempt] = useState(0)
   const [accountOverride, setAccountOverride] = useState(null)
-  const { data: session, error: sessionError, retry: retrySession } = useApiQuery(getSession, undefined, !accountOverride)
+  const [sessionCheck, setSessionCheck] = useState(0)
+  const { data: session, error: sessionError, retry: retrySession } = useApiQuery(getSession, sessionCheck, !accountOverride)
   const username = (accountOverride ?? session)?.username ?? null
   const savedCards = useApiQuery(getGeneratedCards, username, Boolean(username))
   const sessionLoading = !accountOverride && !session && !sessionError
@@ -68,6 +70,7 @@ export default function App() {
     || isInterestsPage || Boolean(generatedCardRoute)
   const isAccountPage = isMyPage || isMemberSubpage
   const showAccountPage = isAccountPage && !sessionLoading && !sessionError
+  const requiresSignIn = showAccountPage && !username
   const focusedPageId = isAboutPage ? 'about-page'
     : isGeneratedPreview ? 'generated-preview-page'
     : databaseId || sample ? 'article-page'
@@ -78,6 +81,14 @@ export default function App() {
         : isWrongAnswersPage ? 'wrong-answers-page'
           : isInterestsPage ? 'interests-page'
             : isMyPage ? 'my-page' : null
+
+  useEffect(() => {
+    if (!username) return
+    return onSessionUnauthorized(() => {
+      setAccountOverride(null)
+      setSessionCheck((attempt) => attempt + 1)
+    })
+  }, [username])
 
   useEffect(() => {
     function handleHashChange() {
@@ -132,6 +143,11 @@ export default function App() {
 
   function closeModal() {
     setModal(null)
+  }
+
+  function closeAccountModal() {
+    closeModal()
+    if (requiresSignIn) window.location.replace('#')
   }
 
   useEffect(() => {
@@ -206,7 +222,6 @@ export default function App() {
     try {
       await signOut()
       setAccountOverride({ username: null })
-      if (window.location.hash === '#/my-page') window.location.hash = 'knowledge-feed'
     } catch (error) {
       setSignOutError(error.message)
     } finally {
@@ -330,10 +345,13 @@ export default function App() {
       {modal === 'generate' && (
         <SampleGenerateModal onGenerated={showGeneratedCard} onClose={closeModal} />
       )}
-      {modal === 'account' && !username && (
+      {(modal === 'account' || requiresSignIn) && !username && (
         <AccountModal
-          onChange={(username) => setAccountOverride({ username })}
-          onClose={() => setModal(null)}
+          onChange={(username) => {
+            setAccountOverride({ username })
+            closeModal()
+          }}
+          onClose={closeAccountModal}
         />
       )}
     </>

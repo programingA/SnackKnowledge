@@ -9,6 +9,11 @@
   font-weight: 700;
 }
 
+.wrong-answer-title a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .wrong-answers-page h1 {
   margin: 14px 0 22px;
   font-size: clamp(26px, 5vw, 36px);
@@ -52,12 +57,18 @@
   gap: 8px 12px;
 }
 
-.wrong-answer-delete {
-  border: 1px solid #e9c1b8;
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #a53428;
-  background: #fff1ec;
+.wrong-answer-actions > button {
+  min-height: 34px;
+  padding: 4px 12px;
+  font-size: 13px;
+}
+
+.wrong-answer-actions > .wrong-answer-retry {
+  background: #386560;
+}
+
+.wrong-answer-actions > .wrong-answer-retry:not(:disabled):hover {
+  background: #2c544f;
 }
 
 .wrong-answer-error {

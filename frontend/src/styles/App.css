@@ -145,6 +145,22 @@ h1 {
   box-shadow: 0 5px 16px #bf4b3320;
 }
 
+.primary-button--compact {
+  min-height: 36px;
+  padding-block: 6px;
+}
+
+.delete-button {
+  border-radius: 8px;
+  background: #a95550;
+  color: #fff;
+  font-weight: 700;
+}
+
+.delete-button:not(:disabled):hover {
+  background: #984c48;
+}
+
 .eyebrow {
   display: block;
   font-size: 9px;
@@ -460,10 +476,28 @@ a.featured-card:hover {
   outline-offset: 3px;
 }
 .knowledge-card > p {
-  margin: 8px 0 16px;
+  margin: 8px 0 0;
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.6;
+}
+.knowledge-card:has(> .card-read) > p {
+  margin-bottom: 16px;
+}
+.bookmarks-page .knowledge-card,
+.knowledge-card:has(.generated-list-delete) {
+  padding-inline-end: 92px;
+}
+.bookmarks-page .knowledge-card .bookmark-control--compact,
+.knowledge-card .generated-list-delete {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 20px;
+  transform: translateY(-50%);
+  margin: 0;
+}
+.bookmarks-page .knowledge-card .bookmark-control--compact {
+  display: flex;
 }
 .card-read {
   align-self: flex-start;

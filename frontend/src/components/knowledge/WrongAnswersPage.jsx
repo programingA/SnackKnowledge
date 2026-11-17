@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { deleteWrongAnswer, getWrongAnswers, startWrongAnswerQuiz } from '../../api/wrongAnswers'
+import DeleteConfirmationModal from '../ui/DeleteConfirmationModal'
 import LoadError from '../ui/LoadError'
 import LoadingSkeleton from '../ui/LoadingSkeleton'
 import KnowledgeQuiz from './KnowledgeQuiz'
@@ -27,7 +28,7 @@ function WrongAnswerList() {
   const [error, setError] = useState('')
   const [reload, setReload] = useState(0)
   const [pendingId, setPendingId] = useState(null)
-  const [confirmId, setConfirmId] = useState(null)
+  const [confirmNote, setConfirmNote] = useState(null)
   const [practice, setPractice] = useState(null)
 
   useEffect(() => {
@@ -44,7 +45,6 @@ function WrongAnswerList() {
 
   async function retry(id) {
     setError('')
-    setConfirmId(null)
     setPendingId(id)
     try {
       setPractice({ id, quiz: await startWrongAnswerQuiz(id) })
@@ -56,18 +56,11 @@ function WrongAnswerList() {
   }
 
   async function remove(id) {
+    await deleteWrongAnswer(id)
     setError('')
-    setPendingId(id)
-    try {
-      await deleteWrongAnswer(id)
-      setNotes((current) => current.filter((note) => note.id !== id))
-      if (practice?.id === id) setPractice(null)
-      setConfirmId(null)
-    } catch (error) {
-      setError(error.message)
-    } finally {
-      setPendingId(null)
-    }
+    setNotes((current) => current.filter((note) => note.id !== id))
+    if (practice?.id === id) setPractice(null)
+    setConfirmNote(null)
   }
 
   if (loadError) {
@@ -86,28 +79,18 @@ function WrongAnswerList() {
         <ul className="wrong-answer-list">
           {notes.map((note) => (
             <li className="wrong-answer-panel" key={note.id}>
-              <p className="wrong-answer-title">{note.knowledgeTitle}</p>
+              <p className="wrong-answer-title">
+                {note.knowledgeId ? <a href={`#/knowledge/${note.knowledgeId}`}>{note.knowledgeTitle}</a> : note.knowledgeTitle}
+              </p>
               <h2>{note.question}</h2>
               <time dateTime={note.savedAt}>{dateFormat.format(new Date(note.savedAt))}</time>
               <div className="wrong-answer-actions">
-                {confirmId === note.id ? (
-                  <>
-                    <p>이 오답을 삭제할까요?</p>
-                    <button type="button" className="wrong-answer-delete" disabled={pendingId !== null}
-                      onClick={() => remove(note.id)}>삭제 확인</button>
-                    <button type="button" className="text-button" disabled={pendingId !== null}
-                      onClick={() => setConfirmId(null)}>취소</button>
-                  </>
-                ) : (
-                  <>
-                    <button type="button" className="primary-button" disabled={pendingId !== null}
-                      onClick={() => retry(note.id)}>
-                      {pendingId === note.id ? '불러오는 중...' : '다시 풀기'}
-                    </button>
-                    <button type="button" className="wrong-answer-delete" disabled={pendingId !== null}
-                      onClick={() => setConfirmId(note.id)}>삭제</button>
-                  </>
-                )}
+                <button type="button" className="primary-button wrong-answer-retry" disabled={pendingId !== null}
+                  onClick={() => retry(note.id)}>
+                  {pendingId === note.id ? '불러오는 중...' : '다시 풀기'}
+                </button>
+                <button type="button" className="delete-button" disabled={pendingId !== null}
+                  onClick={() => setConfirmNote(note)}>삭제</button>
               </div>
               {practice?.id === note.id && (
                 <div className="wrong-answer-practice">
@@ -117,6 +100,10 @@ function WrongAnswerList() {
             </li>
           ))}
         </ul>
+      )}
+      {confirmNote && (
+        <DeleteConfirmationModal label="오답 삭제" question="이 오답을 삭제할까요?" itemName={confirmNote.question}
+          onClose={() => setConfirmNote(null)} onConfirm={() => remove(confirmNote.id)} />
       )}
     </>
   )
