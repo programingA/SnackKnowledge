@@ -22,6 +22,7 @@ import SiteHeader from './components/layout/SiteHeader'
 import DatabaseArticlePage from './components/knowledge/DatabaseArticlePage'
 import KnowledgeFeed from './components/knowledge/KnowledgeFeed'
 import useKnowledgeBookmarks from './components/knowledge/useKnowledgeBookmarks'
+import StatusToast from './components/ui/StatusToast'
 import KnowledgeRecommendations from './components/knowledge/KnowledgeRecommendations'
 import SampleArticlePage from './components/knowledge/SampleArticlePage'
 import SampleGenerateModal from './components/knowledge/SampleGenerateModal'
@@ -300,7 +301,7 @@ export default function App() {
           onSignIn={() => setModal('account')}
         />
       )}
-      {communityRoute && <CommunityPage id={communityRoute[1]} />}
+      {communityRoute && <CommunityPage id={communityRoute[1]} bookmarks={bookmarks} />}
 
       {(isGeneratedPreview || preview) && (
         <GeneratedPreviewPage
@@ -341,6 +342,11 @@ export default function App() {
         </div>
       </main>
       <SiteFooter />
+      <StatusToast
+        message={bookmarks?.notice?.message ?? ''}
+        onDismiss={bookmarks?.dismissNotice}
+        noticeKey={bookmarks?.notice?.id}
+      />
 
       {modal === 'generate' && (
         <SampleGenerateModal onGenerated={showGeneratedCard} onClose={closeModal} />

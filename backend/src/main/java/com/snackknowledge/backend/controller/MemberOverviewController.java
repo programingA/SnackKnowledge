@@ -32,7 +32,9 @@ public class MemberOverviewController {
         return jdbc.sql("""
                 SELECT
                     (SELECT COUNT(*) FROM member_bookmark b JOIN knowledge k ON k.id = b.knowledge_id
-                        WHERE b.username = :username) AS bookmarks,
+                        WHERE b.username = :username)
+                    + (SELECT COUNT(*) FROM member_community_bookmark b JOIN community_share s ON s.share_id = b.share_id
+                        WHERE b.username = :username AND s.status = 'APPROVED') AS bookmarks,
                     (SELECT COUNT(*) FROM member_learning_history h JOIN knowledge k ON k.id = h.knowledge_id
                         WHERE h.username = :username) AS learning_activities,
                     (SELECT COUNT(*) FROM member_generated_card g WHERE g.username = :username) AS generated_cards,
