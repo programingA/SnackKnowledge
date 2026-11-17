@@ -26,8 +26,25 @@
   margin-top: 4px;
 }
 
-.recommendations-state .text-button {
-  color: var(--coral-ink);
+.recommendations-empty {
+  padding: clamp(20px, 4vw, 30px) 16px;
+  border: 1px solid var(--border-neutral);
+  border-radius: 14px;
+  background: var(--surface-paper);
+  text-align: center;
+}
+
+.recommendations-empty h3 {
+  font-size: clamp(15px, 2vw, 17px);
+  word-break: keep-all;
+}
+
+.recommendations-empty p {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: keep-all;
 }
 
 .recommendations-list {
