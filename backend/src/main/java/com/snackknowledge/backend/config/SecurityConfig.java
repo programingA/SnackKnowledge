@@ -3,6 +3,7 @@ package com.snackknowledge.backend.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -24,19 +25,32 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService(JdbcClient jdbc) {
-        return username -> jdbc.sql("SELECT username, password_hash FROM member_account WHERE username = ?")
+        return username -> jdbc.sql("""
+                SELECT account.username, account.password_hash, admin.username IS NOT NULL AS is_admin
+                FROM member_account account
+                LEFT JOIN member_admin admin ON admin.username = account.username
+                WHERE account.username = ?
+                """)
                 .param(AccountCredentials.normalizeUsername(username))
                 .query((row, index) -> User.withUsername(row.getString("username"))
-                        .password(row.getString("password_hash")).roles("MEMBER").build())
+                        .password(row.getString("password_hash"))
+                        .roles(row.getBoolean("is_admin") ? "ADMIN" : "MEMBER")
+                        .build())
                 .optional()
                 .orElseThrow(() -> new UsernameNotFoundException("Account not found"));
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, CommunityReviewAccess reviewAccess) throws Exception {
         return http
                 .authorizeHttpRequests(rules -> rules
-                        .requestMatchers("/api/me/**", "/api/study/generated/saved/**").authenticated()
+                        .requestMatchers("/api/admin/overview").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/community/**").access((authentication, context) ->
+                                new AuthorizationDecision(reviewAccess.canReview(authentication.get())))
+                        .requestMatchers("/api/me/**", "/api/study/generated/saved/**").hasRole("MEMBER")
+                        .requestMatchers("/api/knowledge/**", "/api/community/**", "/api/study/**", "/api/quizzes/**")
+                        .access((authentication, context) ->
+                                new AuthorizationDecision(!CommunityReviewAccess.isAdmin(authentication.get())))
                         .anyRequest().permitAll())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/knowledge/**"))
                 .addFilterAfter(new AccountAttemptFilter(), CsrfFilter.class)

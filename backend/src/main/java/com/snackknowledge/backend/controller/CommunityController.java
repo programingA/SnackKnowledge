@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -28,31 +30,67 @@ public class CommunityController {
 
     @GetMapping("/api/community/cards")
     public List<CardSummary> list() {
+        return listCards("APPROVED").stream()
+                .map(card -> new CardSummary(card.id(), card.category(), card.title(), card.summary()))
+                .toList();
+    }
+
+    @GetMapping("/api/admin/community/reviews")
+    public List<ReviewSummary> pendingReviews() {
+        return listCards("PENDING");
+    }
+
+    private List<ReviewSummary> listCards(String status) {
         return jdbc.sql("""
-                SELECT s.share_id, c.category, c.title, c.summary
+                SELECT s.share_id, c.category, c.title, c.summary, s.username, s.submitted_at
                 FROM community_share s
                 JOIN member_generated_card c ON c.username = s.username AND c.card_id = s.card_id
-                WHERE s.status = 'APPROVED'
+                WHERE s.status = ?
                 ORDER BY s.submitted_at DESC, s.share_id
-                """).query((row, index) -> new CardSummary(row.getString("share_id"), row.getString("category"),
-                        row.getString("title"), row.getString("summary")))
+                """).param(status).query((row, index) -> new ReviewSummary(row.getString("share_id"), row.getString("category"),
+                        row.getString("title"), row.getString("summary"), row.getString("username"),
+                        row.getTimestamp("submitted_at").toInstant()))
                 .list();
     }
 
     @GetMapping("/api/community/cards/{id}")
     public Card read(@PathVariable("id") UUID id) {
+        return readCard(id, "APPROVED").card();
+    }
+
+    @GetMapping("/api/admin/community/reviews/{id}")
+    public ReviewDetail readReview(@PathVariable("id") UUID id) {
+        return readCard(id, "PENDING");
+    }
+
+    private ReviewDetail readCard(UUID id, String status) {
         return jdbc.sql("""
-                SELECT c.category, c.title, c.summary, c.content, c.image
+                SELECT c.category, c.title, c.summary, c.content, c.image, s.username, s.submitted_at
                 FROM community_share s
                 JOIN member_generated_card c ON c.username = s.username AND c.card_id = s.card_id
-                WHERE s.share_id = ? AND s.status = 'APPROVED'
-                """).param(id.toString())
+                WHERE s.share_id = ? AND s.status = ?
+                """).params(id.toString(), status)
                 .query((row, index) -> {
                     byte[] image = row.getBytes("image");
-                    return new Card(row.getString("category"), row.getString("title"), row.getString("summary"),
+                    var card = new Card(row.getString("category"), row.getString("title"), row.getString("summary"),
                             row.getString("content"), image == null ? null : Base64.getEncoder().encodeToString(image));
+                    return new ReviewDetail(card, row.getString("username"), row.getTimestamp("submitted_at").toInstant());
                 }).optional()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/api/admin/community/reviews/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void decide(@PathVariable("id") UUID id, @RequestBody ReviewDecision decision) {
+        String status = decision.status();
+        if (!"APPROVED".equals(status) && !"REJECTED".equals(status)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        int changed = jdbc.sql("UPDATE community_share SET status = ? WHERE share_id = ? AND status = 'PENDING'")
+                .params(status, id.toString()).update();
+        if (changed == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
     }
 
     @GetMapping("/api/me/community-shares/{cardId}")
@@ -84,5 +122,8 @@ public class CommunityController {
                 .params(username, cardId.toString()).query(String.class).optional();
     }
 
+    public record ReviewDecision(String status) {}
+    public record ReviewSummary(String id, String category, String title, String summary, String applicant, Instant submittedAt) {}
+    public record ReviewDetail(Card card, String applicant, Instant submittedAt) {}
     public record ShareStatus(String status) {}
 }

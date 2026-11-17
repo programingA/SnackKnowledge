@@ -3,6 +3,22 @@ CREATE TABLE IF NOT EXISTS member_account (
     password_hash VARCHAR(100) NOT NULL
 ) CHARACTER SET utf8mb4;
 
+CREATE TABLE IF NOT EXISTS member_admin (
+    username VARCHAR(30) PRIMARY KEY,
+    FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ai_usage_totals (
+    id TINYINT PRIMARY KEY,
+    tracking_started_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    answered_questions BIGINT NOT NULL DEFAULT 0,
+    input_tokens BIGINT NOT NULL DEFAULT 0,
+    output_tokens BIGINT NOT NULL DEFAULT 0,
+    total_tokens BIGINT NOT NULL DEFAULT 0
+);
+
+INSERT IGNORE INTO ai_usage_totals (id) VALUES (1);
+
 CREATE TABLE IF NOT EXISTS member_bookmark (
     username VARCHAR(30) NOT NULL,
     knowledge_id BIGINT NOT NULL,
@@ -78,6 +94,11 @@ CREATE TABLE IF NOT EXISTS member_community_bookmark (
     PRIMARY KEY (username, share_id),
     FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE,
     FOREIGN KEY (share_id) REFERENCES community_share(share_id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS community_moderator (
+    username VARCHAR(30) PRIMARY KEY,
+    FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
 
 CREATE TABLE IF NOT EXISTS knowledge_illustration (

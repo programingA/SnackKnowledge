@@ -1,15 +1,16 @@
 package com.snackknowledge.backend.controller;
 
 import com.snackknowledge.backend.config.AccountCredentials;
+import com.snackknowledge.backend.config.CommunityReviewAccess;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -17,10 +18,12 @@ import java.util.Map;
 public class AccountController {
     private final JdbcClient jdbc;
     private final PasswordEncoder encoder;
+    private final CommunityReviewAccess reviewAccess;
 
-    public AccountController(JdbcClient jdbc, PasswordEncoder encoder) {
+    public AccountController(JdbcClient jdbc, PasswordEncoder encoder, CommunityReviewAccess reviewAccess) {
         this.jdbc = jdbc;
         this.encoder = encoder;
+        this.reviewAccess = reviewAccess;
     }
 
     @GetMapping("/csrf")
@@ -29,8 +32,9 @@ public class AccountController {
     }
 
     @GetMapping("/session")
-    public Session session(Principal principal) {
-        return new Session(principal == null ? null : principal.getName());
+    public Session session(Authentication user) {
+        return new Session(user == null ? null : user.getName(), reviewAccess.canReview(user),
+                CommunityReviewAccess.isAdmin(user));
     }
 
     @PostMapping("/register")
@@ -51,5 +55,5 @@ public class AccountController {
     }
 
     public record Credentials(String username, String password, String passwordConfirmation) {}
-    public record Session(String username) {}
+    public record Session(String username, boolean canReviewCommunity, boolean isAdmin) {}
 }

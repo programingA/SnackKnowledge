@@ -45,7 +45,7 @@ public class KnowledgeIllustrationService {
                             row.getString("summary"))).list();
             int saved = 0;
             for (Subject subject : missing) {
-                String encoded = ai.generateCardImage(subject.title(), subject.summary());
+                String encoded = ai.generateCardImageForBackfill(subject.title(), subject.summary());
                 if (encoded == null) continue;
 
                 byte[] image;
