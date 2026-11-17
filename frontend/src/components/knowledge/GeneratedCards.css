@@ -53,8 +53,7 @@
 }
 
 .generated-preview-save .primary-button,
-.generated-preview-secondary,
-.generated-preview-save .text-button {
+.generated-preview-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -67,14 +66,12 @@
   transition: background-color var(--surface-transition);
 }
 
-.generated-preview-save .primary-button,
-.generated-preview-save .text-button {
+.generated-preview-save .primary-button {
   background: var(--coral-ink);
   color: #fff;
 }
 
-.generated-preview-save .primary-button:not(:disabled):hover,
-.generated-preview-save .text-button:hover {
+.generated-preview-save .primary-button:not(:disabled):hover {
   background: var(--coral-ink-hover);
   box-shadow: none;
   transform: none;
@@ -99,6 +96,40 @@
 
 .generated-preview-save .generated-card-actions p {
   font-size: 13px;
+}
+
+.generated-save-notice {
+  position: fixed;
+  z-index: 10;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 16px;
+  border: 1px solid var(--border-neutral);
+  border-radius: 10px;
+  background: var(--surface-paper);
+  color: var(--text-primary);
+  box-shadow: 0 4px 18px #30271b24;
+  font-size: 14px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .generated-save-notice {
+    animation: generated-save-notice-enter 220ms ease-out both;
+  }
+}
+
+@keyframes generated-save-notice-enter {
+  from {
+    transform: translate(-50%, 12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%);
+    opacity: 1;
+  }
 }
 
 .study-article .article-heading > .generated-preview-hint {
