@@ -20,3 +20,20 @@ export function getReadingParagraphs(content) {
 
   return reading
 }
+
+export function formatGeneratedReading() {
+  return (tree) => {
+    const isSingleBlock = tree.children.length === 1
+
+    tree.children = tree.children.flatMap((block) => {
+      if (block.type !== 'paragraph' || block.children.length !== 1) return [block]
+      const [text] = block.children
+      if (text.type !== 'text' || (!isSingleBlock && text.value.length < 220)) return [block]
+
+      const paragraphs = getReadingParagraphs(text.value)
+      return paragraphs.length > 1
+        ? paragraphs.map((value) => ({ type: 'paragraph', children: [{ type: 'text', value }] }))
+        : [block]
+    })
+  }
+}

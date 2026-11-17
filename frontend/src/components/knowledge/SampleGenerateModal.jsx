@@ -4,6 +4,8 @@ import GenerationProgress, { LoadingSpinner } from '../ui/GenerationProgress'
 import Icon from '../ui/Icon'
 import Modal from '../ui/Modal'
 
+const TOPIC_LIMIT = 100
+
 export default function SampleGenerateModal({ onClose, onGenerated }) {
   const [topic, setTopic] = useState('')
   const [loading, setLoading] = useState(false)
@@ -44,15 +46,18 @@ export default function SampleGenerateModal({ onClose, onGenerated }) {
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="topic">알고 싶은 주제</label>
-        <input
+        <textarea
           id="topic"
           value={topic}
-          maxLength={100}
+          rows={4}
+          maxLength={TOPIC_LIMIT}
+          aria-describedby="topic-length"
           onChange={(event) => setTopic(event.target.value)}
           placeholder="예: 블랙홀은 어떻게 생기나요?"
           disabled={loading}
           required
         />
+        <p className="topic-length" id="topic-length">{topic.length} / {TOPIC_LIMIT}자</p>
 
         <fieldset className="topic-suggestions">
           <legend>예시 주제</legend>

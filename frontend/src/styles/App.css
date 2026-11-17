@@ -135,6 +135,7 @@ h1 {
   padding: 14px 19px;
   min-height: 46px;
   transition:
+    var(--button-scale-transition),
     transform 0.2s,
     background 0.2s,
     box-shadow 0.2s;
@@ -215,7 +216,8 @@ h1 {
   gap: 8px;
   min-height: 44px;
   font-size: 14px;
-  transition: background-color var(--surface-transition), color var(--surface-transition), border-color var(--surface-transition);
+  transition: background-color var(--surface-transition), color var(--surface-transition),
+    border-color var(--surface-transition), var(--button-scale-transition);
 }
 .home .primary-button {
   padding: 8px 16px;
@@ -393,28 +395,120 @@ a.featured-card:hover {
   gap: 8px 16px;
   margin-block: 16px;
 }
-.category-tabs {
+.knowledge-category-picker {
+  position: relative;
+  flex: 0 1 21rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.knowledge-category-trigger {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-.category-tabs button {
-  min-height: 36px;
-  padding: 4px 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-neutral);
   border-radius: 8px;
-  background: transparent;
+  background: var(--surface-paper);
   color: var(--text-secondary);
-  font-size: 13px;
-  transition: background-color var(--surface-transition), color var(--surface-transition);
+  font-weight: 600;
+  text-align: start;
 }
-.category-tabs button:hover {
+.knowledge-category-trigger > span:first-child {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.knowledge-category-chevron {
+  flex: none;
+  inline-size: 7px;
+  block-size: 7px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin: 0 3px 3px 0;
+}
+.knowledge-category-trigger[aria-expanded='true'] .knowledge-category-chevron {
+  transform: rotate(225deg);
+  margin-block: 3px 0;
+}
+.knowledge-category-panel {
+  position: absolute;
+  z-index: 5;
+  inset: calc(100% + 6px) 0 auto;
+  padding: 12px;
+  border: 1px solid var(--border-neutral);
+  border-radius: 10px;
+  background: var(--surface-paper);
+  color: var(--text-secondary);
+  box-shadow: 0 6px 20px #30271b24;
+}
+.knowledge-category-panel label {
+  display: block;
+  margin-block-end: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.knowledge-category-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 10px;
+  border: 1px solid var(--border-neutral);
+  border-radius: 8px;
+}
+.knowledge-category-search:focus-within {
+  outline: 2px solid var(--coral-ink);
+  outline-offset: 2px;
+}
+.knowledge-category-search svg {
+  flex-shrink: 0;
+}
+.knowledge-category-search input {
+  inline-size: 100%;
+  min-block-size: 40px;
+  padding: 6px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+.knowledge-category-options {
+  display: grid;
+  gap: 2px;
+  max-block-size: min(17rem, 40dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin-block-start: 8px;
+  padding: 5px;
+}
+.knowledge-category-options button {
+  min-inline-size: 0;
+  min-block-size: 44px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: transparent;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.knowledge-category-options button:hover {
   background: var(--surface-raised);
 }
-.category-tabs .selected,
-.category-tabs .selected:hover {
+.knowledge-category-options button[aria-pressed='true'] {
   background: #f5e7e0;
   color: var(--coral-ink);
   font-weight: 600;
+}
+.knowledge-category-options button:focus-visible {
+  outline-offset: -2px;
+}
+.knowledge-category-empty {
+  padding: 4px 6px 6px;
+  font-size: 13px;
 }
 .result-count {
   color: var(--text-muted);
@@ -429,6 +523,42 @@ a.featured-card:hover {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+.knowledge-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: 24px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.knowledge-pagination button {
+  min-width: 40px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-neutral);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--coral-ink);
+  font-weight: 600;
+}
+.knowledge-pagination .knowledge-page-direction {
+  min-width: 56px;
+  padding-inline: 12px;
+}
+.knowledge-pagination button:hover:not(:disabled) {
+  background: var(--surface-raised);
+}
+.knowledge-pagination button[aria-current='page'] {
+  border-color: #aa8a75;
+  background: #f5e7e0;
+}
+.knowledge-pagination button:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 .knowledge-card-list {
   display: grid;
@@ -687,7 +817,7 @@ a.featured-card:hover {
   display: grid;
   place-items: center;
   color: #847262;
-  transition: background 0.2s;
+  transition: background 0.2s, var(--button-scale-transition);
 }
 .close-button:hover {
   background: #fff;
@@ -1218,16 +1348,27 @@ textarea {
   margin-bottom: 8px;
   font-size: 14px;
 }
-.generate-modal form input {
-  min-height: 44px;
+.generate-modal form textarea {
+  display: block;
+  min-block-size: calc(3lh + 18px);
+  max-block-size: max(112px, min(16rem, 50dvh));
+  field-sizing: content;
+  overflow-wrap: anywhere;
   padding: 8px 12px;
   border-color: #aea396;
   color: #34332e;
   font-size: 16px;
   line-height: 1.5;
 }
-.generate-modal form input::placeholder {
+.generate-modal form textarea::placeholder {
   color: #70665b;
+}
+.topic-length {
+  margin-top: 4px;
+  color: var(--text-muted);
+  text-align: end;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 .generate-modal .primary-button {
   min-height: 44px;
@@ -1236,7 +1377,7 @@ textarea {
   border-radius: 8px;
   background: var(--coral-ink);
   font-size: 14px;
-  transition: background-color 160ms ease-out;
+  transition: background-color 160ms ease-out, var(--button-scale-transition);
 }
 .generate-modal .primary-button:not(:disabled):hover {
   background: var(--coral-ink-hover);
@@ -1647,9 +1788,6 @@ textarea {
   .featured-topic svg {
     width: 44px;
     height: 44px;
-  }
-  .category-tabs button {
-    padding-inline: 8px;
   }
   .footer-inner {
     padding-inline: 16px;

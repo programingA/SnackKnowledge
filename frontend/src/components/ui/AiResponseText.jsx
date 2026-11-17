@@ -10,10 +10,11 @@ const components = {
   ),
 }
 
-export default function AiResponseText({ text, className = '' }) {
+export default function AiResponseText({ text, className = '', additionalRemarkPlugins = [] }) {
   return (
     <div className={`ai-response-text ${className}`.trim()}>
-      <ReactMarkdown {...aiMarkdownOptions} components={components}>
+      <ReactMarkdown {...aiMarkdownOptions} components={components}
+        remarkPlugins={[...aiMarkdownOptions.remarkPlugins, ...additionalRemarkPlugins]}>
         {normalizeAiMarkdown(text ?? '')}
       </ReactMarkdown>
     </div>

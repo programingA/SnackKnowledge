@@ -39,7 +39,14 @@ CREATE TABLE IF NOT EXISTS knowledge (
 ) CHARACTER SET utf8mb4;
 ```
 
-DB 카드 목록을 채우려면 `knowledge`에 데이터를 넣습니다. DB 카드가 비어 있어도 [샘플 카드](http://localhost:5173/#/sample/sky)는 로컬 앱에서 체험할 수 있습니다.
+기본 지식 카드를 채우려면 저장소 루트에서 MySQL에 접속할 때 `--default-character-set=utf8mb4`를 지정하고, MySQL 콘솔에서 다음을 실행합니다.
+
+```sql
+USE snackknowledge;
+SOURCE backend/db/seed-knowledge-cards.sql;
+```
+
+이 스크립트는 과학·일상·기술·심리·자연·우주의 기본 카드를 카테고리별 최소 5개로 채웁니다. 기존 카드는 그대로 두며, 다시 실행해도 카드를 중복 추가하지 않습니다. DB 카드가 비어 있어도 [샘플 카드](http://localhost:5173/#/sample/sky)는 로컬 앱에서 체험할 수 있습니다.
 
 ### 2. 백엔드 실행
 
@@ -52,6 +59,8 @@ if (!(Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
 macOS 또는 Linux에서는 `cp .env.example .env`와 `./gradlew bootRun`을 사용합니다. 백엔드는 기본적으로 `8080` 포트에서 실행됩니다.
+
+삽화가 없는 기본 지식 카드에 이미지를 채우려면 OpenAI API 키를 설정한 뒤 백엔드를 `--knowledge.images.backfill=true` 인수로 한 번 실행합니다. 예를 들어 Windows에서는 `.\gradlew.bat bootRun --args="--knowledge.images.backfill=true"`를 실행합니다. 이미 삽화가 있는 카드는 건너뜁니다.
 
 ### 3. 프런트엔드 실행
 

@@ -22,6 +22,7 @@
   --surface-raised: #f3efe8;
   --border-neutral: #e2dcd1;
   --surface-transition: 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  --button-scale-transition: scale 120ms ease-out;
 }
 * {
   box-sizing: border-box;
@@ -94,6 +95,19 @@ textarea:focus-visible {
 }
 button {
   touch-action: manipulation;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :where(button, a.primary-button) {
+    transition: var(--button-scale-transition);
+  }
+  :where(button, a.primary-button):not(:disabled, [aria-disabled='true']):active {
+    scale: 0.98;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  :where(button, a.primary-button):not(:disabled, [aria-disabled='true'], :active):hover {
+    scale: 1.015;
+  }
 }
 .sr-only {
   position: absolute;
