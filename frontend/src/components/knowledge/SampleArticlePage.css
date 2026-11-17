@@ -1,0 +1,37 @@
+.sample-reading-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
+  align-items: center;
+  gap: clamp(14px, 3vw, 24px);
+}
+
+.sample-reading-intro > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.sample-activity-intro {
+  display: grid;
+  gap: 6px;
+}
+
+.article-body .sample-activity-intro > :is(h3, p) {
+  margin: 0;
+}
+
+.sample-activity-intro .demo-notice {
+  margin: 8px 0 0;
+}
+
+.knowledge-chat-form .suggestion {
+  margin-block: 0 12px;
+  text-align: start;
+}
+
+@media (max-width: 540px) {
+  .sample-reading-intro {
+    grid-template-columns: 1fr;
+  }
+}
