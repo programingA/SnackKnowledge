@@ -35,6 +35,29 @@
   overflow-wrap: anywhere;
 }
 
+.article-category-row {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, max-content) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 8px;
+}
+
+.saved-card-back {
+  text-align: start;
+}
+
+.saved-card-back > a.article-back {
+  margin: 0;
+}
+
+.saved-card-status > .saved-card-back {
+  padding: 8px clamp(16px, 4vw, 32px) 0;
+}
+
+.saved-card-status :is(.load-error, .loading-skeleton-item) {
+  border: 0;
+}
+
 .generated-reading-tabs h2 {
   margin: 0;
   padding: 16px 8px;
@@ -169,4 +192,51 @@
   background: #fff1ec;
   color: #a53428;
   font-weight: 700;
+}
+
+.knowledge-card:has(.generated-list-delete) {
+  padding-inline-end: 78px;
+}
+
+.generated-list-delete {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 20px;
+  transform: translateY(-50%);
+  z-index: 1;
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.modal.generated-delete-modal {
+  width: 420px;
+  padding: 26px;
+  overflow-wrap: anywhere;
+}
+
+.generated-delete-modal h2 {
+  margin-bottom: 12px;
+  padding-inline-end: 28px;
+  font-size: 19px;
+}
+
+.generated-delete-modal p + p {
+  margin-top: 8px;
+}
+
+.generated-delete-title {
+  font-weight: 700;
+}
+
+.generated-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.generated-delete-actions > button {
+  min-height: 44px;
+  padding-inline: 12px;
 }
