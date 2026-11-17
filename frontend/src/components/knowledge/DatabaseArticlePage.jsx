@@ -6,6 +6,7 @@ import LoadingSkeleton from '../ui/LoadingSkeleton'
 import ArticleHeading from './ArticleHeading'
 import BookmarkButton from './BookmarkButton'
 import useLearningActivity from './useLearningActivity'
+import useArticleBackLinkRef from './useArticleBackLinkRef'
 import KnowledgeStudyTabs from './KnowledgeStudyTabs'
 import { getReadingParagraphs } from './readingParagraphs'
 
@@ -17,9 +18,13 @@ export default function DatabaseArticlePage({ id, username, bookmarks }) {
   const { data: knowledge, error, retry } = useApiQuery(loadKnowledge, id)
   const learning = useLearningActivity(id, username, Boolean(knowledge))
   const [imageUnavailable, setImageUnavailable] = useState(false)
+  const backLinkRef = useArticleBackLinkRef()
+  const backLink = <a className="article-back" href="#knowledge-feed" ref={backLinkRef}>← 카드 목록으로 돌아가기</a>
 
   return (
-    <article className="article-page-card study-article" aria-label={knowledge?.title ?? '지식 상세보기'}>
+    <article className={knowledge ? 'article-page-card study-article' : 'article-page-card study-article saved-card-status'}
+      aria-label={knowledge?.title ?? '지식 상세보기'}>
+      {!knowledge && <div className="saved-card-back">{backLink}</div>}
       {error && (
         <LoadError heading="h1" message={error.status === 404 ? '지식 카드를 찾을 수 없어요.' : '지식 카드를 불러오지 못했어요.'}
           onRetry={retry} />
@@ -31,7 +36,7 @@ export default function DatabaseArticlePage({ id, username, bookmarks }) {
 
       {knowledge && (
         <>
-          <ArticleHeading category={knowledge.category} title={knowledge.title} summary={knowledge.summary}
+          <ArticleHeading category={knowledge.category} title={knowledge.title} summary={knowledge.summary} backLink={backLink}
             titleAction={bookmarks && <BookmarkButton key={username} card={knowledge} bookmarks={bookmarks} />} />
           <KnowledgeStudyTabs studyPath={`/api/knowledge/${id}`} summary={knowledge.summary}
             onComplete={learning.track} error={learning.error}>

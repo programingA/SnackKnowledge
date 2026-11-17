@@ -1,11 +1,12 @@
 import AiResponseText from '../ui/AiResponseText'
 import ArticleHeading from './ArticleHeading'
 import KnowledgeStudyTabs from './KnowledgeStudyTabs'
-import { getReadingParagraphs } from './readingParagraphs'
+import { formatGeneratedReading } from './readingParagraphs'
 import './GeneratedCards.css'
 
-export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(studyPath), showImageFallback = false, backLink, headerActions, children }) {
-  const text = /[\n*_`\\$]/.test(card.content) ? card.content : getReadingParagraphs(card.content).join('\n\n')
+const readingPlugins = [formatGeneratedReading]
+
+export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(studyPath), showImageFallback = false, backLink, titleAction, headerActions, children }) {
   const reading = (
     <>
       {card.imageBase64 && (
@@ -15,13 +16,15 @@ export default function GeneratedArticle({ card, studyPath, showStudy = Boolean(
       {showImageFallback && !card.imageBase64 && (
         <p>이미지를 생성하지 못했어요. 카드 내용은 아래에서 읽을 수 있어요.</p>
       )}
-      <AiResponseText className="article-reading generated-article-reading" text={text} />
+      <AiResponseText className="article-reading generated-article-reading" text={card.content}
+        additionalRemarkPlugins={readingPlugins} />
     </>
   )
 
   return (
     <article className="article-page-card generated-article study-article" aria-label={card.title}>
-      <ArticleHeading category={card.category} title={card.title} summary={card.summary} backLink={backLink}>
+      <ArticleHeading category={card.category} title={card.title} summary={card.summary} backLink={backLink}
+        titleAction={titleAction}>
         {headerActions}
       </ArticleHeading>
       {showStudy ? (
