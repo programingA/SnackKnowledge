@@ -29,7 +29,8 @@ function BookmarkList({ bookmarks }) {
     <ul className="knowledge-card-list" role="list">
       {cards.map((card) => (
         <li key={card.id}>
-          <KnowledgeCard card={card} bookmarks={bookmarks} heading="h2" showReadLabel={false} />
+          <KnowledgeCard card={card} bookmarks={bookmarks} heading="h2" showReadLabel={false}
+            href={card.source === 'community' ? `#/community/${card.id}` : undefined} />
         </li>
       ))}
     </ul>

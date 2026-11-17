@@ -13,8 +13,9 @@ export async function getBookmarks(signal) {
   return (await request('', { signal })).data
 }
 
-export async function setBookmark(id, saved) {
-  await request('/' + id, {
+export async function setBookmark(card, saved) {
+  const path = card.source === 'community' ? '/community/' : '/'
+  await request(path + card.id, {
     method: saved ? 'PUT' : 'DELETE',
     headers: await getCsrfHeaders(),
   })

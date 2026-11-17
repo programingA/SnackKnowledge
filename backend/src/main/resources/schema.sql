@@ -71,6 +71,15 @@ CREATE TABLE IF NOT EXISTS community_share (
     FOREIGN KEY (username, card_id) REFERENCES member_generated_card(username, card_id) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
 
+CREATE TABLE IF NOT EXISTS member_community_bookmark (
+    username VARCHAR(30) NOT NULL,
+    share_id CHAR(36) NOT NULL,
+    saved_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (username, share_id),
+    FOREIGN KEY (username) REFERENCES member_account(username) ON DELETE CASCADE,
+    FOREIGN KEY (share_id) REFERENCES community_share(share_id) ON DELETE CASCADE
+) CHARACTER SET utf8mb4;
+
 CREATE TABLE IF NOT EXISTS knowledge_illustration (
     knowledge_id BIGINT PRIMARY KEY,
     image MEDIUMBLOB NOT NULL
