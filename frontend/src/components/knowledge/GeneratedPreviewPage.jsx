@@ -5,7 +5,7 @@ import LoadingSkeleton from '../ui/LoadingSkeleton'
 import GeneratedArticle from './GeneratedArticle'
 import SaveGeneratedCardButton from './SaveGeneratedCardButton'
 
-export default function GeneratedPreviewPage({ card, restored, storageWarning, loading, username, visible, onSignIn, onGenerate }) {
+export default function GeneratedPreviewPage({ card, restored, storageWarning, loading, username, visible, onSignIn, onGenerate, onSavedCardsChange }) {
   const [reconnectedId, setReconnectedId] = useState(null)
   const [studyError, setStudyError] = useState('')
   const [attempt, setAttempt] = useState(0)
@@ -38,7 +38,8 @@ export default function GeneratedPreviewPage({ card, restored, storageWarning, l
             <>
               <div className="generated-preview-actions" role="group" aria-label="생성한 카드 관리">
                 <div className="generated-preview-save">
-                  <SaveGeneratedCardButton card={card} studyId={studyId} username={username} onSignIn={onSignIn} />
+                  <SaveGeneratedCardButton card={card} studyId={studyId} username={username}
+                    onSignIn={onSignIn} onSavedCardsChange={onSavedCardsChange} />
                 </div>
                 <button className="generated-preview-secondary" type="button" onClick={onGenerate}>
                   다른 지식 만들기

@@ -10,7 +10,7 @@ import KnowledgeCard from './KnowledgeCard'
 import useArticleBackLinkRef from './useArticleBackLinkRef'
 import './GeneratedCards.css'
 
-export default function SavedGeneratedCardsPage({ username, id, onSignIn }) {
+export default function SavedGeneratedCardsPage({ username, id, onSignIn, onSavedCardsChange }) {
   const titleRef = useRef(null)
   const backLinkRef = useArticleBackLinkRef()
   const backLink = id && <a className="article-back" href="#/generated-cards" ref={backLinkRef}>← 생성한 카드로</a>
@@ -18,7 +18,8 @@ export default function SavedGeneratedCardsPage({ username, id, onSignIn }) {
   return (
     <main className={id ? "page-shell article-page" : "page-shell generated-cards-page"} id="generated-cards-page" tabIndex={-1}>
       {(!id || !username) && <h1 ref={titleRef} tabIndex={-1}>생성한 카드</h1>}
-      {username ? <SavedCards key={username + ':' + (id ?? 'list')} id={id} titleRef={titleRef} backLink={backLink} /> : (
+      {username ? <SavedCards key={username + ':' + (id ?? 'list')} id={id} titleRef={titleRef} backLink={backLink}
+        onSavedCardsChange={onSavedCardsChange} /> : (
         <div className="generated-cards-panel">
           {backLink && <div>{backLink}</div>}
           <p>로그인하면 저장한 카드를 볼 수 있어요.</p>
@@ -33,7 +34,7 @@ function loadGeneratedCards(signal, id) {
   return id ? getGeneratedCard(id, signal) : getGeneratedCards(signal)
 }
 
-function SavedCards({ id, titleRef, backLink }) {
+function SavedCards({ id, titleRef, backLink, onSavedCardsChange }) {
   const { data, error: loadError, retry } = useApiQuery(loadGeneratedCards, id)
   const errorMessage = id ? '저장한 카드를 불러오지 못했어요.' : '저장한 카드 목록을 불러오지 못했어요.'
   if (loadError || data === null) {
@@ -55,10 +56,10 @@ function SavedCards({ id, titleRef, backLink }) {
       backLink={backLink} headerActions={<CommunityShareControls id={id} />} />
   }
 
-  return <SavedCardList cards={data} titleRef={titleRef} />
+  return <SavedCardList cards={data} titleRef={titleRef} onSavedCardsChange={onSavedCardsChange} />
 }
 
-function SavedCardList({ cards, titleRef }) {
+function SavedCardList({ cards, titleRef, onSavedCardsChange }) {
   const [selected, setSelected] = useState(null)
   const [deletedIds, setDeletedIds] = useState(new Set())
   const visibleCards = cards.filter((card) => !deletedIds.has(card.id))
@@ -84,6 +85,7 @@ function SavedCardList({ cards, titleRef }) {
       {selected && <DeleteCardModal card={selected} onClose={() => setSelected(null)} onDeleted={() => {
         setDeletedIds((current) => new Set([...current, selected.id]))
         setSelected(null)
+        onSavedCardsChange()
       }} />}
     </>
   )

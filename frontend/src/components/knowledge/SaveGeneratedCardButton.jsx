@@ -3,7 +3,7 @@ import Icon from '../ui/Icon'
 import { deleteGeneratedCard, saveGeneratedCard } from '../../api/generatedCards'
 import './GeneratedCards.css'
 
-export default function SaveGeneratedCardButton({ card, studyId, username, onSignIn }) {
+export default function SaveGeneratedCardButton({ card, studyId, username, onSignIn, onSavedCardsChange }) {
   const cardId = useRef(null)
   const signInRequested = useRef(false)
   const saveButton = useRef(null)
@@ -44,6 +44,7 @@ export default function SaveGeneratedCardButton({ card, studyId, username, onSig
         setSaved({ id: cardId.current, username })
         setShowSavedNotice(true)
       }
+      onSavedCardsChange()
     } catch (error) {
       setError(error.message)
     } finally {

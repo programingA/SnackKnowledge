@@ -18,7 +18,7 @@ async function request(path, options) {
 }
 
 export async function getGeneratedCards(signal) {
-  return (await request('', { signal })).data
+  return (await request('', { signal, cache: 'no-store' })).data
 }
 
 export async function getGeneratedCard(id, signal) {
